@@ -35,4 +35,4 @@ Earlier drafts (v01–v07, dated 2026-09-13) are preserved privately by the auth
 
 ## Copyright
 
-© 2026 Maclane Antonio Chagas Figueiro. All rights reserved.
+© 2026 Maclane Antonio Chagas Figueiro. Licensed under CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).
