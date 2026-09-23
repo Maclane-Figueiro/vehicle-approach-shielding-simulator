@@ -1,0 +1,4236 @@
+<!DOCTYPE html>
+<!-- saved from url=(0061)file:///C:/Users/User/Desktop/vehicle-approach-shielding.html -->
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Vehicle Approach Shielding — Simulador Geométrico</title>
+
+<style>
+:root{
+  color-scheme:dark;
+  --green:#72ff75;
+  --radius:16px;
+  --shadow:0 18px 50px rgba(0,0,0,.32);
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  background:
+    radial-gradient(circle at top,#22282d 0,#111417 46%,#090b0d 100%);
+  color:#eef2f4;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+}
+
+button,input{
+  font:inherit;
+}
+
+button{
+  color:inherit;
+}
+
+.app{
+  width:min(1600px,100%);
+  margin:auto;
+  padding:18px;
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  margin-bottom:16px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+
+.brand-mark{
+  width:44px;
+  height:44px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  color:#071109;
+  background:linear-gradient(135deg,#b7ff8c,#30e572 70%);
+  box-shadow:0 0 0 1px rgba(255,255,255,.09),0 10px 30px rgba(51,233,111,.2);
+  font-size:20px;
+  font-weight:900;
+}
+
+h1{
+  margin:0;
+  font-size:clamp(18px,2.4vw,27px);
+  line-height:1.05;
+  letter-spacing:-.03em;
+}
+
+.subtitle{
+  margin:5px 0 0;
+  font-size:12px;
+  color:#8e989f;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.training-badge{
+  padding:7px 10px;
+  border:1px solid rgba(114,255,117,.23);
+  border-radius:999px;
+  color:#a5ffac;
+  background:rgba(45,217,105,.08);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 380px;
+  gap:16px;
+  align-items:start;
+}
+
+.viewer-card,.panel{
+  border:1px solid rgba(255,255,255,.075);
+  background:rgba(21,25,29,.86);
+  box-shadow:var(--shadow);
+}
+
+.viewer-card{
+  overflow:hidden;
+  border-radius:var(--radius);
+}
+
+.viewer-toolbar{
+  min-height:54px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  padding:9px 11px;
+  border-bottom:1px solid #323940;
+  background:linear-gradient(180deg,#1d2227,#171b1f);
+}
+
+.training-bar{
+  padding:10px 12px;
+  border-bottom:1px solid #323940;
+  background:rgba(114,255,117,.05);
+}
+
+.training-row{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.scenario-picker{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.scenario-btn{
+  padding:6px 11px;
+  border:1px solid #394149;
+  border-radius:7px;
+  background:#1a1e22;
+  color:#c4cbcf;
+  font-size:11px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.scenario-btn.active{
+  border-color:#59cd76;
+  background:#193e28;
+  color:#aaffb5;
+}
+
+.training-stats{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+}
+
+.training-stat{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  line-height:1.2;
+}
+
+.training-stat-k{
+  color:#7f8a91;
+  font-size:8px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.training-stat-v{
+  color:#f2f5f6;
+  font-size:13px;
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+}
+
+.training-objective{
+  margin:9px 0 0;
+  color:#c4cbcf;
+  font-size:11px;
+  line-height:1.5;
+}
+
+.btn{
+  min-height:34px;
+  padding:7px 11px;
+  border:1px solid #394149;
+  border-radius:8px;
+  background:#252b30;
+  color:#e9edef;
+  cursor:pointer;
+  transition:background .15s ease,border-color .15s ease,transform .08s ease;
+}
+
+.btn:hover{ background:#30373d; border-color:#505a63; }
+.btn:active{ transform:translateY(1px); }
+.btn:disabled{ opacity:.4; cursor:not-allowed; }
+
+.btn.primary{
+  border-color:#256b3f;
+  background:#193e28;
+  color:#aaffb5;
+}
+
+.toolbar-separator{
+  width:1px;
+  height:27px;
+  margin:0 2px;
+  background:#363d43;
+}
+
+.canvas-wrap{
+  position:relative;
+  background:#46494a;
+}
+
+#stage{
+  width:100%;
+  height:auto;
+  min-height:580px;
+  max-height:calc(100vh - 135px);
+  display:block;
+  touch-action:none;
+  user-select:none;
+  background:#3f4141;
+  cursor:grab;
+}
+
+#stage.panning{ cursor:grabbing; }
+
+.hint{
+  position:absolute;
+  left:13px;
+  bottom:13px;
+  max-width:min(520px,calc(100% - 26px));
+  padding:8px 30px 8px 11px;
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:9px;
+  background:rgba(8,10,11,.75);
+  box-shadow:0 5px 20px rgba(0,0,0,.22);
+  backdrop-filter:blur(8px);
+  color:#bfc6ca;
+  font-size:11px;
+  line-height:1.45;
+  pointer-events:none;
+  transition:opacity .25s ease, transform .25s ease;
+}
+
+.hint.hint-dismissed{
+  opacity:0;
+  transform:translateY(6px);
+  pointer-events:none !important;
+}
+
+.hint-close{
+  position:absolute;
+  top:5px;
+  right:6px;
+  width:20px;
+  height:20px;
+  display:grid;
+  place-items:center;
+  border:none;
+  border-radius:5px;
+  background:transparent;
+  color:#8e989f;
+  font-size:11px;
+  cursor:pointer;
+  pointer-events:auto;
+}
+
+.hint-close:hover{ background:rgba(255,255,255,.1); color:#eef2f4; }
+
+.canvas-title-overlay{
+  position:absolute;
+  left:20px;
+  top:16px;
+  max-width:min(420px,calc(100% - 40px));
+  pointer-events:none;
+}
+
+.canvas-title-overlay h3{
+  margin:0;
+  color:#f0f2f3;
+  font-size:19px;
+  font-weight:800;
+  letter-spacing:.4px;
+}
+
+.canvas-title-overlay .kicker{
+  margin:3px 0 8px;
+  color:#c2c7ca;
+  font-size:10px;
+  letter-spacing:3.5px;
+}
+
+.canvas-title-overlay p{
+  margin:2px 0;
+  color:#d0d3d4;
+  font-size:11px;
+  line-height:1.4;
+}
+
+.zoom-controls{
+  position:absolute;
+  right:13px;
+  top:13px;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;
+  background:rgba(23,25,26,.85);
+  box-shadow:0 5px 20px rgba(0,0,0,.28);
+  backdrop-filter:blur(8px);
+  overflow:hidden;
+}
+
+.zoom-btn{
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  border:none;
+  background:transparent;
+  color:#eef2f4;
+  font-size:19px;
+  font-weight:700;
+  cursor:pointer;
+  line-height:1;
+}
+
+.zoom-btn:hover{ background:rgba(255,255,255,.08); }
+
+.zoom-divider{ height:1px; background:rgba(255,255,255,.12); }
+
+.zoom-readout{
+  padding:5px 0;
+  text-align:center;
+  color:#9aa3a8;
+  font-size:9px;
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+  border-top:1px solid rgba(255,255,255,.12);
+}
+
+.panel{
+  position:sticky;
+  top:12px;
+  border-radius:var(--radius);
+  overflow:hidden;
+  max-height:calc(100vh - 24px);
+  overflow-y:auto;
+}
+
+.panel-head{ padding:15px 16px 13px; border-bottom:1px solid #323940; }
+.panel-head h2{ margin:0 0 4px; font-size:15px; }
+.panel-head p{ margin:0; color:#8e989f; font-size:11px; line-height:1.5; }
+
+.section{ padding:14px 15px; border-bottom:1px solid #323940; }
+.section:last-child{ border-bottom:0; }
+
+.section-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin:0 0 11px;
+  color:#bac3c8;
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.13em;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+
+.field{ display:flex; flex-direction:column; gap:5px; }
+.field.full{ grid-column:1/-1; }
+
+label{ color:#aab3b8; font-size:10px; font-weight:700; }
+
+.input-wrap{ position:relative; }
+
+input[type=number],input[type=range]{ width:100%; }
+
+input[type=number]{
+  height:36px;
+  padding:6px 34px 6px 9px;
+  border:1px solid #394149;
+  border-radius:8px;
+  outline:none;
+  background:#101316;
+  color:#f5f7f8;
+  transition:.15s;
+}
+
+input[type=number]:focus{
+  border-color:#59cd76;
+  box-shadow:0 0 0 3px rgba(89,205,118,.1);
+}
+
+.unit{
+  position:absolute;
+  right:9px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#66727a;
+  font-size:9px;
+  pointer-events:none;
+  white-space:nowrap;
+}
+
+.dual-unit{ margin-top:4px; color:#6d787f; font-size:9px; }
+
+input[type=range]{ accent-color:#68f477; }
+
+.switches{ display:grid; gap:8px; }
+
+.switch-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  font-size:12px;
+  color:#c4cbcf;
+}
+
+.switch{ position:relative; width:38px; height:22px; flex:0 0 auto; }
+.switch input{ position:absolute; opacity:0; pointer-events:none; }
+
+.slider{
+  position:absolute;
+  inset:0;
+  border-radius:99px;
+  background:#353d42;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.slider:before{
+  content:"";
+  position:absolute;
+  top:3px;
+  left:3px;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:#aeb7bc;
+  transition:.15s;
+}
+
+.switch input:checked + .slider{ background:#256c40; }
+.switch input:checked + .slider:before{ transform:translateX(16px); background:#9effac; }
+
+.metrics{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+
+.metric{
+  min-width:0;
+  padding:9px;
+  border:1px solid #31383e;
+  border-radius:9px;
+  background:#111518;
+}
+
+.metric .k{ margin-bottom:4px; color:#7f8a91; font-size:9px; text-transform:uppercase; letter-spacing:.08em; }
+.metric .v{ overflow:hidden; color:#f2f5f6; font-size:13px; font-weight:800; white-space:nowrap; text-overflow:ellipsis; }
+
+.actor-list{ display:grid; gap:7px; margin-bottom:9px; }
+
+.actor-row{
+  display:grid;
+  grid-template-columns:12px 1fr auto;
+  align-items:start;
+  gap:9px;
+  padding:9px;
+  border:1px solid #30383d;
+  border-radius:9px;
+  background:#111518;
+}
+
+.actor-row .dot{ width:10px; height:10px; margin-top:4px; border-radius:50%; box-shadow:0 0 0 3px rgba(255,255,255,.05); }
+.actor-row .name{ font-size:11px; font-weight:800; color:#f0f3f4; margin-bottom:2px; }
+.actor-row .dist{ font-size:10px; color:#93999d; }
+.actor-row .dist b{ color:#c9cfd2; font-weight:700; }
+
+.badge{
+  display:inline-block;
+  margin-top:3px;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+
+.badge.exposed{ color:#ff6b6b; }
+.badge.covered{ color:#7dffa0; }
+.badge.neutral{ color:#e8c25a; }
+
+.actor-dist-row{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-top:7px;
+}
+
+.actor-dist-row label{ color:#8a949a; font-size:9px; font-weight:700; white-space:nowrap; }
+.actor-dist-row .input-wrap{ position:relative; flex:1; min-width:0; }
+
+.actor-dist-input{
+  width:100%;
+  height:28px;
+  padding:4px 26px 4px 7px;
+  border:1px solid #394149;
+  border-radius:7px;
+  outline:none;
+  background:#0e1114;
+  color:#f5f7f8;
+  font-size:11px;
+}
+
+.actor-dist-unit{
+  position:absolute;
+  right:8px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#66727a;
+  font-size:9px;
+  pointer-events:none;
+}
+
+.stance-row{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-top:7px;
+}
+
+.stance-btn{
+  flex:1;
+  padding:6px 4px;
+  border:1px solid #394149;
+  border-radius:7px;
+  background:#161a1d;
+  color:#c4cbcf;
+  font-size:10px;
+  font-weight:800;
+  cursor:pointer;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.stance-btn.active{
+  border-color:#59cd76;
+  background:#193e28;
+  color:#aaffb5;
+}
+
+.vest-tag{
+  margin-top:6px;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:3px 7px;
+  border:1px solid rgba(46,164,255,.28);
+  border-radius:6px;
+  background:rgba(46,164,255,.08);
+  color:#7fc4ff;
+  font-size:9px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.icon-btn{
+  width:26px;
+  height:26px;
+  display:grid;
+  place-items:center;
+  border:1px solid #3a4147;
+  border-radius:7px;
+  background:#1a1e22;
+  color:#c7ccce;
+  cursor:pointer;
+  font-size:13px;
+  line-height:1;
+}
+
+.icon-btn:hover{ background:#262c31; border-color:#55606a; }
+.icon-btn:disabled{ opacity:.3; cursor:not-allowed; }
+
+.add-btn{
+  width:100%;
+  padding:9px;
+  border:1px dashed #3d4650;
+  border-radius:9px;
+  background:transparent;
+  color:#9fe8ac;
+  cursor:pointer;
+  font-size:11px;
+  font-weight:700;
+}
+
+.add-btn:hover{ background:rgba(114,255,117,.06); border-color:#59a56a; }
+.add-btn:disabled{ opacity:.35; cursor:not-allowed; }
+
+.notice{
+  padding:11px 12px;
+  border:1px solid rgba(242,201,76,.18);
+  border-radius:9px;
+  background:rgba(242,201,76,.05);
+  color:#bbb7a3;
+  font-size:10px;
+  line-height:1.55;
+}
+
+.notice strong{ color:#ecd876; }
+
+.legend{ display:flex; flex-wrap:wrap; gap:6px; }
+
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 7px;
+  border:1px solid #30373c;
+  border-radius:7px;
+  background:#111518;
+  color:#aeb7bc;
+  font-size:9px;
+}
+
+.dot{ width:7px; height:7px; border-radius:50%; }
+
+.toast{
+  position:fixed;
+  z-index:100;
+  left:50%;
+  bottom:24px;
+  transform:translate(-50%,20px);
+  padding:10px 14px;
+  border:1px solid #455047;
+  border-radius:9px;
+  opacity:0;
+  pointer-events:none;
+  background:#172219;
+  color:#aaffb5;
+  box-shadow:0 12px 30px rgba(0,0,0,.4);
+  font-size:12px;
+  transition:.2s;
+}
+
+.toast.show{ opacity:1; transform:translate(-50%,0); }
+
+.profile-card{
+  margin-top:16px;
+  border:1px solid rgba(255,255,255,.075);
+  background:rgba(21,25,29,.86);
+  box-shadow:var(--shadow);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+
+.profile-toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  gap:10px;
+  padding:11px 15px;
+  border-bottom:1px solid #323940;
+  background:linear-gradient(180deg,#1d2227,#171b1f);
+}
+
+.profile-title{
+  color:#eef2f4;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.profile-hint{ color:#8e989f; font-size:11px; }
+
+#profileStage{
+  width:100%;
+  height:auto;
+  display:block;
+  background:#3f4141;
+}
+
+.mc-controls{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px;
+  padding:12px 15px;
+  border-bottom:1px solid #323940;
+}
+
+.mc-controls label{ color:#aab3b8; font-size:10px; font-weight:700; }
+
+.mc-controls input[type=number]{
+  width:80px;
+  height:34px;
+  padding:6px 9px;
+  border:1px solid #394149;
+  border-radius:8px;
+  background:#101316;
+  color:#f5f7f8;
+}
+
+.mc-progress{ color:#8e989f; font-size:11px; font-variant-numeric:tabular-nums; }
+
+.mc-results{ padding:15px; }
+
+.mc-table{ width:100%; border-collapse:collapse; font-size:11px; margin-bottom:16px; }
+.mc-table th, .mc-table td{ padding:7px 9px; border-bottom:1px solid #2b3136; text-align:right; white-space:nowrap; }
+.mc-table th:first-child, .mc-table td:first-child{ text-align:left; }
+.mc-table th{ color:#8e989f; font-size:9px; text-transform:uppercase; letter-spacing:.06em; font-weight:800; }
+.mc-table td{ color:#eef2f4; font-weight:700; font-variant-numeric:tabular-nums; }
+.mc-table tr.mc-overall td{ color:#aaffb5; border-top:2px solid #394149; }
+
+.mc-hist-title{ color:#bac3c8; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; margin:0 0 8px; }
+.mc-hist-row{ display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+.mc-hist-label{ width:70px; flex:0 0 auto; color:#8e989f; font-size:10px; text-align:right; }
+.mc-hist-bar-wrap{ flex:1; background:#101316; border-radius:5px; overflow:hidden; height:16px; }
+.mc-hist-bar{ height:100%; background:linear-gradient(90deg,#256b3f,#59cd76); }
+.mc-hist-count{ width:70px; flex:0 0 auto; color:#c4cbcf; font-size:10px; font-variant-numeric:tabular-nums; }
+
+.mc-note{ margin:0 0 14px; color:#8e989f; font-size:10.5px; line-height:1.55; }
+
+.footer{ padding:14px 4px 2px; color:#68737a; font-size:10px; line-height:1.55; }
+
+#stage text{ font-family:Inter,"Segoe UI",Arial,sans-serif; }
+
+.drag-object{ cursor:grab; }
+.drag-object.dragging{ cursor:grabbing; }
+.selector-handle{ cursor:nwse-resize; }
+
+.exposure-line{
+  fill:none;
+  stroke-width:2.6;
+  stroke-dasharray:5 6;
+  opacity:.92;
+  vector-effect:non-scaling-stroke;
+}
+
+.shadow-ray{
+  fill:none;
+  stroke-width:1.4;
+  stroke-dasharray:9 7;
+  opacity:.82;
+  vector-effect:non-scaling-stroke;
+}
+
+.shadow-ray.active{
+  stroke-width:2.4;
+  stroke-dasharray:none;
+  opacity:1;
+}
+
+.actor-halo{ fill:none; stroke-width:3; opacity:.55; }
+
+.rotate-stalk{
+  stroke:#eef2f4;
+  stroke-opacity:.5;
+  stroke-width:1.6;
+  stroke-dasharray:3 4;
+  vector-effect:non-scaling-stroke;
+  pointer-events:none;
+}
+
+.rotate-grip{ cursor:grab; }
+.rotate-grip:active{ cursor:grabbing; }
+.rotate-handle{ stroke:#101416; stroke-width:2; }
+
+.heading-stalk{
+  stroke:#ffe37a;
+  stroke-opacity:.7;
+  stroke-width:2;
+  stroke-dasharray:4 5;
+  vector-effect:non-scaling-stroke;
+  pointer-events:none;
+}
+
+.heading-grip{ cursor:grab; }
+.heading-grip:active{ cursor:grabbing; }
+.heading-handle{ fill:#ffd936; stroke:#3a2f00; stroke-width:2; }
+
+@media(max-width:1050px){
+  .layout{ grid-template-columns:1fr; }
+  .panel{ position:relative; top:auto; max-height:none; }
+  #stage{ max-height:none; }
+}
+
+@media(max-width:620px){
+  .app{ padding:8px; }
+  .viewer-toolbar{ overflow:auto; flex-wrap:nowrap; }
+  .btn{ white-space:nowrap; }
+  .form-grid{ grid-template-columns:1fr; }
+  .field.full{ grid-column:auto; }
+  .metrics{ grid-template-columns:1fr; }
+  #stage{ min-height:510px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">VA</div>
+      <div>
+        <h1>Vehicle Approach Shielding</h1>
+        <p class="subtitle">abordagem tática · viatura + carro abordado · referência top-down</p>
+      </div>
+    </div>
+    <div class="training-badge">treinamento tático · referência visual</div>
+  </header>
+
+  <main class="layout">
+
+    <section class="viewer-card">
+
+      <div class="viewer-toolbar">
+        <button class="btn primary" id="resetBtn">↺ Reiniciar</button>
+        <button class="btn" id="fitBtn">Centralizar</button>
+        <span class="toolbar-separator"></span>
+        <button class="btn" id="exportPngBtn">Exportar PNG</button>
+        <button class="btn" id="exportSvgBtn">Exportar SVG</button>
+        <span class="toolbar-separator"></span>
+        <button class="btn" id="trainingToggleBtn">🎯 Modo Treinamento</button>
+      </div>
+
+      <div class="training-bar" id="trainingBar">
+        <div class="training-row">
+          <div class="scenario-picker" id="scenarioPicker"><button class="scenario-btn">Abordagem padrão</button><button class="scenario-btn">Suspeito em ângulo</button><button class="scenario-btn">Múltiplas ameaças</button><button class="scenario-btn">Ameaça na retaguarda</button></div>
+          <button class="btn" id="rerollBtn" hidden="">🎲 Sortear novamente</button>
+          <div class="training-stats">
+            <div class="training-stat">
+              <span class="training-stat-k">tempo</span>
+              <span class="training-stat-v" id="trainingTimer">00:00</span>
+            </div>
+            <div class="training-stat">
+              <span class="training-stat-k">exposto</span>
+              <span class="training-stat-v" id="trainingExposedCount" style="color:#ff6b6b">0</span>
+            </div>
+            <div class="training-stat">
+              <span class="training-stat-k">protegido</span>
+              <span class="training-stat-v" id="trainingCoveredCount" style="color:#7dffa0">0</span>
+            </div>
+            <div class="training-stat" id="trainingFirstCoverWrap" hidden="">
+              <span class="training-stat-k">1ª proteção</span>
+              <span class="training-stat-v" id="trainingFirstCover">—</span>
+            </div>
+            <button class="btn primary" id="trainingStartBtn">Iniciar</button>
+            <button class="btn" id="trainingStopBtn" hidden="">Finalizar</button>
+          </div>
+        </div>
+        <p class="training-objective" id="trainingObjective">Escolha um cenário acima para uma situação prática guiada, ou clique Iniciar para cronometrar o cenário livre atual.</p>
+      </div>
+
+      <div class="canvas-wrap">
+
+        <svg id="stage" viewBox="-105.8 -163.0 1217.7 1758.9" role="img" aria-label="Diagrama geométrico superior de abordagem: carro abordado, viatura, oficiais e ameaças">
+
+          <defs>
+            <lineargradient id="carBodyGradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#edf3f7" stop-opacity=".72"></stop>
+              <stop offset=".44" stop-color="#87939b" stop-opacity=".24"></stop>
+              <stop offset="1" stop-color="#dbe3e8" stop-opacity=".58"></stop>
+            </lineargradient>
+            <lineargradient id="glassGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#9aa9b3" stop-opacity=".47"></stop>
+              <stop offset="1" stop-color="#172029" stop-opacity=".73"></stop>
+            </lineargradient>
+            <lineargradient id="engineGradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#f8dd58"></stop>
+              <stop offset=".5" stop-color="#c99f20"></stop>
+              <stop offset="1" stop-color="#e8c843"></stop>
+            </lineargradient>
+            <lineargradient id="pillarGradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#cfe3ea"></stop>
+              <stop offset="1" stop-color="#7f97a1"></stop>
+            </lineargradient>
+            <radialgradient id="headGradient">
+              <stop offset="0" stop-color="#d9a47c"></stop>
+              <stop offset="1" stop-color="#8a5d42"></stop>
+            </radialgradient>
+            <filter id="asphaltNoise" x="-20%" y="-20%" width="140%" height="140%">
+              <feturbulence type="fractalNoise" baseFrequency=".58" numOctaves="3" seed="7" stitchTiles="stitch" result="noise"></feturbulence>
+              <fecolormatrix in="noise" type="matrix" values="
+                .24 0 0 0 .24
+                0 .24 0 0 .24
+                0 0 .24 0 .24
+                0 0 0 .22 0" result="grain"></fecolormatrix>
+              <feblend in="SourceGraphic" in2="grain" mode="overlay"></feblend>
+            </filter>
+            <filter id="shadow" x="-60%" y="-60%" width="220%" height="220%">
+              <fegaussianblur stdDeviation="13"></fegaussianblur>
+            </filter>
+            <filter id="softShadow" x="-40%" y="-40%" width="180%" height="180%">
+              <fedropshadow dx="5" dy="10" stdDeviation="6" flood-color="#000" flood-opacity=".48"></fedropshadow>
+            </filter>
+          </defs>
+
+          <!-- asphalt (oversized so it still covers the view when the scene zooms out) -->
+          <rect x="-9000" y="-9000" width="18800" height="19000" fill="#4b4d4d"></rect>
+          <rect x="-9000" y="-9000" width="18800" height="19000" fill="#4b4d4d" filter="url(#asphaltNoise)"></rect>
+
+          <!-- lane markings between the two vehicles -->
+          <line id="laneLine" x1="450" y1="-9000" x2="450" y2="9000" stroke="#e8e2c8" stroke-opacity=".22" stroke-width="6" stroke-dasharray="40 34"></line>
+
+          <!-- FRONT CAR (abordado) -->
+          <ellipse id="frontCarShadow" fill="#000" opacity=".42" filter="url(#shadow)" cx="466" cy="283" rx="119.03999999999999" ry="277.02"></ellipse>
+          <g id="frontCarVisual" class="drag-object" filter="url(#softShadow)" transform="translate(450 260) scale(0.96 0.972)">
+            <g id="frontCarScaled">
+      <g fill="#141719" stroke="#5f6569" stroke-width="2">
+        <rect x="-116" y="-182" width="25" height="93" rx="10"></rect>
+        <rect x="91" y="-182" width="25" height="93" rx="10"></rect>
+        <rect x="-116" y="91" width="25" height="93" rx="10"></rect>
+        <rect x="91" y="91" width="25" height="93" rx="10"></rect>
+      </g>
+      <path d="M-72 -250 Q-100 -239 -110 -183 L-116 144 Q-113 215 -75 242 Q0 264 75 242 Q113 215 116 144
+        L110 -183 Q100 -239 72 -250 Q0 -270 -72 -250Z" fill="url(#carBodyGradient)" stroke="#e8edf0" stroke-opacity=".86" stroke-width="2.8"></path>
+      <path d="M-83 -229 Q0 -253 83 -229 L88 -125 Q0 -146 -88 -125Z" fill="#aab5bb" fill-opacity=".17" stroke="#dfe6ea" stroke-opacity=".45" stroke-width="1.6"></path>
+      <path d="M-78 -108 Q0 -128 78 -108 L70 -22 Q0 -37 -70 -22Z" fill="url(#glassGradient)" stroke="#dfe6e9" stroke-opacity=".38" stroke-width="1.7"></path>
+      <path d="M-70 -9 Q0 -25 70 -9 L70 103 Q0 116 -70 103Z" fill="#313b43" fill-opacity=".45" stroke="#dfe6e9" stroke-opacity=".22" stroke-width="1.4"></path>
+      <path d="M-69 117 Q0 130 69 117 L76 190 Q0 209 -76 190Z" fill="url(#glassGradient)" stroke="#dfe6e9" stroke-opacity=".36" stroke-width="1.5"></path>
+      <rect x="-11" y="-100" width="22" height="287" rx="8" fill="#77828a" opacity=".3" stroke="#ccd4d8" stroke-opacity=".24"></rect>
+      <g fill="#282e33" fill-opacity=".62" stroke="#89939a" stroke-opacity=".32">
+        <rect x="-59" y="-64" width="42" height="72" rx="12"></rect>
+        <rect x="17" y="-64" width="42" height="72" rx="12"></rect>
+        <rect x="-59" y="43" width="42" height="78" rx="12"></rect>
+        <rect x="17" y="43" width="42" height="78" rx="12"></rect>
+      </g>
+      <g stroke="#c7d0d5" stroke-opacity=".28" stroke-width="4">
+        <line x1="-72" y1="-109" x2="-69" y2="116"></line>
+        <line x1="72" y1="-109" x2="69" y2="116"></line>
+      </g>
+      <g fill="#e7edf0" opacity=".72">
+        <path d="M-88 -222l28 -13 4 14 -29 10z"></path>
+        <path d="M88 -222l-28 -13 -4 14 29 10z"></path>
+      </g>
+      <g fill="#d83b34" opacity=".8">
+        <path d="M-86 221l28 12-4 10-26-8z"></path>
+        <path d="M86 221l-28 12 4 10 26-8z"></path>
+      </g>
+    </g>
+          </g>
+          <rect id="frontCarHit" fill="transparent" stroke="transparent" class="drag-object" x="354" y="17" width="192" height="486" rx="46.08"></rect>
+
+          <!-- VIATURA -->
+          <ellipse id="viaturaShadow" fill="#000" opacity=".42" filter="url(#shadow)" cx="534.6129150390625" cy="1154.86083984375" rx="119.03999999999999" ry="277.02"></ellipse>
+          <g id="viaturaVisual" class="drag-object" filter="url(#softShadow)" transform="translate(534.6129150390625 1154.86083984375) rotate(-24)">
+            <g id="viaturaScaled" transform="scale(0.96 0.972)">
+      <g fill="#141719" stroke="#5f6569" stroke-width="2">
+        <rect x="-116" y="-182" width="25" height="93" rx="10"></rect>
+        <rect x="91" y="-182" width="25" height="93" rx="10"></rect>
+        <rect x="-116" y="91" width="25" height="93" rx="10"></rect>
+        <rect x="91" y="91" width="25" height="93" rx="10"></rect>
+      </g>
+      <path d="M-72 -250 Q-100 -239 -110 -183 L-116 144 Q-113 215 -75 242 Q0 264 75 242 Q113 215 116 144
+        L110 -183 Q100 -239 72 -250 Q0 -270 -72 -250Z" fill="url(#carBodyGradient)" stroke="#e8edf0" stroke-opacity=".86" stroke-width="2.8"></path>
+      <path d="M-83 -229 Q0 -253 83 -229 L88 -125 Q0 -146 -88 -125Z" fill="#aab5bb" fill-opacity=".17" stroke="#dfe6ea" stroke-opacity=".45" stroke-width="1.6"></path>
+      <path d="M-78 -108 Q0 -128 78 -108 L70 -22 Q0 -37 -70 -22Z" fill="url(#glassGradient)" stroke="#dfe6e9" stroke-opacity=".38" stroke-width="1.7"></path>
+      <path d="M-70 -9 Q0 -25 70 -9 L70 103 Q0 116 -70 103Z" fill="#313b43" fill-opacity=".45" stroke="#dfe6e9" stroke-opacity=".22" stroke-width="1.4"></path>
+      <path d="M-69 117 Q0 130 69 117 L76 190 Q0 209 -76 190Z" fill="url(#glassGradient)" stroke="#dfe6e9" stroke-opacity=".36" stroke-width="1.5"></path>
+      <rect x="-11" y="-100" width="22" height="287" rx="8" fill="#77828a" opacity=".3" stroke="#ccd4d8" stroke-opacity=".24"></rect>
+      <g fill="#282e33" fill-opacity=".62" stroke="#89939a" stroke-opacity=".32">
+        <rect x="-59" y="-64" width="42" height="72" rx="12"></rect>
+        <rect x="17" y="-64" width="42" height="72" rx="12"></rect>
+        <rect x="-59" y="43" width="42" height="78" rx="12"></rect>
+        <rect x="17" y="43" width="42" height="78" rx="12"></rect>
+      </g>
+      <g stroke="#c7d0d5" stroke-opacity=".28" stroke-width="4">
+        <line x1="-72" y1="-109" x2="-69" y2="116"></line>
+        <line x1="72" y1="-109" x2="69" y2="116"></line>
+      </g>
+      <g fill="#e7edf0" opacity=".72">
+        <path d="M-88 -222l28 -13 4 14 -29 10z"></path>
+        <path d="M88 -222l-28 -13 -4 14 29 10z"></path>
+      </g>
+      <g fill="#d83b34" opacity=".8">
+        <path d="M-86 221l28 12-4 10-26-8z"></path>
+        <path d="M86 221l-28 12 4 10 26-8z"></path>
+      </g>
+    </g>
+            <g id="viaturaEngineGroup">
+              <rect id="viaturaEngineGlow" fill="#f5cb3d" opacity=".18" stroke="#ffe76f" stroke-width="9" rx="5" x="-38" y="-201" width="76" height="60"></rect>
+              <rect id="viaturaEngineRect" fill="url(#engineGradient)" stroke="#493b06" stroke-width="2" rx="4" x="-38" y="-201" width="76" height="60"></rect>
+              <text id="viaturaEngineLabel" text-anchor="middle" fill="#332908" font-size="9" font-weight="900" x="0" y="-168">ENGINE</text>
+            </g>
+            <g id="viaturaPillarsGroup"><rect x="-100.5" y="-139.64" width="9" height="46" rx="2" fill="url(#pillarGradient)" stroke="#42545c" stroke-width="1.4"></rect><rect x="91.5" y="-139.64" width="9" height="46" rx="2" fill="url(#pillarGradient)" stroke="#42545c" stroke-width="1.4"></rect><rect x="-100.5" y="-3.5600000000000023" width="9" height="46" rx="2" fill="url(#pillarGradient)" stroke="#42545c" stroke-width="1.4"></rect><rect x="91.5" y="-3.5600000000000023" width="9" height="46" rx="2" fill="url(#pillarGradient)" stroke="#42545c" stroke-width="1.4"></rect><rect x="-100.5" y="132.51999999999998" width="9" height="46" rx="2" fill="url(#pillarGradient)" stroke="#42545c" stroke-width="1.4"></rect><rect x="91.5" y="132.51999999999998" width="9" height="46" rx="2" fill="url(#pillarGradient)" stroke="#42545c" stroke-width="1.4"></rect></g>
+          </g>
+          <rect id="viaturaHit" fill="transparent" stroke="transparent" class="drag-object" transform="translate(534.6129150390625 1154.86083984375) rotate(-24)" x="-96" y="-243" width="192" height="486" rx="46.08"></rect>
+
+          <!-- viatura heading handle -->
+          <line id="headingStalk" class="heading-stalk" x1="534.6129150390625" y1="911.86083984375" x2="292.6941673750383" y2="611.5024362934969"></line>
+          <g id="headingGrip" class="heading-grip" transform="translate(292.6941673750383 611.5024362934969)">
+            <title>Arraste para girar a viatura</title>
+            <circle id="headingHitCircle" fill="transparent" r="40.589979318142596"></circle>
+            <circle id="headingHandle" class="heading-handle" r="17.58899103786179"></circle>
+          </g>
+
+          <!-- environment cover (poste/árvore/parede), sorted by scenario -->
+          <g id="environmentLayer"></g>
+
+          <!-- geometry: one sub-group per threat×officer pair, created dynamically.
+               Drawn after both car bodies so a long contour ray that has to
+               cross the car's own silhouette (e.g. guiding a rear-seated
+               officer toward the front engine) stays visible on top of it. -->
+          <g id="geometryLayer"><g>
+      <path class="shadow-ray ray-a active" d="M 300 90 L 405.10150426292694 1726.274137623419" style="stroke: rgb(229, 38, 42);"></path>
+      <path class="shadow-ray ray-b active" d="M 300 90 L 490.72760222915895 1718.5153856815443" style="stroke: rgb(229, 38, 42);"></path>
+      <line class="exposure-line" x1="300" y1="90" x2="369.0310363769531" y2="1134.115966796875" style="stroke: rgb(229, 38, 42); display: none;"></line>
+      <g class="exposure-label" transform="translate(334.51551818847656 612.0579833984375)" style="display: none;">
+        <rect x="-38" y="-10" width="76" height="19" rx="3" fill="#e5262a"></rect>
+        <text x="0" y="3.5" text-anchor="middle" font-size="10" font-weight="900" fill="#fff">EXPOSTO</text>
+      </g>
+      <g class="ray-label-group" transform="translate(390.27338205475235 1074.9547746554852)">
+        <rect class="ray-label-bg" x="-34" y="-8" width="68" height="15" rx="3" fill="#0b0d0f" fill-opacity=".82" stroke="#e5262a" stroke-width="1.5"></rect>
+        <text class="ray-label-text" x="0" y="3" text-anchor="middle" font-size="8.5" font-weight="800" fill="#e5262a">roda dianteira esq.</text>
+      </g>
+    </g><g>
+      <path class="shadow-ray ray-a active" d="M 630 95 L 174.7693734169854 1691.3359833715874" style="stroke: rgb(255, 157, 63);"></path>
+      <path class="shadow-ray ray-b active" d="M 630 95 L 293.52890019442236 1720.5185923826657" style="stroke: rgb(255, 157, 63);"></path>
+      <line class="exposure-line" x1="630" y1="95" x2="369.0310363769531" y2="1134.115966796875" style="stroke: rgb(255, 157, 63); display: none;"></line>
+      <g class="exposure-label" transform="translate(499.51551818847656 614.5579833984375)" style="display: none;">
+        <rect x="-38" y="-10" width="76" height="19" rx="3" fill="#ff9d3f"></rect>
+        <text x="0" y="3.5" text-anchor="middle" font-size="10" font-weight="900" fill="#fff">EXPOSTO</text>
+      </g>
+      <g class="ray-label-group" transform="translate(390.27338205475235 1074.9547746554852)">
+        <rect class="ray-label-bg" x="-34" y="-8" width="68" height="15" rx="3" fill="#0b0d0f" fill-opacity=".82" stroke="#ff9d3f" stroke-width="1.5"></rect>
+        <text class="ray-label-text" x="0" y="3" text-anchor="middle" font-size="8.5" font-weight="800" fill="#ff9d3f">roda dianteira esq.</text>
+      </g>
+    </g></g>
+
+          <!-- actors -->
+          <g id="threatsLayer"><g class="drag-object" transform="translate(300 90)">
+      <circle class="actor-hit-area" fill="transparent" r="74.41496208326141"></circle>
+      <ellipse cx="7" cy="8" rx="31" ry="45" fill="#000" opacity=".3" transform="translate(6 8)" filter="url(#shadow)"></ellipse>
+      <circle class="actor-halo" r="38" stroke="#e5262a"></circle>
+      <g class="actorRot" transform="rotate(168.21580087747608)">
+        <rect x="-18" y="12" width="12" height="31" rx="6" fill="#1c2227"></rect>
+        <rect x="6" y="12" width="12" height="31" rx="6" fill="#1c2227"></rect>
+        <rect x="-25" y="-24" width="50" height="50" rx="16" fill="#161c21" stroke="#060809" stroke-width="2"></rect>
+        <path class="vest-shape" d="M-19 -19Q0 -28 19 -19L18 14Q0 24 -18 14Z" fill="#154a79" stroke="#218bd6" stroke-width="1.5"></path>
+        <circle cx="-25" cy="-8" r="7" fill="#181c20"></circle>
+        <circle cx="25" cy="-8" r="7" fill="#181c20"></circle>
+        <line x1="-22" y1="-5" x2="-9" y2="-42" stroke="#1a2025" stroke-width="11" stroke-linecap="round"></line>
+        <line x1="22" y1="-5" x2="9" y2="-42" stroke="#1a2025" stroke-width="11" stroke-linecap="round"></line>
+        <circle cx="0" cy="-29" r="13" fill="url(#headGradient)" stroke="#151719" stroke-width="3"></circle>
+        <path class="actor-tip" d="M-5 -52L0 -64L5 -52Z" fill="#e5262a"></path>
+      </g>
+      <g class="actorLabelGroup" style="display: none;">
+        <rect class="actor-label-bg" x="-42" y="-93" width="84" height="21" rx="3" fill="#e5262a"></rect>
+        <text class="actor-label-text" x="0" y="-78.5" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">AMEAÇA 1</text>
+      </g>
+      <line class="rotate-stalk" x1="0" y1="0" x2="29.013365350044957" y2="139.07073124454888"></line>
+      <g class="rotate-grip" transform="translate(29.013365350044957 139.07073124454888)">
+        <title>Arraste para girar o ícone no próprio eixo</title>
+        <circle class="rotate-handle-hit" fill="transparent" r="37.88398069693309"></circle>
+        <circle class="rotate-handle" fill="#e5262a" r="14.882992416652284"></circle>
+      </g>
+    </g><g class="drag-object" transform="translate(630 95)">
+      <circle class="actor-hit-area" fill="transparent" r="74.41496208326141"></circle>
+      <ellipse cx="7" cy="8" rx="31" ry="45" fill="#000" opacity=".3" transform="translate(6 8)" filter="url(#shadow)"></ellipse>
+      <circle class="actor-halo" r="38" stroke="#ff9d3f"></circle>
+      <g class="actorRot" transform="rotate(194.1494760863452)">
+        <rect x="-18" y="12" width="12" height="31" rx="6" fill="#1c2227"></rect>
+        <rect x="6" y="12" width="12" height="31" rx="6" fill="#1c2227"></rect>
+        <rect x="-25" y="-24" width="50" height="50" rx="16" fill="#161c21" stroke="#060809" stroke-width="2"></rect>
+        <path class="vest-shape" d="M-19 -19Q0 -28 19 -19L18 14Q0 24 -18 14Z" fill="#154a79" stroke="#218bd6" stroke-width="1.5"></path>
+        <circle cx="-25" cy="-8" r="7" fill="#181c20"></circle>
+        <circle cx="25" cy="-8" r="7" fill="#181c20"></circle>
+        <line x1="-22" y1="-5" x2="-9" y2="-42" stroke="#1a2025" stroke-width="11" stroke-linecap="round"></line>
+        <line x1="22" y1="-5" x2="9" y2="-42" stroke="#1a2025" stroke-width="11" stroke-linecap="round"></line>
+        <circle cx="0" cy="-29" r="13" fill="url(#headGradient)" stroke="#151719" stroke-width="3"></circle>
+        <path class="actor-tip" d="M-5 -52L0 -64L5 -52Z" fill="#ff9d3f"></path>
+      </g>
+      <g class="actorLabelGroup" style="display: none;">
+        <rect class="actor-label-bg" x="-42" y="-93" width="84" height="21" rx="3" fill="#ff9d3f"></rect>
+        <text class="actor-label-text" x="0" y="-78.5" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">AMEAÇA 2</text>
+      </g>
+      <line class="rotate-stalk" x1="0" y1="0" x2="-34.72811610889081" y2="137.7548605652669"></line>
+      <g class="rotate-grip" transform="translate(-34.72811610889081 137.7548605652669)">
+        <title>Arraste para girar o ícone no próprio eixo</title>
+        <circle class="rotate-handle-hit" fill="transparent" r="37.88398069693309"></circle>
+        <circle class="rotate-handle" fill="#ff9d3f" r="14.882992416652284"></circle>
+      </g>
+    </g></g>
+          <g id="officersLayer"><g class="drag-object" transform="translate(369.0310363769531 1134.115966796875) scale(0.82)">
+      <circle class="actor-hit-area" fill="transparent" r="90.7499537600749"></circle>
+      <ellipse cx="7" cy="8" rx="31" ry="45" fill="#000" opacity=".3" transform="translate(6 8)" filter="url(#shadow)"></ellipse>
+      <circle class="actor-halo" r="38" stroke="#1798ef"></circle>
+      <g class="actorRot" transform="rotate(54.38551826004307)">
+        <rect x="-18" y="13" width="12" height="33" rx="6" fill="#1c2227"></rect>
+        <rect x="6" y="13" width="12" height="33" rx="6" fill="#1c2227"></rect>
+        <rect x="-25" y="-24" width="50" height="50" rx="16" fill="#161c21" stroke="#060809" stroke-width="2"></rect>
+        <path class="vest-shape" d="M-19 -19Q0 -28 19 -19L18 14Q0 24 -18 14Z" fill="#154a79" stroke="#218bd6" stroke-width="1.5"></path>
+        <circle cx="-25" cy="-8" r="7" fill="#181c20"></circle>
+        <circle cx="25" cy="-8" r="7" fill="#181c20"></circle>
+        <line x1="-22" y1="-5" x2="-9" y2="-42" stroke="#1a2025" stroke-width="11" stroke-linecap="round"></line>
+        <line x1="22" y1="-5" x2="9" y2="-42" stroke="#1a2025" stroke-width="11" stroke-linecap="round"></line>
+        <circle cx="0" cy="-29" r="13" fill="url(#headGradient)" stroke="#151719" stroke-width="3"></circle>
+        <path class="actor-tip" d="M-5 -52L0 -64L5 -52Z" fill="#1798ef"></path>
+      </g>
+      <g class="actorLabelGroup" style="display: none;">
+        <rect class="actor-label-bg" x="-42" y="-93" width="84" height="21" rx="3" fill="#1798ef"></rect>
+        <text class="actor-label-text" x="0" y="-78.5" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">OFICIAL 1</text>
+      </g>
+      <line class="rotate-stalk" x1="0" y1="0" x2="115.49219449932406" y2="-82.72845137894844"></line>
+      <g class="rotate-grip" transform="translate(115.49219449932406 -82.72845137894844)">
+        <title>Arraste para girar o ícone no próprio eixo</title>
+        <circle class="rotate-handle-hit" fill="transparent" r="37.88398069693309"></circle>
+        <circle class="rotate-handle" fill="#1798ef" r="14.882992416652284"></circle>
+      </g>
+    </g></g>
+
+        </svg>
+
+        <div class="zoom-controls">
+          <button class="zoom-btn" id="zoomInBtn" title="Aumentar zoom">+</button>
+          <div class="zoom-divider"></div>
+          <button class="zoom-btn" id="zoomOutBtn" title="Diminuir zoom">−</button>
+          <div class="zoom-readout" id="zoomReadout">100%</div>
+        </div>
+
+        <div class="canvas-title-overlay" id="canvasTitleOverlay" style="display: none;">
+          <h3>VEHICLE APPROACH SHIELDING</h3>
+          <p class="kicker">VIATURA + CARRO ABORDADO</p>
+          <p>Motor, colunas e rodas da viatura como cobertura.</p>
+          <p>Não representa certificação de desempenho balístico.</p>
+        </div>
+
+        <div class="hint hint-dismissed" id="hintBox" style="display: none;">
+          <button class="hint-close" id="hintCloseBtn" title="Fechar dica" aria-label="Fechar dica">✕</button>
+          Arraste o corpo de qualquer ator para reposicionar; a alcinha clara gira
+          o ícone no próprio eixo. A alça <strong>amarela</strong> na viatura gira o
+          veículo inteiro — motor, colunas e rodas giram junto.
+        </div>
+
+      </div>
+    </section>
+
+    <aside class="panel">
+
+      <div class="panel-head">
+        <h2>Configuração da abordagem</h2>
+        <p>Escala visual: 100 px = 1 m. Coluna: 1 px = 1 cm.</p>
+      </div>
+
+      <section class="section">
+        <div class="section-title">Veículos</div>
+        <div class="form-grid">
+
+          <div class="field full">
+            <label for="vehicleGap">Distância entre veículos</label>
+            <div class="input-wrap">
+              <input id="vehicleGap" type="number" min="2" max="30" step=".5">
+              <span class="unit">m</span>
+            </div>
+            <div class="dual-unit" id="vehicleGapDual">4.1 m · 13.5 ft</div>
+          </div>
+
+          <div class="field full">
+            <label for="viaturaAngle">Ângulo da viatura</label>
+            <div class="input-wrap">
+              <input id="viaturaAngle" type="number" min="-179" max="179" step="1">
+              <span class="unit">°</span>
+            </div>
+          </div>
+
+          <div class="field full">
+            <button class="add-btn" id="bestAngleBtn" type="button">🧭 Calcular melhor ângulo</button>
+            <p class="dual-unit">Usa as ameaças, a distância e a posição dos oficiais desta cena agora na tela — só gira a viatura, nunca move ninguém de lugar (posicione tudo, ou carregue um cenário, antes de clicar).</p>
+            <p class="dual-unit" id="bestAngleReadout">Melhor ângulo para as posições atuais: -24° — 1 de 1 oficial(is) ficam totalmente protegidos de todas as 2 ameaça(s) (2 de 2 pares oficial×ameaça cobertos) (via roda dianteira esq.). Ninguém foi reposicionado. Todos agachados.</p>
+          </div>
+
+          <div class="field">
+            <label for="engineWidth">Motor — largura</label>
+            <div class="input-wrap">
+              <input id="engineWidth" type="number" min="30" max="140" step="1">
+              <span class="unit">cm</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="engineDepth">Motor — prof.</label>
+            <div class="input-wrap">
+              <input id="engineDepth" type="number" min="25" max="120" step="1">
+              <span class="unit">cm</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Cobertura da viatura</div>
+        <div class="switches">
+          <div class="switch-row">
+            <span>Motor protege</span>
+            <label class="switch"><input id="showEngineCover" type="checkbox" checked=""><span class="slider"></span></label>
+          </div>
+          <div class="switch-row">
+            <span>Colunas A/B/C protegem</span>
+            <label class="switch"><input id="showPillarCover" type="checkbox" checked=""><span class="slider"></span></label>
+          </div>
+          <div class="switch-row">
+            <span>Rodas protegem</span>
+            <label class="switch"><input id="showWheelCover" type="checkbox" checked=""><span class="slider"></span></label>
+          </div>
+        </div>
+
+        <div class="field full" style="margin-top:12px">
+          <label for="pillarWidth">⬥ Largura das colunas A/B/C</label>
+          <div class="input-wrap">
+            <input id="pillarWidth" type="number" min="5" max="14" step=".5">
+            <span class="unit">cm</span>
+          </div>
+          <div class="dual-unit" id="pillarWidthDual">9.0 cm · 3.5 in</div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Camadas</div>
+        <div class="switches">
+          <div class="switch-row">
+            <span>Guia de proteção (contorno)</span>
+            <label class="switch"><input id="showContour" type="checkbox" checked=""><span class="slider"></span></label>
+          </div>
+          <div class="switch-row">
+            <span>Linha de exposição</span>
+            <label class="switch"><input id="showExposure" type="checkbox" checked=""><span class="slider"></span></label>
+          </div>
+          <div class="switch-row">
+            <span>Rótulos e notas</span>
+            <label class="switch"><input id="showLabels" type="checkbox" checked=""><span class="slider"></span></label>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Oficiais <span id="officerCountLabel" style="color:#6d787f;font-weight:700">(1/4)</span></div>
+        <div id="officerList" class="actor-list"><div class="actor-row">
+      <span class="dot" style="background: rgb(23, 152, 239);"></span>
+      <span class="info">
+        <div class="name">Oficial 1</div>
+        <div class="badge covered">cabeça coberta (roda dianteira esq.)</div>
+        <div class="vest-tag">🛡 tronco: colete</div>
+        <div class="stance-row">
+          <button class="stance-btn" data-stance="standing">Em pé</button>
+          <button class="stance-btn active" data-stance="crouched">Agachado</button>
+        </div>
+      </span>
+      <button class="icon-btn" title="Remover oficial" disabled="">✕</button>
+    </div></div>
+        <button class="add-btn" id="addOfficerBtn">+ Adicionar oficial</button>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Ameaças <span id="threatCountLabel" style="color:#6d787f;font-weight:700">(2/4)</span></div>
+        <div id="threatList" class="actor-list"><div class="actor-row">
+      <span class="dot" style="background: rgb(229, 38, 42);"></span>
+      <span class="info">
+        <div class="name">Ameaça 1</div>
+        <div class="dist">até oficial mais próx. <b>10.46 m (34.3 ft)</b></div>
+        <div class="actor-dist-row">
+          <label>Dist. oficial próx.</label>
+          <div class="input-wrap">
+            <input type="number" class="actor-dist-input" min="0.5" max="60" step="0.1">
+            <span class="actor-dist-unit">m</span>
+          </div>
+        </div>
+        <div class="dual-unit">≈ 34.3 ft</div>
+        <div class="stance-row">
+          <button class="stance-btn active" data-weapon="curta">Arma curta</button>
+          <button class="stance-btn" data-weapon="fuzil">Fuzil</button>
+        </div>
+      </span>
+      <button class="icon-btn" title="Remover ameaça">✕</button>
+    </div><div class="actor-row">
+      <span class="dot" style="background: rgb(255, 157, 63);"></span>
+      <span class="info">
+        <div class="name">Ameaça 2</div>
+        <div class="dist">até oficial mais próx. <b>10.71 m (35.2 ft)</b></div>
+        <div class="actor-dist-row">
+          <label>Dist. oficial próx.</label>
+          <div class="input-wrap">
+            <input type="number" class="actor-dist-input" min="0.5" max="60" step="0.1">
+            <span class="actor-dist-unit">m</span>
+          </div>
+        </div>
+        <div class="dual-unit">≈ 35.2 ft</div>
+        <div class="stance-row">
+          <button class="stance-btn active" data-weapon="curta">Arma curta</button>
+          <button class="stance-btn" data-weapon="fuzil">Fuzil</button>
+        </div>
+      </span>
+      <button class="icon-btn" title="Remover ameaça">✕</button>
+    </div></div>
+        <button class="add-btn" id="addThreatBtn">+ Adicionar ameaça</button>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Leituras geométricas</div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="k">exposição (cabeça)</div>
+            <div class="v" id="exposureMetric" style="color: rgb(125, 255, 160);">0 de 2 pares</div>
+          </div>
+          <div class="metric">
+            <div class="k">oficiais / ameaças</div>
+            <div class="v" id="countMetric">1 / 2</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="legend">
+          <span class="legend-item"><i class="dot" style="background:#f0c83c"></i>motor</span>
+          <span class="legend-item"><i class="dot" style="background:#cfe3ea"></i>coluna</span>
+          <span class="legend-item"><i class="dot" style="background:#8a94ff"></i>roda</span>
+          <span class="legend-item"><i class="dot" style="background:#9a9a95"></i>poste</span>
+          <span class="legend-item"><i class="dot" style="background:#6b4a30"></i>árvore</span>
+          <span class="legend-item"><i class="dot" style="background:#9a938a"></i>parede</span>
+          <span class="legend-item"><i class="dot" style="background:#ff6b6b"></i>exposição</span>
+          <span class="legend-item"><i class="dot" style="background:#ffd936"></i>girar viatura</span>
+        </div>
+        <div class="notice" style="margin-top:10px">
+          <strong>Importante:</strong> a cabeça é protegida geometricamente contra o
+          objeto ativo (motor/coluna/roda/poste/árvore/parede). Motor e rodas só
+          protegem com o oficial <strong>agachado</strong> — colunas, poste, árvore e
+          parede protegem mesmo em pé. O tronco é sempre considerado protegido por
+          colete balístico, independente da geometria. Resultado visual, não
+          certificação balística.
+        </div>
+        <div class="notice" style="margin-top:10px">
+          <strong>Calibre da ameaça (Arma curta / Fuzil, ajustável por ameaça na
+          lista abaixo):</strong> muda quais objetos contam como cobertura, com base
+          no 1º Teste de Impacto Balístico do 20º BPM/M (AGSP, Exército Brasileiro,
+          31/10/2017):
+          <br>• <strong>Motor</strong> — resiste a arma curta e a fuzil (testado; não
+          transfixou nenhum calibre, fuzil só perfurou a carcaça).
+          <br>• <strong>Árvore</strong> — resiste a fuzil (testado, mesmo sustentado);
+          arma curta não testada, tratada como resistente por inferência.
+          <br>• <strong>Poste</strong> — resiste a fuzil em disparo único, mas cede sob
+          saturação (3 tiros de 7,62 ou 6 de 5,56 no mesmo ponto — a ferramenta não
+          modela isso, então trate como cobertura "de curto prazo" contra fuzil);
+          arma curta não testada, tratada como resistente por inferência.
+          <br>• <strong>Parede de bloco</strong> — resiste a arma curta, mas
+          <strong>não</strong> resiste a fuzil (testado: 1 disparo atravessou).
+          <br>• <strong>Coluna</strong> — não testada; hipótese do usuário (pendente de
+          validação) de que só protege arma curta. Fuzil já considerado capaz de
+          perfurar.
+          <br>• <strong>Roda</strong> — não testada; testes de campo pendentes. Hoje
+          conta como cobertura para os dois calibres, até haver dado real.
+        </div>
+      </section>
+
+    </aside>
+
+  </main>
+
+  <section class="profile-card">
+    <div class="profile-toolbar">
+      <span class="profile-title">VISTA DE PERFIL — por que agachar importa</span>
+      <span class="profile-hint">Altura real da cobertura vs. altura do oficial, na postura atual de cada um.</span>
+    </div>
+    <svg id="profileStage" viewBox="0 0 900 240" role="img" aria-label="Vista lateral comparando a altura das coberturas com a altura dos oficiais em pé ou agachados">
+      <rect x="0" y="0" width="900" height="240" fill="#3f4141"></rect>
+      <rect x="0" y="0" width="900" height="240" fill="#3f4141" filter="url(#asphaltNoise)"></rect>
+      <g id="profileContent"><line x1="0" y1="210" x2="900" y2="210" stroke="#5a5d5d" stroke-width="2"></line>
+        <line x1="0" y1="88.99999999999999" x2="900" y2="88.99999999999999" stroke="#f0c83c" stroke-opacity=".55" stroke-width="1.4" stroke-dasharray="7 6"></line>
+      
+        <line x1="0" y1="47.19999999999999" x2="900" y2="47.19999999999999" stroke="#cfe3ea" stroke-opacity=".55" stroke-width="1.4" stroke-dasharray="7 6"></line>
+      
+        <line x1="0" y1="31.799999999999983" x2="900" y2="31.799999999999983" stroke="#ff6b6b" stroke-opacity=".55" stroke-width="1.4" stroke-dasharray="7 6"></line>
+      
+      <text x="8" y="83.99999999999999" fill="#f0c83c" font-size="10" font-weight="800">motor / roda ≈ 1,10 m</text>
+      <text x="8" y="42.19999999999999" fill="#cfe3ea" font-size="10" font-weight="800">coluna / teto ≈ 1,48 m</text>
+      <text x="8" y="26.799999999999983" fill="#ff6b6b" font-size="10" font-weight="800">linha de mira ≈ 1,62 m</text>
+    
+      <rect x="25" y="88.99999999999999" width="60" height="121.00000000000001" rx="4" fill="url(#engineGradient)" stroke="#42545c" stroke-width="1.5"></rect>
+      <text x="55" y="226" text-anchor="middle" fill="#aeb7bc" font-size="10" font-weight="700">MOTOR</text>
+    
+      <rect x="133" y="47.19999999999999" width="14" height="162.8" rx="4" fill="url(#pillarGradient)" stroke="#42545c" stroke-width="1.5"></rect>
+      <text x="140" y="226" text-anchor="middle" fill="#aeb7bc" font-size="10" font-weight="700">COLUNA</text>
+    
+      <g>
+        <rect x="251" y="117.49999999999999" width="18" height="92.50000000000001" rx="6" fill="#1798ef" fill-opacity=".85" stroke="#101416" stroke-width="1.2"></rect>
+        <circle cx="260" cy="111.19999999999999" r="9" fill="url(#headGradient)" stroke="#101416" stroke-width="1.2"></circle>
+        <text x="260" y="96.19999999999999" text-anchor="middle" fill="#1798ef" font-size="9" font-weight="900">OF. 1 · agachado</text>
+        <text x="260" y="224" text-anchor="middle" fill="#7dffa0" font-size="9" font-weight="800">cabeça abaixo de tudo</text>
+      </g>
+    </g>
+    </svg>
+  </section>
+
+  <section class="profile-card" id="monteCarloCard">
+    <div class="profile-toolbar">
+      <span class="profile-title">VALIDAÇÃO ESTATÍSTICA — ÂNGULO ÓTIMO (MONTE CARLO)</span>
+      <span class="profile-hint">Independente da cena acima — sorteia suas próprias N situações por padrão de abordagem e mede o ganho de proteção do ângulo ótimo sobre a viatura alinhada (0°).</span>
+    </div>
+    <div class="mc-controls">
+      <label for="mcTrials">Simulações por cenário</label>
+      <input id="mcTrials" type="number" min="20" max="500" step="10" value="100">
+      <button class="btn primary" id="mcRunBtn">▶ Rodar simulação</button>
+      <button class="btn" id="mcExportBtn">⬇ Exportar CSV</button>
+      <span class="mc-progress" id="mcProgress">Concluído: 400 simulações.</span>
+    </div>
+    <div id="mcResults" class="mc-results">
+      <p class="mc-note">
+        Cada linha: 100 cenários sorteados por padrão de abordagem (viatura e carro abordado
+        seguindo a doutrina fixa — carro à frente, viatura à retaguarda), comparando o ponto ótimo encontrado
+        contra a viatura estacionada reta (0°). "Angular ajudou" conta cenários em que o ângulo ótimo ganhou
+        mais de 5 pontos percentuais de perímetro protegido sobre 0°. "Solução total" é a fração de cenários
+        em que existe pelo menos um ponto 100% protegido de todas as ameaças no ângulo ótimo.
+      </p>
+      <table class="mc-table">
+        <thead><tr>
+          <th>Cenário</th><th>N</th><th>Ângulo ótimo (|°|)</th><th>Mediana</th>
+          <th>Ganho médio</th><th>Angular ajudou</th><th>Solução total</th>
+        </tr></thead>
+        <tbody><tr>
+        <td>Abordagem padrão</td>
+        <td>100</td>
+        <td>9° ± 7°</td>
+        <td>7°</td>
+        <td>+9.1 pp</td>
+        <td>71%</td>
+        <td>100%</td>
+      </tr><tr>
+        <td>Suspeito em ângulo</td>
+        <td>100</td>
+        <td>10° ± 1°</td>
+        <td>10°</td>
+        <td>+20.3 pp</td>
+        <td>100%</td>
+        <td>100%</td>
+      </tr><tr>
+        <td>Múltiplas ameaças</td>
+        <td>100</td>
+        <td>26° ± 23°</td>
+        <td>25°</td>
+        <td>+20.6 pp</td>
+        <td>100%</td>
+        <td>100%</td>
+      </tr><tr>
+        <td>Ameaça na retaguarda</td>
+        <td>100</td>
+        <td>24° ± 39°</td>
+        <td>7°</td>
+        <td>+11.1 pp</td>
+        <td>79%</td>
+        <td>100%</td>
+      </tr><tr class="mc-overall">
+      <td>Geral (todos os cenários)</td>
+      <td>400</td>
+      <td>17° ± 24°</td>
+      <td>10°</td>
+      <td>+15.3 pp</td>
+      <td>88%</td>
+      <td>100%</td>
+    </tr></tbody>
+      </table>
+      <p class="mc-hist-title">Distribuição do ângulo ótimo (valor absoluto, todos os cenários)</p>
+      <div class="mc-hist-row">
+        <span class="mc-hist-label">0°–15°</span>
+        <span class="mc-hist-bar-wrap"><span class="mc-hist-bar" style="width:62.74999999999999%"></span></span>
+        <span class="mc-hist-count">251 (63%)</span>
+      </div><div class="mc-hist-row">
+        <span class="mc-hist-label">15°–30°</span>
+        <span class="mc-hist-bar-wrap"><span class="mc-hist-bar" style="width:29.5%"></span></span>
+        <span class="mc-hist-count">118 (30%)</span>
+      </div><div class="mc-hist-row">
+        <span class="mc-hist-label">30°–45°</span>
+        <span class="mc-hist-bar-wrap"><span class="mc-hist-bar" style="width:5%"></span></span>
+        <span class="mc-hist-count">20 (5%)</span>
+      </div><div class="mc-hist-row">
+        <span class="mc-hist-label">45°–60°</span>
+        <span class="mc-hist-bar-wrap"><span class="mc-hist-bar" style="width:0%"></span></span>
+        <span class="mc-hist-count">0 (0%)</span>
+      </div><div class="mc-hist-row">
+        <span class="mc-hist-label">60°–90°</span>
+        <span class="mc-hist-bar-wrap"><span class="mc-hist-bar" style="width:0%"></span></span>
+        <span class="mc-hist-count">0 (0%)</span>
+      </div><div class="mc-hist-row">
+        <span class="mc-hist-label">90°–180°</span>
+        <span class="mc-hist-bar-wrap"><span class="mc-hist-bar" style="width:2.75%"></span></span>
+        <span class="mc-hist-count">11 (3%)</span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    Visualização educacional para treinamento de posicionamento tático em abordagens.
+    Dimensões, ângulos e distâncias são calculados matematicamente a partir dos valores
+    informados. Não considera materiais, munição, penetração, ricochete ou outras
+    variáveis físicas de um ensaio balístico real.
+  </footer>
+
+</div>
+
+<div id="toast" class="toast">Melhor ângulo aplicado: -24°</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const SCALE = 100; // px per meter (also: 1 px = 1 cm for cm-based fields)
+  const MAX_THREATS = 4;
+  const MAX_OFFICERS = 4;
+  const MIN_ACTORS = 1;
+  const WORLD_BOUND = 8000;
+  const ACTOR_CAR_MARGIN = 20;
+  const MIN_DIST_M = 0.5;
+  const MAX_DIST_M = 60;
+  const DEFAULT_VIEW_W = 900;
+  const DEFAULT_VIEW_H = 1300;
+  const DRAG_HIT_RADIUS_PX = 55;
+  const ROTATE_HANDLE_OFFSET_PX = 105;
+  const ROTATE_HANDLE_R_PX = 11;
+  const ROTATE_HANDLE_HIT_R_PX = 28;
+  const HEADING_HANDLE_OFFSET_PX = 260;
+  const HEADING_HANDLE_R_PX = 13;
+  const HEADING_HANDLE_HIT_R_PX = 30;
+  const MIN_MANUAL_ZOOM = 0.25;
+  const MAX_MANUAL_ZOOM = 4;
+
+  const THREAT_COLORS = ["#e5262a", "#ff9d3f", "#c792ff", "#39c2ff"];
+  const OFFICER_COLORS = ["#1798ef", "#2fd97a", "#f2a33c"];
+
+  const $ = id => document.getElementById(id);
+  const stage = $("stage");
+
+  const PILLAR_FRACTIONS = [
+    { key: "A", frac: 0.26 },
+    { key: "B", frac: 0.54 },
+    { key: "C", frac: 0.82 }
+  ];
+  const PILLAR_LENGTH = 46;
+
+  const WHEEL_LOCAL_RECTS = [
+    { x: -116, y: -182, w: 25, h: 93, label: "roda dianteira esq." },
+    { x: 91, y: -182, w: 25, h: 93, label: "roda dianteira dir." },
+    { x: -116, y: 91, w: 25, h: 93, label: "roda traseira esq." },
+    { x: 91, y: 91, w: 25, h: 93, label: "roda traseira dir." }
+  ];
+
+  // Environment cover, sized from the AGSP 2017 live-fire test (poste de
+  // concreto armado Eletropaulo, tronco de eucalipto ~50cm) — see the
+  // panel notice for what each one actually stopped.
+  const ENV_DIMENSIONS = {
+    poste: { radius: 17.5, label: "poste (concreto armado)" },
+    arvore: { radius: 25, label: "árvore (tronco)" },
+    parede: { length: 250, thickness: 20, label: "parede (bloco)" }
+  };
+
+  const WEAPON_CLASSES = [
+    { id: "curta", label: "Arma curta" },
+    { id: "fuzil", label: "Fuzil" }
+  ];
+
+  // Per-object ballistic verdicts, by weapon class. "resiste" and
+  // "satura" both count as valid cover geometrically (the tool has no
+  // concept of shots-already-fired) — "satura" only differs by showing a
+  // caveat in the UI, since a single hit is what the geometry represents.
+  // "hipotese" is untested, kept as valid cover for now, and flagged as
+  // unconfirmed. "nao_resiste" removes the object as a candidate outright.
+  // Source for motor/poste/arvore/parede: 1º Teste de Impacto Balístico do
+  // 20º BPM/M, AGSP/Exército Brasileiro, 31/10/2017 (relatório oficial).
+  // Coluna/roda: não testados nesse relatório.
+  const BALLISTIC_RATING = {
+    motor: {
+      curta: "resiste",
+      fuzil: "resiste",
+      note: "Testado: não transfixou com pistola/revólver/carabina .30 (nem perfurou a carcaça); com fuzil 7,62 e 5,56 perfurou só a carcaça, sem transfixar."
+    },
+    arvore: {
+      curta: "hipotese",
+      fuzil: "resiste",
+      note: "Testado com fuzil 7,62/5,56/carabina .30: parou tudo, mesmo com fogo sustentado. Arma curta não testada — inferido por ser o anteparo mais resistente do teste."
+    },
+    poste: {
+      curta: "hipotese",
+      fuzil: "satura",
+      note: "Testado com fuzil: resistiu a disparo único; sob saturação (3 tiros de 7,62 ou 6 de 5,56 no mesmo ponto) foi vencido. Arma curta não testada — inferido, por ser mais fraca que o fuzil já contido."
+    },
+    parede: {
+      curta: "resiste",
+      fuzil: "nao_resiste",
+      note: "Testado: deteve pistola, revólver, carabina .30 e espingarda (só perfuração da 1ª face). Fuzil 7,62 e 5,56 atravessaram com um único disparo."
+    },
+    coluna: {
+      curta: "hipotese",
+      fuzil: "nao_resiste",
+      note: "Não testada neste relatório. Hipótese do usuário (pendente de validação em campo): só protege arma curta, e só em ângulo quase longitudinal — a ferramenta ainda não aplica a restrição de ângulo. Fuzil considerado capaz de perfurar."
+    },
+    roda: {
+      curta: "hipotese",
+      fuzil: "hipotese",
+      note: "Não testada neste relatório — testes de campo pendentes (lateral, longitudinal com 1 roda, longitudinal com 2 rodas alinhadas)."
+    }
+  };
+
+  function objectResistsWeapon(obj, weapon) {
+    const rating = obj.ratingKey && BALLISTIC_RATING[obj.ratingKey];
+    if (!rating) return true;
+    return rating[weapon] !== "nao_resiste";
+  }
+
+  function objectsForWeapon(objects, weapon) {
+    return objects.filter(o => objectResistsWeapon(o, weapon));
+  }
+
+  const DEFAULT_STATE = {
+    frontCar: { cx: 450, cy: 260, width: 192, length: 486 },
+    viatura: { cx: 450, cy: 980, width: 192, length: 486, heading: 0 },
+
+    engine: { width: 76, depth: 60, frontGap: 42 },
+    pillarWidth: 9,
+
+    threats: [
+      { id: 1, x: 300, y: 90, weapon: "curta" },
+      { id: 2, x: 630, y: 95, weapon: "curta" }
+    ],
+
+    // Officer 1 starts at the driver's seat of the viatura (parked, heading 0).
+    officers: [
+      { id: 1, x: 309, y: 910, crouched: false }
+    ],
+
+    // Environment cover (poste/árvore/parede) — empty in free mode; scenarios
+    // populate this randomly (see generateEnvironment).
+    environment: [],
+
+    manualZoom: 1,
+    panX: 0,
+    panY: 0,
+    focusThreatId: 1,
+    selected: null
+  };
+
+  let state = structuredClone(DEFAULT_STATE);
+
+  let nextThreatId = 3;
+  let nextOfficerId = 2;
+  let drag = null;
+  let toastTimer = null;
+  let lastViewBox = { x: 0, y: 0, width: DEFAULT_VIEW_W, height: DEFAULT_VIEW_H };
+
+  // Seats on the viatura, in local car-frame coordinates (heading=0, just
+  // outside each door). Officers are assigned to these in order: motorista,
+  // passageiro, atrás do motorista, atrás do passageiro.
+  const OFFICER_SEAT_LOCAL = [
+    { x: -141, y: -70, label: "banco do motorista" },
+    { x: 141, y: -70, label: "banco do passageiro" },
+    { x: -141, y: 90, label: "banco de trás (atrás do motorista)" },
+    { x: 141, y: 90, label: "banco de trás (atrás do passageiro)" }
+  ];
+
+  function getOfficerSeatWorld(index, car) {
+    const seat = OFFICER_SEAT_LOCAL[index % OFFICER_SEAT_LOCAL.length];
+    return carLocalToWorld(car, { x: seat.x, y: seat.y });
+  }
+
+  function rnd(min, max) { return min + Math.random() * (max - min); }
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  function pickDistinct(arr, n) {
+    const copy = arr.slice();
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy.slice(0, n);
+  }
+
+  let nextEnvId = 1;
+
+  // Places 0-2 environment cover elements (poste/árvore/parede) near the
+  // viatura — a plausible curb/sidewalk distance, on either side, anywhere
+  // from a bit ahead of the front bumper to a bit behind the rear bumper.
+  // Half the time there's nothing at all, since real posts or trees are
+  // often too far apart (e.g. ~15m between light poles) to reach.
+  function generateEnvironment(viaturaBase) {
+    if (Math.random() < 0.5) return [];
+
+    const count = Math.random() < 0.7 ? 1 : 2;
+    const types = pickDistinct(Object.keys(ENV_DIMENSIONS), count);
+
+    return types.map(type => {
+      let world;
+      // A handful of tries is enough to dodge the front car for typical
+      // gaps; if every try lands inside it (very short gap), just keep the
+      // last draw rather than looping forever.
+      for (let attempt = 0; attempt < 6; attempt++) {
+        const side = pick([-1, 1]);
+        const localX = side * (viaturaBase.width / 2 + rnd(150, 350));
+        const localY = rnd(-viaturaBase.length / 2 - 300, viaturaBase.length / 2 + 300);
+        world = carLocalToWorld(viaturaBase, { x: localX, y: localY });
+        if (!isInsideCar(state.frontCar, world, 40)) break;
+      }
+
+      return {
+        id: nextEnvId++,
+        type,
+        cx: world.x,
+        cy: world.y,
+        heading: type === "parede" ? rad(rnd(-90, 90)) : 0
+      };
+    });
+  }
+
+  // Threat spawn points, in local coordinates relative to the abordado car
+  // (which never rotates — only the viatura angles behind it). Each entry
+  // returns a slightly jittered position so the exact spot differs every draw.
+  const CAR_HALF_W = DEFAULT_STATE.frontCar.width / 2;
+  const CAR_HALF_L = DEFAULT_STATE.frontCar.length / 2;
+  const THREAT_PATTERNS = {
+    hood: () => ({ x: rnd(-40, 40), y: -CAR_HALF_L - 60 }),
+    driverDoor: () => ({ x: -CAR_HALF_W - 55, y: rnd(-90, -50) }),
+    passengerDoor: () => ({ x: CAR_HALF_W + 55, y: rnd(-90, -50) }),
+    rearDoorL: () => ({ x: -CAR_HALF_W - 55, y: rnd(70, 110) }),
+    rearDoorR: () => ({ x: CAR_HALF_W + 55, y: rnd(70, 110) }),
+    trunkCenter: () => ({ x: rnd(-40, 40), y: CAR_HALF_L + 60 }),
+    trunkDriverLine: () => ({ x: rnd(-90, -50), y: CAR_HALF_L + 60 }),
+    trunkPassengerLine: () => ({ x: rnd(50, 90), y: CAR_HALF_L + 60 })
+  };
+
+  // Pre-set training situations, each with a clear objective. Every one
+  // redraws the viatura angle, distance and threat spawn point(s) at random
+  // within realistic ranges each time it's (re)selected — free-form testing
+  // stays available any time via "Reiniciar".
+  const SCENARIOS = [
+    {
+      id: "padrao",
+      label: "Abordagem padrão",
+      objective: "Um suspeito à frente do carro abordado — a posição exata muda a cada sorteio. Reposicione e agache o(s) oficial(is) até ficar protegido.",
+      setup: () => ({
+        viaturaHeadingDeg: rnd(-12, 12),
+        gapM: rnd(5, 8),
+        threatKeys: [pick(["hood", "driverDoor", "passengerDoor"])]
+      })
+    },
+    {
+      id: "angulo",
+      label: "Suspeito em ângulo",
+      objective: "A viatura estaciona em ângulo e a distância é curta — lado e inclinação mudam a cada sorteio. Ache a coluna ou o motor que cobre essa linha.",
+      setup: () => ({
+        viaturaHeadingDeg: pick([-1, 1]) * rnd(20, 45),
+        gapM: rnd(3, 5),
+        threatKeys: [pick(["driverDoor", "passengerDoor", "rearDoorL", "rearDoorR"])]
+      })
+    },
+    {
+      id: "multiplas",
+      label: "Múltiplas ameaças",
+      objective: "Dois suspeitos em pontos diferentes do veículo, sorteados a cada início. Encontre uma posição protegida dos dois ao mesmo tempo — ou aceite que talvez não exista uma.",
+      setup: () => ({
+        viaturaHeadingDeg: rnd(-15, 15),
+        gapM: rnd(6, 9),
+        threatKeys: pickDistinct(["hood", "driverDoor", "passengerDoor", "rearDoorL", "rearDoorR"], 2)
+      })
+    },
+    {
+      id: "retaguarda",
+      label: "Ameaça na retaguarda",
+      objective: "Suspeito(s) surgiram atrás do carro abordado, na reta do motorista e/ou do passageiro. Cubra essa linha sem perder o ângulo frontal.",
+      setup: () => ({
+        viaturaHeadingDeg: rnd(-20, 20),
+        gapM: rnd(5, 8),
+        threatKeys: Math.random() < 0.5
+          ? [pick(["trunkDriverLine", "trunkPassengerLine", "trunkCenter"])]
+          : pickDistinct(["trunkDriverLine", "trunkPassengerLine"], 2)
+      })
+    }
+  ];
+
+  const training = {
+    active: false,
+    scenarioId: null,
+    startTime: null,
+    exposedCount: 0,
+    coveredCount: 0,
+    wasExposed: null,
+    firstCoverMs: null
+  };
+
+  let trainingTimerInterval = null;
+
+  /* ------------------------------------------------------------
+     HELPERS
+  ------------------------------------------------------------ */
+
+  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+  function cloneDefaultState() { return structuredClone(DEFAULT_STATE); }
+  function meters(px) { return px / SCALE; }
+  function deg(rad) { return rad * 180 / Math.PI; }
+  function rad(d) { return d * Math.PI / 180; }
+
+  function angle(from, to) {
+    return Math.atan2(to.y - from.y, to.x - from.x);
+  }
+
+  function normalizeAngle(r) {
+    while (r > Math.PI) r -= Math.PI * 2;
+    while (r < -Math.PI) r += Math.PI * 2;
+    return r;
+  }
+
+  function fmtShort(valueM) {
+    const ft = valueM * 3.28084;
+    return `${valueM.toFixed(2)} m (${ft.toFixed(1)} ft)`;
+  }
+
+  function fmtCmDual(valueCm) {
+    const inches = valueCm / 2.54;
+    return `${valueCm.toFixed(1)} cm · ${inches.toFixed(1)} in`;
+  }
+
+  function fmtMDual(valueM) {
+    const ft = valueM * 3.28084;
+    return `${valueM.toFixed(1)} m · ${ft.toFixed(1)} ft`;
+  }
+
+  function threatColor(i) { return THREAT_COLORS[i % THREAT_COLORS.length]; }
+  function officerColor(i) { return OFFICER_COLORS[i % OFFICER_COLORS.length]; }
+
+  function svgPoint(event) {
+    const point = stage.createSVGPoint();
+    point.x = event.clientX;
+    point.y = event.clientY;
+    const ctm = stage.getScreenCTM();
+    if (!ctm) return { x: 0, y: 0 };
+    const t = point.matrixTransform(ctm.inverse());
+    return { x: t.x, y: t.y };
+  }
+
+  function showToast(message) {
+    const toast = $("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 1800);
+  }
+
+  /* ------------------------------------------------------------
+     ROTATED-CAR GEOMETRY
+     A "car" here is any {cx, cy, width, length, heading}. heading=0 means
+     the car's local -y (front) points toward world -y (screen "up"), same
+     convention plain (non-rotating) objects have always used in this tool.
+  ------------------------------------------------------------ */
+
+  function carLocalToWorld(car, local) {
+    const h = car.heading || 0;
+    const cos = Math.cos(h);
+    const sin = Math.sin(h);
+    return {
+      x: car.cx + local.x * cos - local.y * sin,
+      y: car.cy + local.x * sin + local.y * cos
+    };
+  }
+
+  function carWorldToLocal(car, point) {
+    const h = car.heading || 0;
+    const dx = point.x - car.cx;
+    const dy = point.y - car.cy;
+    const cos = Math.cos(-h);
+    const sin = Math.sin(-h);
+    return { x: dx * cos - dy * sin, y: dx * sin + dy * cos };
+  }
+
+  function isInsideCar(car, point, margin = 12) {
+    const halfW = car.width / 2;
+    const halfL = car.length / 2;
+    const local = carWorldToLocal(car, point);
+    return (
+      local.x > -halfW - margin && local.x < halfW + margin &&
+      local.y > -halfL - margin && local.y < halfL + margin
+    );
+  }
+
+  function nearestPointOnCar(car, point) {
+    const halfW = car.width / 2;
+    const halfL = car.length / 2;
+    const local = carWorldToLocal(car, point);
+    const clamped = { x: clamp(local.x, -halfW, halfW), y: clamp(local.y, -halfL, halfL) };
+    return carLocalToWorld(car, clamped);
+  }
+
+  // Pushes an actor that a moving/rotating car has swallowed back out to
+  // just outside its nearest edge, preserving which side it was on — e.g.
+  // the officer in the rear-passenger seat gets shoved out past the rear
+  // bumper if the viatura rotates its tail through that spot, instead of
+  // being left stranded inside the car body.
+  function pushClearOfCar(car, actor, margin) {
+    const halfW = car.width / 2;
+    const halfL = car.length / 2;
+    const local = carWorldToLocal(car, actor);
+
+    const distX = halfW + margin - Math.abs(local.x);
+    const distY = halfL + margin - Math.abs(local.y);
+
+    if (distX <= distY) {
+      local.x = (local.x < 0 ? -1 : 1) * (halfW + margin);
+    } else {
+      local.y = (local.y < 0 ? -1 : 1) * (halfL + margin);
+    }
+
+    const world = carLocalToWorld(car, local);
+    actor.x = clamp(world.x, -WORLD_BOUND, WORLD_BOUND);
+    actor.y = clamp(world.y, -WORLD_BOUND, WORLD_BOUND);
+  }
+
+  function keepActorsClearOfCars() {
+    const margin = ACTOR_CAR_MARGIN + 15;
+    [...state.officers, ...state.threats].forEach(actor => {
+      if (isInsideCar(state.viatura, actor, ACTOR_CAR_MARGIN)) pushClearOfCar(state.viatura, actor, margin);
+      if (isInsideCar(state.frontCar, actor, ACTOR_CAR_MARGIN)) pushClearOfCar(state.frontCar, actor, margin);
+    });
+  }
+
+  function getEngineCorners(car) {
+    const halfW = state.engine.width / 2;
+    const halfL = car.length / 2;
+    const y1 = -halfL + state.engine.frontGap;
+    const y2 = y1 + state.engine.depth;
+    return [
+      { x: -halfW, y: y1 }, { x: halfW, y: y1 },
+      { x: -halfW, y: y2 }, { x: halfW, y: y2 }
+    ].map(p => carLocalToWorld(car, p));
+  }
+
+  function getPillarObjects(car) {
+    const halfW = car.width / 2;
+    const halfL = car.length / 2;
+    const halfPillar = state.pillarWidth / 2;
+    const out = [];
+
+    PILLAR_FRACTIONS.forEach(({ key, frac }) => {
+      const cy = -halfL + frac * car.length;
+
+      [-1, 1].forEach(side => {
+        const cx = side * halfW;
+        const corners = [
+          { x: cx - halfPillar, y: cy - PILLAR_LENGTH / 2 },
+          { x: cx + halfPillar, y: cy - PILLAR_LENGTH / 2 },
+          { x: cx - halfPillar, y: cy + PILLAR_LENGTH / 2 },
+          { x: cx + halfPillar, y: cy + PILLAR_LENGTH / 2 }
+        ].map(p => carLocalToWorld(car, p));
+
+        out.push({
+          corners,
+          label: `coluna ${key} ${side < 0 ? "esq." : "dir."}`,
+          key: `pillar-${key}-${side < 0 ? "L" : "R"}`,
+          ratingKey: "coluna"
+        });
+      });
+    });
+
+    return out;
+  }
+
+  function getWheelObjects(car) {
+    const sx = car.width / 200;
+    const sy = car.length / 500;
+
+    return WHEEL_LOCAL_RECTS.map(w => ({
+      corners: [
+        { x: w.x, y: w.y }, { x: w.x + w.w, y: w.y },
+        { x: w.x, y: w.y + w.h }, { x: w.x + w.w, y: w.y + w.h }
+      ].map(p => carLocalToWorld(car, { x: p.x * sx, y: p.y * sy })),
+      label: w.label,
+      key: w.label,
+      ratingKey: "roda"
+    }));
+  }
+
+  // Environment cover (poste/árvore/parede) — free-standing, not attached to
+  // either vehicle. Poste/árvore are circles (constant apparent width from
+  // any angle); parede is a rectangle like the viatura's own cover objects.
+  function getParedeCorners(wall) {
+    const halfL = ENV_DIMENSIONS.parede.length / 2;
+    const halfT = ENV_DIMENSIONS.parede.thickness / 2;
+    return [
+      { x: -halfL, y: -halfT }, { x: halfL, y: -halfT },
+      { x: -halfL, y: halfT }, { x: halfL, y: halfT }
+    ].map(p => carLocalToWorld(wall, p));
+  }
+
+  function getEnvironmentCoverObjects() {
+    return state.environment.map(env => {
+      if (env.type === "parede") {
+        return {
+          corners: getParedeCorners(env),
+          label: ENV_DIMENSIONS.parede.label,
+          key: `env-${env.id}`,
+          requiresCrouch: false,
+          ratingKey: "parede"
+        };
+      }
+      return {
+        shape: "circle",
+        center: { x: env.cx, y: env.cy },
+        radius: ENV_DIMENSIONS[env.type].radius,
+        label: ENV_DIMENSIONS[env.type].label,
+        key: `env-${env.id}`,
+        requiresCrouch: false,
+        ratingKey: env.type
+      };
+    });
+  }
+
+  // Every currently-enabled cover object, tagged with whether it only works
+  // while the officer is crouched. Accepts a hypothetical viatura pose (used
+  // by the best-angle search below) instead of the live one so candidate
+  // headings can be scored without touching state — environment objects are
+  // world-anchored and unaffected by that pose either way.
+  function getActiveCoverObjects(car = state.viatura) {
+    const objects = [];
+
+    if (showEngineCover.checked) {
+      objects.push({ corners: getEngineCorners(car), label: "motor", requiresCrouch: true, key: "engine", ratingKey: "motor" });
+    }
+
+    if (showPillarCover.checked) {
+      getPillarObjects(car).forEach(p => objects.push({ ...p, requiresCrouch: false }));
+    }
+
+    if (showWheelCover.checked) {
+      getWheelObjects(car).forEach(w => objects.push({ ...w, requiresCrouch: true }));
+    }
+
+    objects.push(...getEnvironmentCoverObjects());
+
+    return objects;
+  }
+
+  /* ------------------------------------------------------------
+     SHADOW / SHIELDING GEOMETRY (generalized to 4 arbitrary corners)
+  ------------------------------------------------------------ */
+
+  function calculateGeometry(threatPos, corners) {
+    const center = {
+      x: corners.reduce((s, c) => s + c.x, 0) / 4,
+      y: corners.reduce((s, c) => s + c.y, 0) / 4
+    };
+
+    const centerAngle = angle(threatPos, center);
+
+    let minRel = Infinity, maxRel = -Infinity;
+    let minCorner = corners[0], maxCorner = corners[0];
+
+    for (const corner of corners) {
+      const relative = normalizeAngle(angle(threatPos, corner) - centerAngle);
+      if (relative < minRel) { minRel = relative; minCorner = corner; }
+      if (relative > maxRel) { maxRel = relative; maxCorner = corner; }
+    }
+
+    const a = { x: maxCorner.x - threatPos.x, y: maxCorner.y - threatPos.y };
+    const b = { x: minCorner.x - threatPos.x, y: minCorner.y - threatPos.y };
+
+    const lenA = Math.hypot(a.x, a.y);
+    const lenB = Math.hypot(b.x, b.y);
+    if (lenA < 1 || lenB < 1) return null;
+
+    const ua = { x: a.x / lenA, y: a.y / lenA };
+    const ub = { x: b.x / lenB, y: b.y / lenB };
+
+    let bisector = { x: ua.x + ub.x, y: ua.y + ub.y };
+    const bl = Math.hypot(bisector.x, bisector.y) || 1;
+    bisector = { x: bisector.x / bl, y: bisector.y / bl };
+
+    const projectionA = a.x * bisector.x + a.y * bisector.y;
+    const projectionB = b.x * bisector.x + b.y * bisector.y;
+    const baseProjection = (projectionA + projectionB) / 2;
+
+    return { a, b, bisector, baseProjection, centerAngle, minRel, maxRel };
+  }
+
+  function isPointShielded(threatPos, point, g) {
+    if (!g) return false;
+    const rel = normalizeAngle(angle(threatPos, point) - g.centerAngle);
+    if (rel < g.minRel || rel > g.maxRel) return false;
+    const v = { x: point.x - threatPos.x, y: point.y - threatPos.y };
+    const projection = v.x * g.bisector.x + v.y * g.bisector.y;
+    return projection > g.baseProjection;
+  }
+
+  function pointAlongProjectedRay(vector, bisector, targetProjection, threatPos) {
+    const denom = vector.x * bisector.x + vector.y * bisector.y;
+    if (Math.abs(denom) < 0.00001) return null;
+    const scalar = targetProjection / denom;
+    return { x: threatPos.x + vector.x * scalar, y: threatPos.y + vector.y * scalar };
+  }
+
+  // Same shadow-cone shape as calculateGeometry, derived from the two
+  // tangent lines from threatPos to a circle instead of a rectangle's
+  // extreme corners — used for poste/árvore, whose apparent width (unlike
+  // a rectangle's) doesn't change with viewing angle.
+  function calculateGeometryCircle(threatPos, center, radius) {
+    const dx = center.x - threatPos.x;
+    const dy = center.y - threatPos.y;
+    const d = Math.hypot(dx, dy);
+    if (d <= radius) return null;
+
+    const centerAngle = Math.atan2(dy, dx);
+    const alpha = Math.asin(radius / d);
+    const tangentLen = Math.sqrt(d * d - radius * radius);
+
+    const dirA = centerAngle + alpha;
+    const dirB = centerAngle - alpha;
+    const a = { x: Math.cos(dirA) * tangentLen, y: Math.sin(dirA) * tangentLen };
+    const b = { x: Math.cos(dirB) * tangentLen, y: Math.sin(dirB) * tangentLen };
+
+    let bisector = { x: Math.cos(centerAngle), y: Math.sin(centerAngle) };
+    const projectionA = a.x * bisector.x + a.y * bisector.y;
+    const projectionB = b.x * bisector.x + b.y * bisector.y;
+    const baseProjection = (projectionA + projectionB) / 2;
+
+    return {
+      a, b, bisector, baseProjection, centerAngle,
+      minRel: -alpha, maxRel: alpha
+    };
+  }
+
+  // Dispatches to the right shadow-cone calculation for an object's shape —
+  // 'rect' (motor/coluna/roda/parede, 4 corners) or 'circle' (poste/árvore).
+  function geometryForObject(threatPos, obj) {
+    return obj.shape === "circle"
+      ? calculateGeometryCircle(threatPos, obj.center, obj.radius)
+      : calculateGeometry(threatPos, obj.corners);
+  }
+
+  function objectCentroid(obj) {
+    if (obj.shape === "circle") return obj.center;
+    return {
+      x: obj.corners.reduce((s, c) => s + c.x, 0) / 4,
+      y: obj.corners.reduce((s, c) => s + c.y, 0) / 4
+    };
+  }
+
+  // Finds the cover object (if any) that shields `point` from `threatPos`,
+  // skipping objects the officer's current stance can't use.
+  // ignoreCrouch=true checks the raw geometry only (any enabled object,
+  // regardless of stance) — used to draw the contour as a planning aid so
+  // a standing officer can still see where crouching WOULD protect them.
+  function findShield(threatPos, point, crouched, objects, ignoreCrouch = false) {
+    const usable = ignoreCrouch ? objects : objects.filter(o => !o.requiresCrouch || crouched);
+    for (const obj of usable) {
+      const g = geometryForObject(threatPos, obj);
+      if (g && isPointShielded(threatPos, point, g)) return { obj, g };
+    }
+    return null;
+  }
+
+  /* ------------------------------------------------------------
+     BEST-ANGLE SEARCH
+     Sweeps candidate viatura headings (position and vehicle gap held fixed)
+     and scores each one by how many standable spots around the car body
+     protect an officer from every current threat at once. Assumes the
+     officer will crouch when needed — crouching only ever adds eligible
+     cover (motor/rodas), never removes it (colunas protect either way) —
+     so the best case found here is always genuinely reachable in practice.
+  ------------------------------------------------------------ */
+
+  const PERIMETER_SAMPLE_SPACING = 22; // px == cm at this scale (see panel note)
+
+  // Points standing just outside the car's own body, walking its full
+  // rectangular perimeter — a far denser, more realistic search space than
+  // the 4 fixed seats, since a real officer can stop anywhere along it.
+  function generatePerimeterSamples(car, margin) {
+    const halfW = car.width / 2 + margin;
+    const halfL = car.length / 2 + margin;
+    const points = [];
+
+    const walkEdge = (x1, y1, x2, y2) => {
+      const dist = Math.hypot(x2 - x1, y2 - y1);
+      const steps = Math.max(1, Math.round(dist / PERIMETER_SAMPLE_SPACING));
+      for (let i = 0; i < steps; i++) {
+        const t = i / steps;
+        points.push({ x: x1 + (x2 - x1) * t, y: y1 + (y2 - y1) * t });
+      }
+    };
+
+    walkEdge(-halfW, -halfL, halfW, -halfL);
+    walkEdge(halfW, -halfL, halfW, halfL);
+    walkEdge(halfW, halfL, -halfW, halfL);
+    walkEdge(-halfW, halfL, -halfW, -halfL);
+
+    return points.map(p => carLocalToWorld(car, p));
+  }
+
+  // Scores one candidate heading (degrees) for a given car pose + threat
+  // list: how many perimeter spots protect against every threat at once,
+  // assuming crouch is available. Pure — touches no global state, so it
+  // doubles as the per-trial evaluator for the Monte Carlo validation below.
+  function scoreHeadingFor(carBase, threats, headingDeg, margin) {
+    const car = { ...carBase, heading: rad(headingDeg) };
+    const objects = getActiveCoverObjects(car);
+    if (objects.length === 0) return { score: 0, totalSamples: 0, spot: null, spotLabel: null };
+
+    const samples = generatePerimeterSamples(car, margin);
+    let score = 0;
+    let spot = null;
+    let spotShield = null;
+
+    for (const p of samples) {
+      let protectedFromAll = true;
+      let lastShield = null;
+      for (const t of threats) {
+        lastShield = findShield(t, p, true, objects);
+        if (!lastShield) { protectedFromAll = false; break; }
+      }
+      if (protectedFromAll) {
+        score++;
+        if (!spot) { spot = p; spotShield = lastShield; }
+      }
+    }
+
+    return { score, totalSamples: samples.length, spot, spotLabel: spotShield ? spotShield.obj.label : null };
+  }
+
+  // Sweeps every 3° and returns { heading, score, totalSamples, spot,
+  // spotLabel } for the winner, or null if there are no threats to test.
+  function searchBestHeadingFor(carBase, threats, currentDeg = 0) {
+    if (threats.length === 0) return null;
+
+    const margin = ACTOR_CAR_MARGIN + 15;
+    let best = null;
+
+    for (let candidateDeg = -179; candidateDeg <= 179; candidateDeg += 3) {
+      const result = scoreHeadingFor(carBase, threats, candidateDeg, margin);
+
+      const better =
+        !best ||
+        result.score > best.score ||
+        (result.score === best.score && Math.abs(candidateDeg - currentDeg) < Math.abs(best.heading - currentDeg));
+
+      if (better) best = { heading: candidateDeg, ...result };
+    }
+
+    return best;
+  }
+
+  function findBestHeading() {
+    return searchBestHeadingFor(state.viatura, state.threats, deg(state.viatura.heading));
+  }
+
+  // Scores one candidate heading by how many of the CURRENT officers (in
+  // their current spots) it protects from every threat — crouch assumed
+  // available. Unlike scoreHeadingFor/searchBestHeadingFor above (which
+  // search the whole perimeter for the single best spot anywhere, used by
+  // the Monte Carlo validation), this asks "if the car were angled this
+  // way, would the officers already standing here be covered?" instead of
+  // relocating them — so an officer placed on the left stays on the left,
+  // side-flips never happen, and a small forced step-back (via
+  // keepActorsClearOfCars) only ever occurs when it's the price of
+  // genuinely better protection, not an arbitrary tie-break.
+  function scoreHeadingForOfficers(carBase, threats, officers, headingDeg) {
+    const car = { ...carBase, heading: rad(headingDeg) };
+    const objects = getActiveCoverObjects(car);
+    let score = 0;
+    let fullyProtected = 0;
+    const perOfficerLabel = new Map();
+
+    officers.forEach(o => {
+      let protectedFromAll = true;
+      threats.forEach(t => {
+        const threatObjects = objectsForWeapon(objects, t.weapon || "curta");
+        const shield = findShield(t, o, true, threatObjects);
+        if (shield) { score++; perOfficerLabel.set(o.id, shield.obj.label); }
+        else { protectedFromAll = false; }
+      });
+      if (protectedFromAll) fullyProtected++;
+    });
+
+    return { score, fullyProtected, perOfficerLabel };
+  }
+
+  function searchBestHeadingForOfficers(carBase, threats, officers, currentDeg = 0) {
+    if (threats.length === 0 || officers.length === 0) return null;
+
+    let best = null;
+    for (let candidateDeg = -179; candidateDeg <= 179; candidateDeg += 1) {
+      const candidateCar = { ...carBase, heading: rad(candidateDeg) };
+      // Headings that would rotate the car body into an officer who isn't
+      // moving aren't excluded outright — genuinely better protection can
+      // be worth a small forced step back via keepActorsClearOfCars — but
+      // they're only picked over a non-nudging heading when they actually
+      // protect more people, never as an arbitrary tie-break.
+      const nudged = officers.filter(o => isInsideCar(candidateCar, o, ACTOR_CAR_MARGIN)).length;
+
+      const result = scoreHeadingForOfficers(carBase, threats, officers, candidateDeg);
+
+      const better =
+        !best ||
+        result.fullyProtected > best.fullyProtected ||
+        (result.fullyProtected === best.fullyProtected && result.score > best.score) ||
+        (result.fullyProtected === best.fullyProtected && result.score === best.score && nudged < best.nudged) ||
+        (result.fullyProtected === best.fullyProtected && result.score === best.score && nudged === best.nudged &&
+          Math.abs(candidateDeg - currentDeg) < Math.abs(best.heading - currentDeg));
+
+      if (better) best = { heading: candidateDeg, nudged, ...result };
+    }
+
+    return best ? { ...best, officersNudged: best.nudged > 0 } : null;
+  }
+
+  /* ------------------------------------------------------------
+     DOM: FRONT CAR + VIATURA VISUALS
+  ------------------------------------------------------------ */
+
+  function carBodyMarkup() {
+    return `
+      <g fill="#141719" stroke="#5f6569" stroke-width="2">
+        <rect x="-116" y="-182" width="25" height="93" rx="10"/>
+        <rect x="91" y="-182" width="25" height="93" rx="10"/>
+        <rect x="-116" y="91" width="25" height="93" rx="10"/>
+        <rect x="91" y="91" width="25" height="93" rx="10"/>
+      </g>
+      <path d="M-72 -250 Q-100 -239 -110 -183 L-116 144 Q-113 215 -75 242 Q0 264 75 242 Q113 215 116 144
+        L110 -183 Q100 -239 72 -250 Q0 -270 -72 -250Z"
+        fill="url(#carBodyGradient)" stroke="#e8edf0" stroke-opacity=".86" stroke-width="2.8"/>
+      <path d="M-83 -229 Q0 -253 83 -229 L88 -125 Q0 -146 -88 -125Z"
+        fill="#aab5bb" fill-opacity=".17" stroke="#dfe6ea" stroke-opacity=".45" stroke-width="1.6"/>
+      <path d="M-78 -108 Q0 -128 78 -108 L70 -22 Q0 -37 -70 -22Z"
+        fill="url(#glassGradient)" stroke="#dfe6e9" stroke-opacity=".38" stroke-width="1.7"/>
+      <path d="M-70 -9 Q0 -25 70 -9 L70 103 Q0 116 -70 103Z"
+        fill="#313b43" fill-opacity=".45" stroke="#dfe6e9" stroke-opacity=".22" stroke-width="1.4"/>
+      <path d="M-69 117 Q0 130 69 117 L76 190 Q0 209 -76 190Z"
+        fill="url(#glassGradient)" stroke="#dfe6e9" stroke-opacity=".36" stroke-width="1.5"/>
+      <rect x="-11" y="-100" width="22" height="287" rx="8" fill="#77828a" opacity=".3"
+        stroke="#ccd4d8" stroke-opacity=".24"/>
+      <g fill="#282e33" fill-opacity=".62" stroke="#89939a" stroke-opacity=".32">
+        <rect x="-59" y="-64" width="42" height="72" rx="12"/>
+        <rect x="17" y="-64" width="42" height="72" rx="12"/>
+        <rect x="-59" y="43" width="42" height="78" rx="12"/>
+        <rect x="17" y="43" width="42" height="78" rx="12"/>
+      </g>
+      <g stroke="#c7d0d5" stroke-opacity=".28" stroke-width="4">
+        <line x1="-72" y1="-109" x2="-69" y2="116"/>
+        <line x1="72" y1="-109" x2="69" y2="116"/>
+      </g>
+      <g fill="#e7edf0" opacity=".72">
+        <path d="M-88 -222l28 -13 4 14 -29 10z"/>
+        <path d="M88 -222l-28 -13 -4 14 29 10z"/>
+      </g>
+      <g fill="#d83b34" opacity=".8">
+        <path d="M-86 221l28 12-4 10-26-8z"/>
+        <path d="M86 221l-28 12 4 10 26-8z"/>
+      </g>
+    `;
+  }
+
+  $("frontCarScaled").innerHTML = carBodyMarkup();
+  $("viaturaScaled").innerHTML = carBodyMarkup();
+
+  function updateFrontCar() {
+    const car = state.frontCar;
+    const sx = car.width / 200;
+    const sy = car.length / 500;
+
+    $("frontCarVisual").setAttribute("transform", `translate(${car.cx} ${car.cy}) scale(${sx} ${sy})`);
+    $("frontCarShadow").setAttribute("cx", car.cx + 16);
+    $("frontCarShadow").setAttribute("cy", car.cy + 23);
+    $("frontCarShadow").setAttribute("rx", car.width * .62);
+    $("frontCarShadow").setAttribute("ry", car.length * .57);
+
+    const hit = $("frontCarHit");
+    hit.setAttribute("x", car.cx - car.width / 2);
+    hit.setAttribute("y", car.cy - car.length / 2);
+    hit.setAttribute("width", car.width);
+    hit.setAttribute("height", car.length);
+    hit.setAttribute("rx", Math.min(55, car.width * .24));
+  }
+
+  function updateViatura() {
+    const car = state.viatura;
+    const sx = car.width / 200;
+    const sy = car.length / 500;
+    const headingDeg = deg(car.heading);
+
+    $("viaturaVisual").setAttribute("transform", `translate(${car.cx} ${car.cy}) rotate(${headingDeg})`);
+    $("viaturaScaled").setAttribute("transform", `scale(${sx} ${sy})`);
+
+    $("viaturaShadow").setAttribute("cx", car.cx);
+    $("viaturaShadow").setAttribute("cy", car.cy);
+    $("viaturaShadow").setAttribute("rx", car.width * .62);
+    $("viaturaShadow").setAttribute("ry", car.length * .57);
+
+    const halfW = state.engine.width / 2;
+    const halfL = car.length / 2;
+    const ey1 = -halfL + state.engine.frontGap;
+
+    const engineRect = $("viaturaEngineRect");
+    engineRect.setAttribute("x", -halfW);
+    engineRect.setAttribute("y", ey1);
+    engineRect.setAttribute("width", state.engine.width);
+    engineRect.setAttribute("height", state.engine.depth);
+
+    const engineGlow = $("viaturaEngineGlow");
+    engineGlow.setAttribute("x", -halfW);
+    engineGlow.setAttribute("y", ey1);
+    engineGlow.setAttribute("width", state.engine.width);
+    engineGlow.setAttribute("height", state.engine.depth);
+
+    const engineLabel = $("viaturaEngineLabel");
+    engineLabel.setAttribute("x", 0);
+    engineLabel.setAttribute("y", ey1 + state.engine.depth / 2 + 3);
+
+    const pillarsGroup = $("viaturaPillarsGroup");
+    const halfPillar = state.pillarWidth / 2;
+    const halfWc = car.width / 2;
+
+    let pillarHtml = "";
+    PILLAR_FRACTIONS.forEach(({ frac }) => {
+      const cy = -halfL + frac * car.length;
+      [-1, 1].forEach(side => {
+        const cx = side * halfWc;
+        pillarHtml += `<rect x="${cx - halfPillar}" y="${cy - PILLAR_LENGTH / 2}"
+          width="${state.pillarWidth}" height="${PILLAR_LENGTH}" rx="2"
+          fill="url(#pillarGradient)" stroke="#42545c" stroke-width="1.4"></rect>`;
+      });
+    });
+    pillarsGroup.innerHTML = pillarHtml;
+
+    const hit = $("viaturaHit");
+    hit.setAttribute("transform", `translate(${car.cx} ${car.cy}) rotate(${headingDeg})`);
+    hit.setAttribute("x", -car.width / 2);
+    hit.setAttribute("y", -car.length / 2);
+    hit.setAttribute("width", car.width);
+    hit.setAttribute("height", car.length);
+    hit.setAttribute("rx", Math.min(55, car.width * .24));
+
+    // heading handle: sticks out from the FRONT of the viatura
+    const zoom = getZoomScale();
+    const frontLocal = { x: 0, y: -halfL - HEADING_HANDLE_OFFSET_PX * zoom };
+    const handlePos = carLocalToWorld(car, frontLocal);
+
+    $("headingStalk").setAttribute("x1", car.cx);
+    $("headingStalk").setAttribute("y1", car.cy - halfL);
+    $("headingStalk").setAttribute("x2", handlePos.x);
+    $("headingStalk").setAttribute("y2", handlePos.y);
+
+    $("headingGrip").setAttribute("transform", `translate(${handlePos.x} ${handlePos.y})`);
+    $("headingHandle").setAttribute("r", HEADING_HANDLE_R_PX * zoom);
+    $("headingHitCircle").setAttribute("r", HEADING_HANDLE_HIT_R_PX * zoom);
+  }
+
+  /* ------------------------------------------------------------
+     ACTOR (threat / officer) TEMPLATE + DOM RECONCILIATION
+  ------------------------------------------------------------ */
+
+  function buildActorGroup(kind) {
+    const group = document.createElementNS(SVG_NS, "g");
+    group.setAttribute("class", "drag-object");
+
+    const legsY = kind === "officer" ? 13 : 12;
+    const legsH = kind === "officer" ? 33 : 31;
+
+    group.innerHTML = `
+      <circle class="actor-hit-area" fill="transparent"></circle>
+      <ellipse cx="7" cy="8" rx="31" ry="45" fill="#000" opacity=".3"
+        transform="translate(6 8)" filter="url(#shadow)"></ellipse>
+      <circle class="actor-halo" r="38"></circle>
+      <g class="actorRot">
+        <rect x="-18" y="${legsY}" width="12" height="${legsH}" rx="6" fill="#1c2227"></rect>
+        <rect x="6" y="${legsY}" width="12" height="${legsH}" rx="6" fill="#1c2227"></rect>
+        <rect x="-25" y="-24" width="50" height="50" rx="16" fill="#161c21" stroke="#060809" stroke-width="2"></rect>
+        <path class="vest-shape" d="M-19 -19Q0 -28 19 -19L18 14Q0 24 -18 14Z"
+          fill="#154a79" stroke="#218bd6" stroke-width="1.5"></path>
+        <circle cx="-25" cy="-8" r="7" fill="#181c20"></circle>
+        <circle cx="25" cy="-8" r="7" fill="#181c20"></circle>
+        <line x1="-22" y1="-5" x2="-9" y2="-42" stroke="#1a2025" stroke-width="11" stroke-linecap="round"></line>
+        <line x1="22" y1="-5" x2="9" y2="-42" stroke="#1a2025" stroke-width="11" stroke-linecap="round"></line>
+        <circle cx="0" cy="-29" r="13" fill="url(#headGradient)" stroke="#151719" stroke-width="3"></circle>
+        <path class="actor-tip" d="M-5 -52L0 -64L5 -52Z"></path>
+      </g>
+      <g class="actorLabelGroup">
+        <rect class="actor-label-bg" x="-42" y="-93" width="84" height="21" rx="3"></rect>
+        <text class="actor-label-text" x="0" y="-78.5" text-anchor="middle"
+          fill="#fff" font-size="10" font-weight="900"></text>
+      </g>
+      <line class="rotate-stalk" x1="0" y1="0" x2="0" y2="0"></line>
+      <g class="rotate-grip">
+        <title>Arraste para girar o ícone no próprio eixo</title>
+        <circle class="rotate-handle-hit" fill="transparent"></circle>
+        <circle class="rotate-handle"></circle>
+      </g>
+    `;
+
+    return group;
+  }
+
+  function buildGeometryGroup() {
+    const g = document.createElementNS(SVG_NS, "g");
+    g.innerHTML = `
+      <path class="shadow-ray ray-a"></path>
+      <path class="shadow-ray ray-b"></path>
+      <line class="exposure-line" x1="0" y1="0" x2="0" y2="0"></line>
+      <g class="exposure-label">
+        <rect x="-38" y="-10" width="76" height="19" rx="3"></rect>
+        <text x="0" y="3.5" text-anchor="middle" font-size="10" font-weight="900" fill="#fff">EXPOSTO</text>
+      </g>
+      <g class="ray-label-group">
+        <rect class="ray-label-bg" x="-34" y="-8" width="68" height="15" rx="3" fill="#0b0d0f" fill-opacity=".82"></rect>
+        <text class="ray-label-text" x="0" y="3" text-anchor="middle" font-size="8.5" font-weight="800"></text>
+      </g>
+    `;
+    return g;
+  }
+
+  // id -> { group, hitArea, halo, tip, vestShape, labelBg, labelText,
+  //          rotateStalk, rotateGrip, rotateHandle, rotateHandleHit }
+  const threatNodes = new Map();
+  const officerNodes = new Map();
+
+  // "threatId:officerId" -> geometry group nodes
+  const pairNodes = new Map();
+
+  function reconcileActorDom(list, nodes, layerEl, colorFn, labelPrefix, kind, onPointerDown) {
+    const currentIds = new Set(list.map(a => a.id));
+
+    for (const [id, n] of nodes) {
+      if (!currentIds.has(id)) {
+        n.group.remove();
+        nodes.delete(id);
+      }
+    }
+
+    list.forEach(a => {
+      if (nodes.has(a.id)) return;
+
+      const group = buildActorGroup(kind);
+      layerEl.appendChild(group);
+
+      group.addEventListener("pointerdown", event => onPointerDown(event, a.id, "move"));
+
+      const rotateGrip = group.querySelector(".rotate-grip");
+      rotateGrip.addEventListener("pointerdown", event => onPointerDown(event, a.id, "rotate"));
+
+      nodes.set(a.id, {
+        group,
+        hitArea: group.querySelector(".actor-hit-area"),
+        halo: group.querySelector(".actor-halo"),
+        tip: group.querySelector(".actor-tip"),
+        vestShape: group.querySelector(".vest-shape"),
+        labelBg: group.querySelector(".actor-label-bg"),
+        labelText: group.querySelector(".actor-label-text"),
+        rotateStalk: group.querySelector(".rotate-stalk"),
+        rotateGrip,
+        rotateHandle: group.querySelector(".rotate-handle"),
+        rotateHandleHit: group.querySelector(".rotate-handle-hit")
+      });
+    });
+
+    list.forEach((a, index) => {
+      const n = nodes.get(a.id);
+      const color = colorFn(index);
+
+      n.halo.setAttribute("stroke", color);
+      n.tip.setAttribute("fill", color);
+      n.labelBg.setAttribute("fill", color);
+      n.labelText.textContent = `${labelPrefix} ${index + 1}${a.weapon === "fuzil" ? " 🔫" : ""}`;
+      n.rotateHandle.setAttribute("fill", color);
+    });
+  }
+
+  function reconcilePairDom() {
+    const currentKeys = new Set();
+    state.threats.forEach(t => state.officers.forEach(o => currentKeys.add(`${t.id}:${o.id}`)));
+
+    for (const [key, g] of pairNodes) {
+      if (!currentKeys.has(key)) {
+        g.group.remove();
+        pairNodes.delete(key);
+      }
+    }
+
+    currentKeys.forEach(key => {
+      if (pairNodes.has(key)) return;
+
+      const group = buildGeometryGroup();
+      $("geometryLayer").appendChild(group);
+
+      pairNodes.set(key, {
+        group,
+        rayA: group.querySelector(".ray-a"),
+        rayB: group.querySelector(".ray-b"),
+        exposureLine: group.querySelector(".exposure-line"),
+        exposureLabelGroup: group.querySelector(".exposure-label"),
+        exposureLabelBg: group.querySelector(".exposure-label rect"),
+        rayLabelGroup: group.querySelector(".ray-label-group"),
+        rayLabelBg: group.querySelector(".ray-label-bg"),
+        rayLabelText: group.querySelector(".ray-label-text")
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------
+     ROTATE-HANDLE POSITIONING (shared by threats + officers)
+  ------------------------------------------------------------ */
+
+  function positionRotateHandle(n, facingAngle) {
+    const zoom = getZoomScale();
+    const hx = Math.cos(facingAngle) * ROTATE_HANDLE_OFFSET_PX * zoom;
+    const hy = Math.sin(facingAngle) * ROTATE_HANDLE_OFFSET_PX * zoom;
+
+    n.rotateStalk.setAttribute("x2", hx);
+    n.rotateStalk.setAttribute("y2", hy);
+    n.rotateGrip.setAttribute("transform", `translate(${hx} ${hy})`);
+    n.rotateHandle.setAttribute("r", ROTATE_HANDLE_R_PX * zoom);
+    n.rotateHandleHit.setAttribute("r", ROTATE_HANDLE_HIT_R_PX * zoom);
+  }
+
+  function engineWorldCenter() {
+    const corners = getEngineCorners(state.viatura);
+    return {
+      x: corners.reduce((s, c) => s + c.x, 0) / 4,
+      y: corners.reduce((s, c) => s + c.y, 0) / 4
+    };
+  }
+
+  function updateThreatVisuals() {
+    const hitRadius = DRAG_HIT_RADIUS_PX * getZoomScale();
+
+    state.threats.forEach(t => {
+      const n = threatNodes.get(t.id);
+      if (!n) return;
+
+      if (t.facing === undefined) t.facing = angle(t, engineWorldCenter());
+
+      n.group.setAttribute("transform", `translate(${t.x} ${t.y})`);
+      n.group.querySelector(".actorRot").setAttribute("transform", `rotate(${deg(t.facing) + 90})`);
+      n.hitArea.setAttribute("r", hitRadius);
+      positionRotateHandle(n, t.facing);
+    });
+  }
+
+  function updateOfficerVisuals() {
+    const hitRadius = DRAG_HIT_RADIUS_PX * getZoomScale();
+
+    state.officers.forEach(o => {
+      const n = officerNodes.get(o.id);
+      if (!n) return;
+
+      if (o.facing === undefined) o.facing = angle(o, engineWorldCenter());
+
+      const scale = o.crouched ? 0.82 : 1;
+
+      n.group.setAttribute("transform", `translate(${o.x} ${o.y}) scale(${scale})`);
+      n.group.querySelector(".actorRot").setAttribute("transform", `rotate(${deg(o.facing) + 90})`);
+      n.vestShape.setAttribute("fill", "#154a79");
+      n.hitArea.setAttribute("r", hitRadius / scale);
+      positionRotateHandle(n, o.facing);
+    });
+  }
+
+  /* ------------------------------------------------------------
+     GEOMETRY RENDER (per threat × officer pair)
+  ------------------------------------------------------------ */
+
+  // key -> { exposed, shieldLabel }
+  const pairResults = new Map();
+  // officerId -> { exposedCount, shieldLabel }
+  const officerSummary = new Map();
+
+  function renderPairs() {
+    const objects = getActiveCoverObjects();
+    pairResults.clear();
+
+    state.officers.forEach(o => officerSummary.set(o.id, { exposedCount: 0, shieldLabel: null }));
+
+    state.threats.forEach((t, tIndex) => {
+      const color = threatColor(tIndex);
+      // Cover that doesn't stand up to this specific threat's weapon (e.g. a
+      // coluna against a fuzil) simply isn't a candidate for it at all.
+      const threatObjects = objectsForWeapon(objects, t.weapon || "curta");
+
+      state.officers.forEach(o => {
+        const key = `${t.id}:${o.id}`;
+        const nodes = pairNodes.get(key);
+        if (!nodes) return;
+
+        const shield = findShield(t, o, o.crouched, threatObjects);
+        const exposed = !shield;
+
+        pairResults.set(key, { exposed, shieldLabel: shield ? shield.obj.label : null });
+
+        const summary = officerSummary.get(o.id);
+        if (exposed) summary.exposedCount++;
+        else if (!summary.shieldLabel) summary.shieldLabel = shield.obj.label;
+
+        // exposure line
+        const showExpLine = exposed && showExposure.checked;
+        nodes.exposureLine.style.display = showExpLine ? "" : "none";
+        nodes.exposureLabelGroup.style.display = showExpLine ? "" : "none";
+
+        if (showExpLine) {
+          nodes.exposureLine.style.stroke = color;
+          nodes.exposureLine.setAttribute("x1", t.x);
+          nodes.exposureLine.setAttribute("y1", t.y);
+          nodes.exposureLine.setAttribute("x2", o.x);
+          nodes.exposureLine.setAttribute("y2", o.y);
+
+          const midX = (t.x + o.x) / 2;
+          const midY = (t.y + o.y) / 2;
+          nodes.exposureLabelGroup.setAttribute("transform", `translate(${midX} ${midY})`);
+          nodes.exposureLabelBg.setAttribute("fill", color);
+        }
+
+        // contour: prefer the exact object whose shadow the officer is
+        // currently standing in (geometry-only, ignoring crouch) — this is
+        // always precise, since it's the same containment test that decides
+        // real protection. Only when the officer isn't aligned with any
+        // enabled object at all do we fall back to a loose "nearest object"
+        // guide, just to give a rough direction to walk toward. Either way,
+        // a label on the line names the exact object — with 11 candidates
+        // (motor + 6 colunas + 4 rodas) often clustered together, it's
+        // rarely the one the officer happens to be standing closest to.
+        const geometricShield = findShield(t, o, o.crouched, threatObjects, true);
+        let g = null;
+        let chosenObj = null;
+        if (geometricShield) {
+          g = geometricShield.g;
+          chosenObj = geometricShield.obj;
+        } else {
+          let nearestObj = null, nearestDist = Infinity;
+          threatObjects.forEach(obj => {
+            const c = objectCentroid(obj);
+            const d = Math.hypot(o.x - c.x, o.y - c.y);
+            if (d < nearestDist) { nearestDist = d; nearestObj = obj; }
+          });
+          chosenObj = nearestObj;
+          g = nearestObj ? geometryForObject(t, nearestObj) : null;
+        }
+
+        const showRays = !!g && showContour.checked;
+        nodes.rayA.style.display = showRays ? "" : "none";
+        nodes.rayB.style.display = showRays ? "" : "none";
+        nodes.rayLabelGroup.style.display = showRays ? "" : "none";
+
+        if (showRays) {
+          const maxProjection = g.baseProjection + 6.5 * SCALE;
+          const farA = pointAlongProjectedRay(g.a, g.bisector, maxProjection, t);
+          const farB = pointAlongProjectedRay(g.b, g.bisector, maxProjection, t);
+
+          // solid/bright exactly when this pair is genuinely protected right
+          // now (same crouch-aware status as the EXPOSTO/PROTEGIDO badge) —
+          // never contradicts it.
+          nodes.rayA.classList.toggle("active", !exposed);
+          nodes.rayB.classList.toggle("active", !exposed);
+          nodes.rayA.style.stroke = color;
+          nodes.rayB.style.stroke = color;
+
+          if (farA && farB) {
+            nodes.rayA.setAttribute("d", `M ${t.x} ${t.y} L ${farA.x} ${farA.y}`);
+            nodes.rayB.setAttribute("d", `M ${t.x} ${t.y} L ${farB.x} ${farB.y}`);
+          }
+
+          const objCenter = objectCentroid(chosenObj);
+          nodes.rayLabelGroup.setAttribute("transform", `translate(${objCenter.x} ${objCenter.y})`);
+          nodes.rayLabelText.textContent = chosenObj.label;
+          nodes.rayLabelText.setAttribute("fill", color);
+          nodes.rayLabelBg.setAttribute("stroke", color);
+          nodes.rayLabelBg.setAttribute("stroke-width", exposed ? 0.75 : 1.5);
+        }
+      });
+    });
+
+    trackTrainingTransition();
+  }
+
+  // Counts how many times the scenario crossed from "everyone covered" to
+  // "someone exposed" and back, while a training session is running — this
+  // is the "quantas vezes exposto / protegido" the report is built from.
+  function trackTrainingTransition() {
+    if (!training.active) return;
+
+    const anyExposed = [...officerSummary.values()].some(s => s.exposedCount > 0);
+
+    if (training.wasExposed === null) {
+      training.wasExposed = anyExposed;
+    } else if (anyExposed && !training.wasExposed) {
+      training.exposedCount++;
+      training.wasExposed = true;
+    } else if (!anyExposed && training.wasExposed) {
+      training.coveredCount++;
+      training.wasExposed = false;
+      if (training.firstCoverMs === null) {
+        training.firstCoverMs = performance.now() - training.startTime;
+      }
+    }
+
+    $("trainingExposedCount").textContent = training.exposedCount;
+    $("trainingCoveredCount").textContent = training.coveredCount;
+
+    if (training.firstCoverMs !== null) {
+      $("trainingFirstCoverWrap").hidden = false;
+      $("trainingFirstCover").textContent = formatMs(training.firstCoverMs);
+    }
+  }
+
+  function formatMs(ms) {
+    const totalSec = Math.max(0, Math.floor(ms / 1000));
+    const mm = String(Math.floor(totalSec / 60)).padStart(2, "0");
+    const ss = String(totalSec % 60).padStart(2, "0");
+    return `${mm}:${ss}`;
+  }
+
+  /* ------------------------------------------------------------
+     PANELS: OFFICER LIST / THREAT LIST
+  ------------------------------------------------------------ */
+
+  const officerRowNodes = new Map();
+  const threatRowNodes = new Map();
+
+  function buildOfficerRow() {
+    const row = document.createElement("div");
+    row.className = "actor-row";
+    row.innerHTML = `
+      <span class="dot"></span>
+      <span class="info">
+        <div class="name"></div>
+        <div class="badge"></div>
+        <div class="vest-tag">🛡 tronco: colete</div>
+        <div class="stance-row">
+          <button class="stance-btn" data-stance="standing">Em pé</button>
+          <button class="stance-btn" data-stance="crouched">Agachado</button>
+        </div>
+      </span>
+      <button class="icon-btn" title="Remover oficial">✕</button>
+    `;
+    return row;
+  }
+
+  function reconcileOfficerListDom() {
+    const currentIds = new Set(state.officers.map(o => o.id));
+
+    for (const [id, n] of officerRowNodes) {
+      if (!currentIds.has(id)) { n.row.remove(); officerRowNodes.delete(id); }
+    }
+
+    state.officers.forEach(o => {
+      if (officerRowNodes.has(o.id)) return;
+
+      const row = buildOfficerRow();
+      officerList.appendChild(row);
+
+      const standingBtn = row.querySelector('[data-stance="standing"]');
+      const crouchedBtn = row.querySelector('[data-stance="crouched"]');
+      const removeBtn = row.querySelector(".icon-btn");
+
+      standingBtn.addEventListener("click", () => setOfficerCrouch(o.id, false));
+      crouchedBtn.addEventListener("click", () => setOfficerCrouch(o.id, true));
+      removeBtn.addEventListener("click", () => removeOfficer(o.id));
+
+      officerRowNodes.set(o.id, {
+        row,
+        dot: row.querySelector(".dot"),
+        name: row.querySelector(".name"),
+        badge: row.querySelector(".badge"),
+        standingBtn,
+        crouchedBtn,
+        removeBtn
+      });
+    });
+  }
+
+  function updateOfficerListValues() {
+    $("officerCountLabel").textContent = `(${state.officers.length}/${MAX_OFFICERS})`;
+
+    state.officers.forEach((o, index) => {
+      const n = officerRowNodes.get(o.id);
+      const color = officerColor(index);
+      const summary = officerSummary.get(o.id) || { exposedCount: 0, shieldLabel: null };
+
+      n.dot.style.background = color;
+      n.name.textContent = `Oficial ${index + 1}`;
+
+      if (summary.exposedCount > 0) {
+        n.badge.textContent = `cabeça exposta a ${summary.exposedCount}`;
+        n.badge.className = "badge exposed";
+      } else {
+        n.badge.textContent = `cabeça coberta (${summary.shieldLabel || "—"})`;
+        n.badge.className = "badge covered";
+      }
+
+      n.standingBtn.classList.toggle("active", !o.crouched);
+      n.crouchedBtn.classList.toggle("active", !!o.crouched);
+      n.removeBtn.disabled = state.officers.length <= MIN_ACTORS;
+    });
+
+    $("addOfficerBtn").disabled = state.officers.length >= MAX_OFFICERS;
+  }
+
+  function buildThreatRow() {
+    const row = document.createElement("div");
+    row.className = "actor-row";
+    row.innerHTML = `
+      <span class="dot"></span>
+      <span class="info">
+        <div class="name"></div>
+        <div class="dist"></div>
+        <div class="actor-dist-row">
+          <label>Dist. oficial próx.</label>
+          <div class="input-wrap">
+            <input type="number" class="actor-dist-input" min="${MIN_DIST_M}" max="${MAX_DIST_M}" step="0.1">
+            <span class="actor-dist-unit">m</span>
+          </div>
+        </div>
+        <div class="dual-unit"></div>
+        <div class="stance-row">
+          <button class="stance-btn" data-weapon="curta">Arma curta</button>
+          <button class="stance-btn" data-weapon="fuzil">Fuzil</button>
+        </div>
+      </span>
+      <button class="icon-btn" title="Remover ameaça">✕</button>
+    `;
+    return row;
+  }
+
+  function nearestOfficer(point) {
+    let best = null;
+    let bestDist = Infinity;
+    state.officers.forEach(o => {
+      const d = Math.hypot(o.x - point.x, o.y - point.y);
+      if (d < bestDist) { bestDist = d; best = o; }
+    });
+    return best;
+  }
+
+  function reconcileThreatListDom() {
+    const currentIds = new Set(state.threats.map(t => t.id));
+
+    for (const [id, n] of threatRowNodes) {
+      if (!currentIds.has(id)) { n.row.remove(); threatRowNodes.delete(id); }
+    }
+
+    state.threats.forEach(t => {
+      if (threatRowNodes.has(t.id)) return;
+
+      const row = buildThreatRow();
+      threatList.appendChild(row);
+
+      const distInput = row.querySelector(".actor-dist-input");
+      const removeBtn = row.querySelector(".icon-btn");
+      const curtaBtn = row.querySelector('[data-weapon="curta"]');
+      const fuzilBtn = row.querySelector('[data-weapon="fuzil"]');
+
+      distInput.addEventListener("input", () => {
+        const value = parseFloat(distInput.value);
+        if (Number.isFinite(value)) setThreatDistanceFromNearestOfficer(t.id, value);
+      });
+
+      removeBtn.addEventListener("click", () => removeThreat(t.id));
+      curtaBtn.addEventListener("click", () => setThreatWeapon(t.id, "curta"));
+      fuzilBtn.addEventListener("click", () => setThreatWeapon(t.id, "fuzil"));
+
+      threatRowNodes.set(t.id, {
+        row,
+        dot: row.querySelector(".dot"),
+        name: row.querySelector(".name"),
+        dist: row.querySelector(".dist"),
+        distInput,
+        dual: row.querySelector(".dual-unit"),
+        curtaBtn,
+        fuzilBtn,
+        removeBtn
+      });
+    });
+  }
+
+  function setThreatWeapon(id, weapon) {
+    const t = state.threats.find(t => t.id === id);
+    if (!t) return;
+    t.weapon = weapon;
+    render();
+  }
+
+  function updateThreatListValues() {
+    $("threatCountLabel").textContent = `(${state.threats.length}/${MAX_THREATS})`;
+
+    state.threats.forEach((t, index) => {
+      const n = threatRowNodes.get(t.id);
+      const color = threatColor(index);
+      const nearest = nearestOfficer(t);
+      const distM = nearest ? Math.hypot(t.x - nearest.x, t.y - nearest.y) / SCALE : 0;
+
+      n.dot.style.background = color;
+      n.name.textContent = `Ameaça ${index + 1}`;
+      n.dist.innerHTML = nearest ? `até oficial mais próx. <b>${fmtShort(distM)}</b>` : "sem oficial na cena";
+
+      if (document.activeElement !== n.distInput) {
+        n.distInput.value = distM.toFixed(1);
+      }
+
+      n.dual.textContent = `≈ ${(distM * 3.28084).toFixed(1)} ft`;
+      n.curtaBtn.classList.toggle("active", (t.weapon || "curta") === "curta");
+      n.fuzilBtn.classList.toggle("active", t.weapon === "fuzil");
+      n.removeBtn.disabled = state.threats.length <= MIN_ACTORS;
+    });
+
+    $("addThreatBtn").disabled = state.threats.length >= MAX_THREATS;
+  }
+
+  /* ------------------------------------------------------------
+     METRICS
+  ------------------------------------------------------------ */
+
+  function renderMetrics() {
+    let exposedPairs = 0;
+    pairResults.forEach(r => { if (r.exposed) exposedPairs++; });
+
+    const totalPairs = state.threats.length * state.officers.length;
+
+    $("exposureMetric").textContent = totalPairs
+      ? `${exposedPairs} de ${totalPairs} pares`
+      : "—";
+
+    $("exposureMetric").style.color = exposedPairs > 0 ? "#ff6b6b" : "#7dffa0";
+
+    $("countMetric").textContent = `${state.officers.length} / ${state.threats.length}`;
+  }
+
+  /* ------------------------------------------------------------
+     PROFILE VIEW (side elevation): why crouching matters
+     Purely illustrative — reads the SAME o.crouched flag the top-down
+     view uses, converted to a plain side-on height comparison.
+  ------------------------------------------------------------ */
+
+  const PROFILE_PX_PER_CM = 1.1;
+  const PROFILE_GROUND_Y = 210;
+  const LOW_COVER_CM = 110;   // effective hood / fender height (engine, wheels)
+  const TALL_COVER_CM = 148;  // roof-pillar height
+  const SHOOTER_EYE_CM = 162; // typical standing adversary's aim height
+  const STANDING_HEAD_CM = 175;
+  const CROUCHED_HEAD_CM = 98;
+
+  function profileY(heightCm) {
+    return PROFILE_GROUND_Y - heightCm * PROFILE_PX_PER_CM;
+  }
+
+  function buildProfileBlock(x, widthPx, heightCm, label, fillId) {
+    const y = profileY(heightCm);
+    const h = PROFILE_GROUND_Y - y;
+    return `
+      <rect x="${x - widthPx / 2}" y="${y}" width="${widthPx}" height="${h}" rx="4"
+        fill="${fillId}" stroke="#42545c" stroke-width="1.5"></rect>
+      <text x="${x}" y="${PROFILE_GROUND_Y + 16}" text-anchor="middle"
+        fill="#aeb7bc" font-size="10" font-weight="700">${label}</text>
+    `;
+  }
+
+  function buildProfileOfficer(x, o, index) {
+    const color = officerColor(index);
+    const heightCm = o.crouched ? CROUCHED_HEAD_CM : STANDING_HEAD_CM;
+    const headY = profileY(heightCm);
+    const headR = 9;
+    const shoulderY = headY + headR * 1.7;
+    const bodyH = PROFILE_GROUND_Y - shoulderY;
+
+    const clearsLow = headY < profileY(LOW_COVER_CM);
+    const clearsTall = headY < profileY(TALL_COVER_CM);
+
+    let statusText, statusColor;
+    if (!clearsTall) {
+      statusText = "cabeça abaixo de tudo";
+      statusColor = "#7dffa0";
+    } else if (!clearsLow) {
+      statusText = "protegido por coluna só";
+      statusColor = "#e8c25a";
+    } else {
+      statusText = "cabeça exposta";
+      statusColor = "#ff6b6b";
+    }
+
+    return `
+      <g>
+        <rect x="${x - 9}" y="${shoulderY}" width="18" height="${bodyH}" rx="6"
+          fill="${color}" fill-opacity=".85" stroke="#101416" stroke-width="1.2"></rect>
+        <circle cx="${x}" cy="${headY + headR}" r="${headR}" fill="url(#headGradient)"
+          stroke="#101416" stroke-width="1.2"></circle>
+        <text x="${x}" y="${headY - 6}" text-anchor="middle" fill="${color}"
+          font-size="9" font-weight="900">OF. ${index + 1} · ${o.crouched ? "agachado" : "em pé"}</text>
+        <text x="${x}" y="${PROFILE_GROUND_Y + 14}" text-anchor="middle" fill="${statusColor}"
+          font-size="9" font-weight="800">${statusText}</text>
+      </g>
+    `;
+  }
+
+  function renderProfileView() {
+    const content = $("profileContent");
+    let html = "";
+
+    // ground line
+    html += `<line x1="0" y1="${PROFILE_GROUND_Y}" x2="900" y2="${PROFILE_GROUND_Y}"
+      stroke="#5a5d5d" stroke-width="2"></line>`;
+
+    // reference height lines
+    [
+      { cm: LOW_COVER_CM, label: "altura do motor / roda (≈1,10 m)", color: "#f0c83c" },
+      { cm: TALL_COVER_CM, label: "altura da coluna / teto (≈1,48 m)", color: "#cfe3ea" },
+      { cm: SHOOTER_EYE_CM, label: "linha de mira padrão (≈1,62 m)", color: "#ff6b6b" }
+    ].forEach(ref => {
+      const y = profileY(ref.cm);
+      html += `
+        <line x1="0" y1="${y}" x2="900" y2="${y}" stroke="${ref.color}"
+          stroke-opacity=".55" stroke-width="1.4" stroke-dasharray="7 6"></line>
+      `;
+    });
+
+    // left-edge labels for the reference lines (kept inside the viewBox)
+    html += `
+      <text x="8" y="${profileY(LOW_COVER_CM) - 5}" fill="#f0c83c" font-size="10" font-weight="800">motor / roda ≈ 1,10 m</text>
+      <text x="8" y="${profileY(TALL_COVER_CM) - 5}" fill="#cfe3ea" font-size="10" font-weight="800">coluna / teto ≈ 1,48 m</text>
+      <text x="8" y="${profileY(SHOOTER_EYE_CM) - 5}" fill="#ff6b6b" font-size="10" font-weight="800">linha de mira ≈ 1,62 m</text>
+    `;
+
+    // cover reference blocks
+    html += buildProfileBlock(55, 60, LOW_COVER_CM, "MOTOR", "url(#engineGradient)");
+    html += buildProfileBlock(140, 14, TALL_COVER_CM, "COLUNA", "url(#pillarGradient)");
+
+    // officers, spaced evenly from x=260 onward
+    const startX = 260;
+    const spacing = 110;
+    state.officers.forEach((o, index) => {
+      html += buildProfileOfficer(startX + index * spacing, o, index);
+    });
+
+    content.innerHTML = html;
+  }
+
+  /* ------------------------------------------------------------
+     ACTOR MANAGEMENT
+  ------------------------------------------------------------ */
+
+  function addThreat() {
+    if (state.threats.length >= MAX_THREATS) {
+      showToast(`Máximo de ${MAX_THREATS} ameaças`);
+      return;
+    }
+
+    const trunk = nearestPointOnCar(state.frontCar, { x: state.frontCar.cx, y: state.frontCar.cy + state.frontCar.length });
+    const offset = (state.threats.length - 1) * 70;
+
+    state.threats.push({
+      id: nextThreatId++,
+      x: clamp(state.frontCar.cx + offset, -WORLD_BOUND, WORLD_BOUND),
+      y: clamp(trunk.y + 90, -WORLD_BOUND, WORLD_BOUND),
+      weapon: "curta"
+    });
+
+    render();
+    showToast(`Ameaça ${state.threats.length} adicionada`);
+  }
+
+  function removeThreat(id) {
+    if (state.threats.length <= MIN_ACTORS) {
+      showToast("Mantenha ao menos uma ameaça");
+      return;
+    }
+    state.threats = state.threats.filter(t => t.id !== id);
+    render();
+    showToast("Ameaça removida");
+  }
+
+  function addOfficer() {
+    if (state.officers.length >= MAX_OFFICERS) {
+      showToast(`Máximo de ${MAX_OFFICERS} oficiais`);
+      return;
+    }
+
+    const seat = getOfficerSeatWorld(state.officers.length, state.viatura);
+
+    state.officers.push({
+      id: nextOfficerId++,
+      x: clamp(seat.x, -WORLD_BOUND, WORLD_BOUND),
+      y: clamp(seat.y, -WORLD_BOUND, WORLD_BOUND),
+      crouched: false
+    });
+
+    render();
+    showToast(`Oficial ${state.officers.length} adicionado — ${OFFICER_SEAT_LOCAL[(state.officers.length - 1) % OFFICER_SEAT_LOCAL.length].label}`);
+  }
+
+  function removeOfficer(id) {
+    if (state.officers.length <= MIN_ACTORS) {
+      showToast("Mantenha ao menos um oficial");
+      return;
+    }
+    state.officers = state.officers.filter(o => o.id !== id);
+    render();
+    showToast("Oficial removido");
+  }
+
+  function setOfficerCrouch(id, crouched) {
+    const o = state.officers.find(o => o.id === id);
+    if (!o) return;
+    o.crouched = crouched;
+    render();
+  }
+
+  function toggleOfficerCrouch(id) {
+    const o = state.officers.find(o => o.id === id);
+    if (!o) return;
+    setOfficerCrouch(id, !o.crouched);
+  }
+
+  function setThreatDistanceFromNearestOfficer(id, meters) {
+    const t = state.threats.find(t => t.id === id);
+    if (!t) return;
+
+    const nearest = nearestOfficer(t);
+    if (!nearest) return;
+
+    const dist = clamp(meters, MIN_DIST_M, MAX_DIST_M) * SCALE;
+    const currentDist = Math.hypot(t.x - nearest.x, t.y - nearest.y);
+    const bearing = currentDist < 1 ? 0 : angle(nearest, t);
+
+    const candidate = {
+      x: clamp(nearest.x + Math.cos(bearing) * dist, -WORLD_BOUND, WORLD_BOUND),
+      y: clamp(nearest.y + Math.sin(bearing) * dist, -WORLD_BOUND, WORLD_BOUND)
+    };
+
+    if (isInsideCar(state.frontCar, candidate, ACTOR_CAR_MARGIN) || isInsideCar(state.viatura, candidate, ACTOR_CAR_MARGIN)) {
+      showToast("Essa distância colocaria a ameaça sobre um veículo");
+      render();
+      return;
+    }
+
+    t.x = candidate.x;
+    t.y = candidate.y;
+    render();
+  }
+
+  /* ------------------------------------------------------------
+     ZOOM / VIEWBOX
+  ------------------------------------------------------------ */
+
+  function getZoomScale() { return lastViewBox.width / DEFAULT_VIEW_W; }
+
+  function computeViewBox() {
+    const margin = 120;
+
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+
+    const consider = (x, y, pad) => {
+      minX = Math.min(minX, x - pad);
+      maxX = Math.max(maxX, x + pad);
+      minY = Math.min(minY, y - pad);
+      maxY = Math.max(maxY, y + pad);
+    };
+
+    [state.frontCar, state.viatura].forEach(car => {
+      const corners = [
+        { x: -car.width / 2, y: -car.length / 2 }, { x: car.width / 2, y: -car.length / 2 },
+        { x: -car.width / 2, y: car.length / 2 }, { x: car.width / 2, y: car.length / 2 }
+      ].map(p => carLocalToWorld(car, p));
+      corners.forEach(c => consider(c.x, c.y, 60));
+    });
+
+    state.threats.forEach(t => consider(t.x, t.y, 75));
+    state.officers.forEach(o => consider(o.x, o.y, 75));
+    state.environment.forEach(env => {
+      const pad = env.type === "parede" ? ENV_DIMENSIONS.parede.length / 2 : ENV_DIMENSIONS[env.type].radius;
+      consider(env.cx, env.cy, pad + 40);
+    });
+
+    minX -= margin; maxX += margin; minY -= margin; maxY += margin;
+
+    const aspect = DEFAULT_VIEW_W / DEFAULT_VIEW_H;
+    const contentW = maxX - minX;
+    const contentH = maxY - minY;
+
+    const fitWidth = Math.max(DEFAULT_VIEW_W, contentW, contentH * aspect);
+    const width = fitWidth * state.manualZoom;
+    const height = width / aspect;
+
+    const cx = (minX + maxX) / 2 + state.panX;
+    const cy = (minY + maxY) / 2 + state.panY;
+
+    return { x: cx - width / 2, y: cy - height / 2, width, height };
+  }
+
+  function updateViewBox() {
+    stage.setAttribute(
+      "viewBox",
+      `${lastViewBox.x.toFixed(1)} ${lastViewBox.y.toFixed(1)} ${lastViewBox.width.toFixed(1)} ${lastViewBox.height.toFixed(1)}`
+    );
+    $("zoomReadout").textContent = `${Math.round(100 / state.manualZoom)}%`;
+  }
+
+  function setManualZoom(z) {
+    state.manualZoom = clamp(z, MIN_MANUAL_ZOOM, MAX_MANUAL_ZOOM);
+    render();
+  }
+
+  /* ------------------------------------------------------------
+     LAYERS / INPUTS SYNC
+  ------------------------------------------------------------ */
+
+  function renderLayers() {
+    $("canvasTitleOverlay").style.display = showLabels.checked ? "" : "none";
+    $("hintBox").style.display = showLabels.checked ? "" : "none";
+
+    threatNodes.forEach(n => {
+      n.group.querySelector(".actorLabelGroup").style.display = showLabels.checked ? "" : "none";
+    });
+    officerNodes.forEach(n => {
+      n.group.querySelector(".actorLabelGroup").style.display = showLabels.checked ? "" : "none";
+    });
+  }
+
+  function syncInputs() {
+    const gap = frontToViaturaGapMeters();
+
+    if (document.activeElement !== vehicleGap) {
+      vehicleGap.value = gap.toFixed(1);
+    }
+    vehicleGapDual.textContent = fmtMDual(gap);
+
+    if (document.activeElement !== viaturaAngle) {
+      let d = deg(state.viatura.heading);
+      d = ((d + 180) % 360 + 360) % 360 - 180;
+      viaturaAngle.value = d.toFixed(0);
+    }
+
+    if (document.activeElement !== engineWidth) engineWidth.value = state.engine.width.toFixed(0);
+    if (document.activeElement !== engineDepth) engineDepth.value = state.engine.depth.toFixed(0);
+    if (document.activeElement !== pillarWidth) pillarWidth.value = state.pillarWidth.toFixed(1);
+
+    pillarWidthDual.textContent = fmtCmDual(state.pillarWidth);
+  }
+
+  function frontToViaturaGapMeters() {
+    const d = Math.hypot(state.frontCar.cx - state.viatura.cx, state.frontCar.cy - state.viatura.cy);
+    const gapPx = Math.max(0, d - state.frontCar.length / 2 - state.viatura.length / 2);
+    return gapPx / SCALE;
+  }
+
+  /* ------------------------------------------------------------
+     RENDER
+  ------------------------------------------------------------ */
+
+  // Environment cover is scenario-generated and non-draggable in this
+  // version, so it's simplest to just rebuild it fully each render rather
+  // than diff by id — there are only ever 0-2 of them.
+  function renderEnvironment() {
+    environmentLayer.replaceChildren();
+
+    state.environment.forEach(env => {
+      const g = document.createElementNS(SVG_NS, "g");
+
+      if (env.type === "parede") {
+        const dim = ENV_DIMENSIONS.parede;
+        g.setAttribute("transform", `translate(${env.cx} ${env.cy}) rotate(${deg(env.heading)})`);
+        g.innerHTML = `
+          <rect x="${-dim.length / 2}" y="${-dim.thickness / 2}" width="${dim.length}" height="${dim.thickness}"
+            fill="#9a938a" stroke="#57534d" stroke-width="2" rx="2"></rect>
+          <text y="${-dim.thickness / 2 - 8}" text-anchor="middle" font-size="11" font-weight="800" fill="#d8d3ca">PAREDE</text>
+        `;
+      } else {
+        const dim = ENV_DIMENSIONS[env.type];
+        const isArvore = env.type === "arvore";
+        g.setAttribute("transform", `translate(${env.cx} ${env.cy})`);
+        g.innerHTML = `
+          <circle r="${dim.radius}" fill="${isArvore ? "#6b4a30" : "#9a9a95"}"
+            stroke="${isArvore ? "#3d2b1f" : "#57534d"}" stroke-width="2.5"></circle>
+          <text y="${-dim.radius - 8}" text-anchor="middle" font-size="11" font-weight="800" fill="#d8d3ca">${isArvore ? "ÁRVORE" : "POSTE"}</text>
+        `;
+      }
+
+      environmentLayer.appendChild(g);
+    });
+  }
+
+  function render() {
+    keepActorsClearOfCars();
+
+    reconcileActorDom(state.threats, threatNodes, threatsLayer, threatColor, "AMEAÇA", "threat", onActorPointerDown("threat"));
+    reconcileActorDom(state.officers, officerNodes, officersLayer, officerColor, "OFICIAL", "officer", onActorPointerDown("officer"));
+    reconcilePairDom();
+    reconcileOfficerListDom();
+    reconcileThreatListDom();
+
+    lastViewBox = computeViewBox();
+
+    updateFrontCar();
+    updateViatura();
+    renderEnvironment();
+    updateThreatVisuals();
+    updateOfficerVisuals();
+    renderPairs();
+    renderMetrics();
+    renderProfileView();
+    updateOfficerListValues();
+    updateThreatListValues();
+    syncInputs();
+    renderLayers();
+    updateViewBox();
+  }
+
+  /* ------------------------------------------------------------
+     POINTER INTERACTION
+  ------------------------------------------------------------ */
+
+  const threatsLayer = $("threatsLayer");
+  const officersLayer = $("officersLayer");
+  const environmentLayer = $("environmentLayer");
+  const officerList = $("officerList");
+  const threatList = $("threatList");
+
+  const vehicleGap = $("vehicleGap");
+  const viaturaAngle = $("viaturaAngle");
+  const engineWidth = $("engineWidth");
+  const engineDepth = $("engineDepth");
+  const pillarWidth = $("pillarWidth");
+  const pillarWidthDual = $("pillarWidthDual");
+  const vehicleGapDual = $("vehicleGapDual");
+
+  const showEngineCover = $("showEngineCover");
+  const showPillarCover = $("showPillarCover");
+  const showWheelCover = $("showWheelCover");
+  const showContour = $("showContour");
+  const showExposure = $("showExposure");
+  const showLabels = $("showLabels");
+
+  function onActorPointerDown(kind) {
+    return (event, id, mode) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const list = kind === "threat" ? state.threats : state.officers;
+      const actor = list.find(a => a.id === id);
+      if (!actor) return;
+
+      if (mode === "move") {
+        const p = svgPoint(event);
+        drag = {
+          type: `${kind}Move`,
+          id,
+          pointerId: event.pointerId,
+          el: event.currentTarget,
+          offsetX: p.x - actor.x,
+          offsetY: p.y - actor.y,
+          clickTime: performance.now()
+        };
+      } else {
+        drag = { type: `${kind}Rotate`, id, pointerId: event.pointerId, el: event.currentTarget };
+      }
+
+      event.currentTarget.classList.add("dragging");
+      event.currentTarget.setPointerCapture(event.pointerId);
+    };
+  }
+
+  // double-click / double-tap on an officer toggles crouch
+  let lastOfficerClick = { id: null, time: 0 };
+
+  function handleOfficerClickForCrouch(id) {
+    const now = performance.now();
+    if (lastOfficerClick.id === id && now - lastOfficerClick.time < 380) {
+      toggleOfficerCrouch(id);
+      lastOfficerClick = { id: null, time: 0 };
+    } else {
+      lastOfficerClick = { id, time: now };
+    }
+  }
+
+  officersLayer.addEventListener("pointerdown", event => {
+    const g = event.target.closest("[data-officer-id]");
+  });
+
+  function beginHeadingDrag(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    drag = { type: "heading", pointerId: event.pointerId, el: event.currentTarget };
+    event.currentTarget.classList.add("dragging");
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  $("headingGrip").addEventListener("pointerdown", beginHeadingDrag);
+
+  function beginFrontCarDrag(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const p = svgPoint(event);
+    drag = {
+      type: "frontCarMove",
+      pointerId: event.pointerId,
+      el: event.currentTarget,
+      offsetX: p.x - state.frontCar.cx,
+      offsetY: p.y - state.frontCar.cy
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  $("frontCarHit").addEventListener("pointerdown", beginFrontCarDrag);
+
+  function beginViaturaDrag(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const p = svgPoint(event);
+    drag = {
+      type: "viaturaMove",
+      pointerId: event.pointerId,
+      el: event.currentTarget,
+      offsetX: p.x - state.viatura.cx,
+      offsetY: p.y - state.viatura.cy
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  $("viaturaHit").addEventListener("pointerdown", beginViaturaDrag);
+
+  // Dragging empty canvas (asphalt/road) pans the whole scene. Every
+  // interactive element above already calls stopPropagation on its own
+  // pointerdown, so this only ever fires for genuine background clicks.
+  function beginPan(event) {
+    event.preventDefault();
+    drag = {
+      type: "pan",
+      pointerId: event.pointerId,
+      el: stage,
+      startClientX: event.clientX,
+      startClientY: event.clientY,
+      startPanX: state.panX,
+      startPanY: state.panY,
+      scenePerScreenPx: lastViewBox.width / stage.getBoundingClientRect().width
+    };
+    stage.classList.add("panning");
+    stage.setPointerCapture(event.pointerId);
+  }
+
+  stage.addEventListener("pointerdown", beginPan);
+
+  // The hint box sits over the bottom-left corner of the canvas and can
+  // cover an actor once the user pans/repositions things there. Once
+  // they've clearly started interacting (any pointerdown anywhere in the
+  // scene — capture phase, so it fires even though actor/handle handlers
+  // stop propagation), it's done its job and fades out of the way.
+  const hintBox = $("hintBox");
+  let hintDismissed = false;
+
+  function dismissHint() {
+    if (hintDismissed) return;
+    hintDismissed = true;
+    hintBox.classList.add("hint-dismissed");
+  }
+
+  stage.addEventListener("pointerdown", dismissHint, true);
+  $("hintCloseBtn").addEventListener("click", dismissHint);
+
+  stage.addEventListener("pointermove", event => {
+    if (!drag) return;
+    const p = svgPoint(event);
+
+    if (drag.type === "threatMove" || drag.type === "officerMove") {
+      const list = drag.type === "threatMove" ? state.threats : state.officers;
+      const actor = list.find(a => a.id === drag.id);
+      if (!actor) return;
+
+      const candidate = {
+        x: clamp(p.x - drag.offsetX, -WORLD_BOUND, WORLD_BOUND),
+        y: clamp(p.y - drag.offsetY, -WORLD_BOUND, WORLD_BOUND)
+      };
+
+      const blocked =
+        isInsideCar(state.frontCar, candidate, ACTOR_CAR_MARGIN) ||
+        isInsideCar(state.viatura, candidate, ACTOR_CAR_MARGIN);
+
+      if (!blocked) { actor.x = candidate.x; actor.y = candidate.y; }
+    }
+
+    if (drag.type === "threatRotate" || drag.type === "officerRotate") {
+      const list = drag.type === "threatRotate" ? state.threats : state.officers;
+      const actor = list.find(a => a.id === drag.id);
+      if (!actor) return;
+      actor.facing = angle(actor, p);
+    }
+
+    if (drag.type === "heading") {
+      state.viatura.heading = normalizeAngle(
+        angle({ x: state.viatura.cx, y: state.viatura.cy }, p) + Math.PI / 2
+      );
+    }
+
+    if (drag.type === "frontCarMove") {
+      state.frontCar.cx = clamp(p.x - drag.offsetX, -WORLD_BOUND, WORLD_BOUND);
+      state.frontCar.cy = clamp(p.y - drag.offsetY, -WORLD_BOUND, WORLD_BOUND);
+    }
+
+    if (drag.type === "viaturaMove") {
+      state.viatura.cx = clamp(p.x - drag.offsetX, -WORLD_BOUND, WORLD_BOUND);
+      state.viatura.cy = clamp(p.y - drag.offsetY, -WORLD_BOUND, WORLD_BOUND);
+    }
+
+    if (drag.type === "pan") {
+      const deltaX = event.clientX - drag.startClientX;
+      const deltaY = event.clientY - drag.startClientY;
+      state.panX = drag.startPanX - deltaX * drag.scenePerScreenPx;
+      state.panY = drag.startPanY - deltaY * drag.scenePerScreenPx;
+    }
+
+    render();
+  });
+
+  stage.addEventListener("pointerup", event => {
+    if (drag && (drag.type === "threatMove" || drag.type === "officerMove") && drag.type === "officerMove") {
+      const heldMs = performance.now() - drag.clickTime;
+      if (heldMs < 250) {
+        // treat as a click (not a drag) — check for double-click crouch toggle
+        handleOfficerClickForCrouch(drag.id);
+      }
+    }
+    endDrag();
+  });
+
+  stage.addEventListener("pointercancel", endDrag);
+
+  function endDrag() {
+    if (!drag) return;
+    if (drag.el) drag.el.classList.remove("dragging");
+    stage.classList.remove("panning");
+    drag = null;
+  }
+
+  /* ------------------------------------------------------------
+     INPUT EVENTS
+  ------------------------------------------------------------ */
+
+  vehicleGap.addEventListener("input", () => {
+    const value = parseFloat(vehicleGap.value);
+    if (!Number.isFinite(value)) return;
+
+    const targetGapPx = clamp(value, 2, 30) * SCALE;
+    const bearing = angle(
+      { x: state.viatura.cx, y: state.viatura.cy },
+      { x: state.frontCar.cx, y: state.frontCar.cy }
+    );
+    const dist = state.viatura.length / 2 + state.frontCar.length / 2 + targetGapPx;
+
+    state.frontCar.cx = state.viatura.cx + Math.cos(bearing) * dist;
+    state.frontCar.cy = state.viatura.cy + Math.sin(bearing) * dist;
+
+    render();
+  });
+
+  viaturaAngle.addEventListener("input", () => {
+    const value = parseFloat(viaturaAngle.value);
+    if (!Number.isFinite(value)) return;
+    state.viatura.heading = rad(clamp(value, -179, 179));
+    render();
+  });
+
+  // Sweeps headings (keeping position/distance fixed) for the one that best
+  // protects the officers exactly where they already are — it never moves
+  // or relocates anyone, including across sides, only rotates the car.
+  // Crouches everyone, since the search assumes crouching is available and
+  // colunas/poste/árvore/parede don't mind it either way, so the real
+  // EXPOSTO/PROTEGIDO badges end up matching what's reported here.
+  $("bestAngleBtn").addEventListener("click", () => {
+    const result = searchBestHeadingForOfficers(state.viatura, state.threats, state.officers, deg(state.viatura.heading));
+    const readout = $("bestAngleReadout");
+    readout.hidden = false;
+
+    if (!result) {
+      readout.textContent = "Adicione ao menos uma ameaça e um oficial antes de calcular.";
+      return;
+    }
+
+    const before = state.officers.map(o => ({ id: o.id, x: o.x, y: o.y }));
+
+    state.viatura.heading = rad(result.heading);
+    state.officers.forEach(o => { o.crouched = true; });
+
+    render();
+
+    const maxMoveCm = Math.max(0, ...before.map(b => {
+      const o = state.officers.find(x => x.id === b.id);
+      return o ? Math.hypot(o.x - b.x, o.y - b.y) : 0;
+    }));
+
+    const totalPairs = state.officers.length * state.threats.length;
+    const labels = [...new Set(result.perOfficerLabel.values())];
+    const labelsText = labels.length ? ` (via ${labels.join(", ")})` : "";
+    const moveNote = maxMoveCm > 1
+      ? ` Esse ângulo era melhor mas encostava a lataria em quem estava perto demais — a viatura empurrou a pessoa mais próxima ${(maxMoveCm / 100).toFixed(2)} m pra fora do carro (não para outro lugar).`
+      : " Ninguém foi reposicionado.";
+    readout.textContent = `Melhor ângulo para as posições atuais: ${result.heading}° — ${result.fullyProtected} de ${state.officers.length} oficial(is) ficam totalmente protegidos de todas as ${state.threats.length} ameaça(s) (${result.score} de ${totalPairs} pares oficial×ameaça cobertos)${labelsText}.${moveNote} Todos agachados.`;
+    showToast(`Melhor ângulo aplicado: ${result.heading}°`);
+  });
+
+  engineWidth.addEventListener("input", () => {
+    const value = parseFloat(engineWidth.value);
+    if (Number.isFinite(value)) { state.engine.width = clamp(value, 30, 140); render(); }
+  });
+
+  engineDepth.addEventListener("input", () => {
+    const value = parseFloat(engineDepth.value);
+    if (Number.isFinite(value)) { state.engine.depth = clamp(value, 25, 120); render(); }
+  });
+
+  pillarWidth.addEventListener("input", () => {
+    const value = parseFloat(pillarWidth.value);
+    if (Number.isFinite(value)) { state.pillarWidth = clamp(value, 5, 14); render(); }
+  });
+
+  [showEngineCover, showPillarCover, showWheelCover, showContour, showExposure, showLabels].forEach(c => {
+    c.addEventListener("change", render);
+  });
+
+  $("addThreatBtn").addEventListener("click", addThreat);
+  $("addOfficerBtn").addEventListener("click", addOfficer);
+
+  $("zoomInBtn").addEventListener("click", () => setManualZoom(state.manualZoom * 0.8));
+  $("zoomOutBtn").addEventListener("click", () => setManualZoom(state.manualZoom * 1.25));
+
+  /* ------------------------------------------------------------
+     TRAINING MODE: scenarios, session timer, exposure counters
+  ------------------------------------------------------------ */
+
+  function applyScenario(scenario) {
+    const officerCount = clamp(state.officers.length || 1, 1, MAX_OFFICERS);
+    const setup = scenario.setup();
+
+    state = cloneDefaultState();
+    state.viatura.heading = rad(setup.viaturaHeadingDeg || 0);
+    state.frontCar.cx = state.viatura.cx;
+    state.frontCar.cy = state.viatura.cy - (
+      state.viatura.length / 2 + state.frontCar.length / 2 + (setup.gapM || 6) * SCALE
+    );
+
+    state.threats = setup.threatKeys.map((key, i) => {
+      const local = THREAT_PATTERNS[key]();
+      const p = carLocalToWorld(state.frontCar, local);
+      return {
+        id: i + 1,
+        x: clamp(p.x, -WORLD_BOUND, WORLD_BOUND),
+        y: clamp(p.y, -WORLD_BOUND, WORLD_BOUND),
+        // Fuzil sorteado com menor frequência — a maioria das abordagens
+        // reais envolve arma curta, mas o cenário ocasionalmente força a
+        // decisão mais crítica (colunas/rodas deixam de valer como cobertura).
+        weapon: Math.random() < 0.25 ? "fuzil" : "curta"
+      };
+    });
+
+    state.officers = Array.from({ length: officerCount }, (_, i) => {
+      const seat = getOfficerSeatWorld(i, state.viatura);
+      return {
+        id: i + 1,
+        x: clamp(seat.x, -WORLD_BOUND, WORLD_BOUND),
+        y: clamp(seat.y, -WORLD_BOUND, WORLD_BOUND),
+        crouched: false
+      };
+    });
+
+    state.environment = generateEnvironment(state.viatura);
+
+    nextThreatId = state.threats.length + 1;
+    nextOfficerId = state.officers.length + 1;
+
+    training.scenarioId = scenario.id;
+    stopTraining();
+    training.exposedCount = 0;
+    training.coveredCount = 0;
+    training.wasExposed = null;
+    training.firstCoverMs = null;
+    $("trainingExposedCount").textContent = "0";
+    $("trainingCoveredCount").textContent = "0";
+    $("trainingFirstCoverWrap").hidden = true;
+    $("trainingTimer").textContent = "00:00";
+    $("bestAngleReadout").hidden = true;
+
+    render();
+    renderScenarioPicker();
+
+    const envNames = { poste: "poste", arvore: "árvore", parede: "parede" };
+    const envText = state.environment.length
+      ? `elemento(s) de ambiente: ${state.environment.map(e => envNames[e.type]).join(" + ")}`
+      : "sem elemento de ambiente desta vez";
+    const hasFuzil = state.threats.some(t => t.weapon === "fuzil");
+    const weaponText = hasFuzil ? " · ameaça com fuzil 🔫" : "";
+    showToast(`Cenário carregado: ${scenario.label} — ${envText}${weaponText}`);
+  }
+
+  function renderScenarioPicker() {
+    const el = $("scenarioPicker");
+    el.innerHTML = "";
+
+    SCENARIOS.forEach(sc => {
+      const btn = document.createElement("button");
+      btn.className = "scenario-btn" + (training.scenarioId === sc.id ? " active" : "");
+      btn.textContent = sc.label;
+      btn.addEventListener("click", () => applyScenario(sc));
+      el.appendChild(btn);
+    });
+
+    const active = SCENARIOS.find(s => s.id === training.scenarioId);
+    $("trainingObjective").textContent = active
+      ? `Objetivo: ${active.objective}`
+      : "Escolha um cenário acima para uma situação prática guiada, ou clique Iniciar para cronometrar o cenário livre atual.";
+    $("rerollBtn").hidden = !active;
+  }
+
+  function startTraining() {
+    training.active = true;
+    training.startTime = performance.now();
+    training.exposedCount = 0;
+    training.coveredCount = 0;
+    training.wasExposed = null;
+    training.firstCoverMs = null;
+
+    $("trainingStartBtn").hidden = true;
+    $("trainingStopBtn").hidden = false;
+    $("trainingFirstCoverWrap").hidden = true;
+    $("trainingExposedCount").textContent = "0";
+    $("trainingCoveredCount").textContent = "0";
+
+    if (trainingTimerInterval) clearInterval(trainingTimerInterval);
+    trainingTimerInterval = setInterval(updateTrainingTimerDisplay, 300);
+    updateTrainingTimerDisplay();
+
+    renderPairs();
+    showToast("Treinamento iniciado");
+  }
+
+  function stopTraining() {
+    const wasActive = training.active;
+    training.active = false;
+
+    if (trainingTimerInterval) {
+      clearInterval(trainingTimerInterval);
+      trainingTimerInterval = null;
+    }
+
+    $("trainingStartBtn").hidden = false;
+    $("trainingStopBtn").hidden = true;
+
+    if (wasActive) showToast("Treinamento finalizado — resultado fica na barra até reiniciar");
+  }
+
+  function updateTrainingTimerDisplay() {
+    if (!training.startTime) { $("trainingTimer").textContent = "00:00"; return; }
+    $("trainingTimer").textContent = formatMs(performance.now() - training.startTime);
+  }
+
+  $("trainingToggleBtn").addEventListener("click", () => {
+    $("trainingBar").hidden = !$("trainingBar").hidden;
+  });
+
+  $("trainingStartBtn").addEventListener("click", startTraining);
+  $("trainingStopBtn").addEventListener("click", stopTraining);
+
+  $("rerollBtn").addEventListener("click", () => {
+    const active = SCENARIOS.find(s => s.id === training.scenarioId);
+    if (active) applyScenario(active);
+  });
+
+  renderScenarioPicker();
+
+  $("resetBtn").addEventListener("click", () => {
+    state = cloneDefaultState();
+    nextThreatId = Math.max(...state.threats.map(t => t.id)) + 1;
+    nextOfficerId = Math.max(...state.officers.map(o => o.id)) + 1;
+
+    showEngineCover.checked = true;
+    showPillarCover.checked = true;
+    showWheelCover.checked = true;
+    showContour.checked = true;
+    showExposure.checked = true;
+    showLabels.checked = true;
+
+    training.scenarioId = null;
+    stopTraining();
+    renderScenarioPicker();
+    $("bestAngleReadout").hidden = true;
+
+    render();
+    showToast("Cenário reiniciado");
+  });
+
+  $("fitBtn").addEventListener("click", () => {
+    state.manualZoom = 1;
+    state.panX = 0;
+    state.panY = 0;
+    render();
+    showToast("Visualização reenquadrada");
+  });
+
+  /* ------------------------------------------------------------
+     EXPORT
+  ------------------------------------------------------------ */
+
+  function serializeStageSvg() {
+    const clone = stage.cloneNode(true);
+    clone.setAttribute("width", "900");
+    clone.setAttribute("height", "1300");
+    clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+
+    const style = document.createElementNS(SVG_NS, "style");
+    style.textContent = `
+      text{ font-family: Arial, sans-serif; }
+      .shadow-ray{ fill:none; stroke-width:1.4; stroke-dasharray:9 7; opacity:.82; }
+      .shadow-ray.active{ stroke-width:2.4; stroke-dasharray:none; opacity:1; }
+      .exposure-line{ fill:none; stroke-width:2.6; stroke-dasharray:5 6; opacity:.92; }
+      .actor-halo{ fill:none; stroke-width:3; opacity:.55; }
+    `;
+    clone.insertBefore(style, clone.firstChild);
+
+    return new XMLSerializer().serializeToString(clone);
+  }
+
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function downloadSvgFallback(serialized, message) {
+    downloadBlob(new Blob([serialized], { type: "image/svg+xml;charset=utf-8" }), "vehicle-approach-shielding.svg");
+    showToast(message);
+  }
+
+  function rasterizeSvgToPngBlob(serialized) {
+    return new Promise((resolve, reject) => {
+      const svgBlob = new Blob([serialized], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svgBlob);
+      const image = new Image();
+
+      image.onload = () => {
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = 1800;
+          canvas.height = 2600;
+          const ctx = canvas.getContext("2d");
+          ctx.scale(2, 2);
+          ctx.drawImage(image, 0, 0, 900, 1300);
+          URL.revokeObjectURL(url);
+
+          canvas.toBlob(blob => {
+            if (blob) resolve(blob); else reject(new Error("canvas.toBlob returned null"));
+          }, "image/png");
+        }
+        catch (err) { URL.revokeObjectURL(url); reject(err); }
+      };
+
+      image.onerror = () => { URL.revokeObjectURL(url); reject(new Error("failed to load SVG into Image")); };
+      image.src = url;
+    });
+  }
+
+  $("exportPngBtn").addEventListener("click", async () => {
+    let serialized;
+    try { serialized = serializeStageSvg(); }
+    catch (err) { console.error(err); showToast("Falha ao exportar imagem"); return; }
+
+    try {
+      const blob = await rasterizeSvgToPngBlob(serialized);
+      downloadBlob(blob, "vehicle-approach-shielding.png");
+      showToast("PNG exportado");
+    }
+    catch (err) {
+      console.error("PNG indisponível, exportando SVG:", err);
+      downloadSvgFallback(serialized, "PNG indisponível aqui — SVG exportado no lugar");
+    }
+  });
+
+  $("exportSvgBtn").addEventListener("click", () => {
+    try { downloadSvgFallback(serializeStageSvg(), "SVG exportado"); }
+    catch (err) { console.error(err); showToast("Falha ao exportar SVG"); }
+  });
+
+  /* ------------------------------------------------------------
+     MONTE CARLO VALIDATION
+     Runs N randomized trials per scenario family (reusing the same
+     threat-pattern generators as the training scenarios) and compares, for
+     each, the perimeter-protection score at heading=0 (car parked straight)
+     against the score at the true optimal heading — the statistical basis
+     for claims like "angling ~30-50° usually beats parking straight".
+  ------------------------------------------------------------ */
+
+  function mean(arr) { return arr.reduce((s, v) => s + v, 0) / arr.length; }
+  function median(arr) {
+    const sorted = [...arr].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+  }
+  function stddev(arr) {
+    const m = mean(arr);
+    return Math.sqrt(mean(arr.map(v => (v - m) ** 2)));
+  }
+
+  // One randomized trial from a scenario's own threat-pattern generator,
+  // with the viatura held at the canonical "just parked, heading 0" pose —
+  // the fixed doctrine (carro suspeito à frente, viatura à retaguarda) the
+  // whole comparison is scoped to.
+  function generateMonteCarloTrial(scenario) {
+    const setup = scenario.setup();
+    const viaturaBase = {
+      cx: DEFAULT_STATE.viatura.cx,
+      cy: DEFAULT_STATE.viatura.cy,
+      width: DEFAULT_STATE.viatura.width,
+      length: DEFAULT_STATE.viatura.length,
+      heading: 0
+    };
+    const frontCar = {
+      cx: viaturaBase.cx,
+      cy: viaturaBase.cy - (viaturaBase.length / 2 + DEFAULT_STATE.frontCar.length / 2 + setup.gapM * SCALE),
+      width: DEFAULT_STATE.frontCar.width,
+      length: DEFAULT_STATE.frontCar.length
+    };
+    const threats = setup.threatKeys.map((key, i) => {
+      const local = THREAT_PATTERNS[key]();
+      const p = carLocalToWorld(frontCar, local);
+      return { id: i + 1, x: p.x, y: p.y };
+    });
+    return { viaturaBase, threats };
+  }
+
+  let monteCarloRows = null; // last run's raw per-trial data, for CSV export
+
+  async function runMonteCarlo(trialsPerScenario) {
+    const runBtn = $("mcRunBtn");
+    const exportBtn = $("mcExportBtn");
+    const progress = $("mcProgress");
+    const resultsEl = $("mcResults");
+
+    runBtn.disabled = true;
+    exportBtn.disabled = true;
+    resultsEl.hidden = true;
+    resultsEl.innerHTML = "";
+
+    const margin = ACTOR_CAR_MARGIN + 15;
+    const rows = [];
+    const total = trialsPerScenario * SCENARIOS.length;
+    let done = 0;
+
+    // This validation is specifically about the viatura's own cover
+    // (motor/coluna/roda) vs. its angle — not whatever poste/árvore/parede
+    // the current on-screen scene happens to have. Suspend them for the run.
+    const savedEnvironment = state.environment;
+    state.environment = [];
+
+    try {
+      for (const scenario of SCENARIOS) {
+        for (let i = 0; i < trialsPerScenario; i++) {
+          const { viaturaBase, threats } = generateMonteCarloTrial(scenario);
+          const baseline = scoreHeadingFor(viaturaBase, threats, 0, margin);
+          const best = searchBestHeadingFor(viaturaBase, threats, 0);
+
+          const baselinePct = baseline.totalSamples ? (baseline.score / baseline.totalSamples) * 100 : 0;
+          const bestPct = best.totalSamples ? (best.score / best.totalSamples) * 100 : 0;
+
+          rows.push({
+            scenario: scenario.label,
+            angle: best.heading,
+            absAngle: Math.abs(best.heading),
+            baselinePct,
+            bestPct,
+            gainPct: bestPct - baselinePct,
+            anySolutionAt0: baseline.score > 0,
+            anySolutionAtBest: best.score > 0
+          });
+
+          done++;
+          if (done % 15 === 0) {
+            progress.textContent = `Rodando... ${done}/${total}`;
+            await new Promise(r => setTimeout(r, 0));
+          }
+        }
+      }
+    } finally {
+      state.environment = savedEnvironment;
+    }
+
+    progress.textContent = `Concluído: ${total} simulações.`;
+    monteCarloRows = rows;
+    renderMonteCarloResults(rows, trialsPerScenario);
+    runBtn.disabled = false;
+    exportBtn.disabled = false;
+  }
+
+  function renderMonteCarloResults(rows, trialsPerScenario) {
+    const el = $("mcResults");
+    el.hidden = false;
+
+    const groups = SCENARIOS.map(sc => rows.filter(r => r.scenario === sc.label));
+
+    function summarize(rowSet) {
+      const absAngles = rowSet.map(r => r.absAngle);
+      const gains = rowSet.map(r => r.gainPct);
+      const solvedAtBest = rowSet.filter(r => r.anySolutionAtBest).length;
+      const helped = rowSet.filter(r => r.gainPct > 5).length;
+      return {
+        n: rowSet.length,
+        angleMean: mean(absAngles),
+        angleMedian: median(absAngles),
+        angleStd: stddev(absAngles),
+        gainMean: mean(gains),
+        solvedAtBestPct: (solvedAtBest / rowSet.length) * 100,
+        helpedPct: (helped / rowSet.length) * 100
+      };
+    }
+
+    const rowsHtml = SCENARIOS.map((sc, i) => {
+      const s = summarize(groups[i]);
+      return `<tr>
+        <td>${sc.label}</td>
+        <td>${s.n}</td>
+        <td>${s.angleMean.toFixed(0)}° ± ${s.angleStd.toFixed(0)}°</td>
+        <td>${s.angleMedian.toFixed(0)}°</td>
+        <td>${s.gainMean >= 0 ? "+" : ""}${s.gainMean.toFixed(1)} pp</td>
+        <td>${s.helpedPct.toFixed(0)}%</td>
+        <td>${s.solvedAtBestPct.toFixed(0)}%</td>
+      </tr>`;
+    }).join("");
+
+    const overall = summarize(rows);
+    const overallHtml = `<tr class="mc-overall">
+      <td>Geral (todos os cenários)</td>
+      <td>${overall.n}</td>
+      <td>${overall.angleMean.toFixed(0)}° ± ${overall.angleStd.toFixed(0)}°</td>
+      <td>${overall.angleMedian.toFixed(0)}°</td>
+      <td>${overall.gainMean >= 0 ? "+" : ""}${overall.gainMean.toFixed(1)} pp</td>
+      <td>${overall.helpedPct.toFixed(0)}%</td>
+      <td>${overall.solvedAtBestPct.toFixed(0)}%</td>
+    </tr>`;
+
+    const buckets = [[0, 15], [15, 30], [30, 45], [45, 60], [60, 90], [90, 180]];
+    const histHtml = buckets.map(([lo, hi]) => {
+      const count = rows.filter(r => r.absAngle >= lo && r.absAngle < hi).length;
+      const pct = (count / rows.length) * 100;
+      return `<div class="mc-hist-row">
+        <span class="mc-hist-label">${lo}°–${hi}°</span>
+        <span class="mc-hist-bar-wrap"><span class="mc-hist-bar" style="width:${pct}%"></span></span>
+        <span class="mc-hist-count">${count} (${pct.toFixed(0)}%)</span>
+      </div>`;
+    }).join("");
+
+    el.innerHTML = `
+      <p class="mc-note">
+        Cada linha: ${trialsPerScenario} cenários sorteados por padrão de abordagem (viatura e carro abordado
+        seguindo a doutrina fixa — carro à frente, viatura à retaguarda), comparando o ponto ótimo encontrado
+        contra a viatura estacionada reta (0°). "Angular ajudou" conta cenários em que o ângulo ótimo ganhou
+        mais de 5 pontos percentuais de perímetro protegido sobre 0°. "Solução total" é a fração de cenários
+        em que existe pelo menos um ponto 100% protegido de todas as ameaças no ângulo ótimo.
+      </p>
+      <table class="mc-table">
+        <thead><tr>
+          <th>Cenário</th><th>N</th><th>Ângulo ótimo (|°|)</th><th>Mediana</th>
+          <th>Ganho médio</th><th>Angular ajudou</th><th>Solução total</th>
+        </tr></thead>
+        <tbody>${rowsHtml}${overallHtml}</tbody>
+      </table>
+      <p class="mc-hist-title">Distribuição do ângulo ótimo (valor absoluto, todos os cenários)</p>
+      ${histHtml}
+    `;
+  }
+
+  function exportMonteCarloCsv() {
+    if (!monteCarloRows) return;
+    const header = "cenario,angulo_otimo_deg,protecao_0_pct,protecao_otima_pct,ganho_pp,solucao_total_em_0,solucao_total_no_otimo\n";
+    const body = monteCarloRows.map(r => [
+      r.scenario.replace(/,/g, ";"),
+      r.angle,
+      r.baselinePct.toFixed(2),
+      r.bestPct.toFixed(2),
+      r.gainPct.toFixed(2),
+      r.anySolutionAt0 ? 1 : 0,
+      r.anySolutionAtBest ? 1 : 0
+    ].join(",")).join("\n");
+
+    downloadBlob(new Blob([header + body], { type: "text/csv;charset=utf-8" }), "monte-carlo-angulo-otimo.csv");
+    showToast("CSV exportado");
+  }
+
+  $("mcRunBtn").addEventListener("click", () => {
+    const n = clamp(parseInt($("mcTrials").value, 10) || 100, 20, 500);
+    runMonteCarlo(n);
+  });
+
+  $("mcExportBtn").addEventListener("click", exportMonteCarloCsv);
+
+  /* ------------------------------------------------------------
+     INITIALIZATION
+  ------------------------------------------------------------ */
+
+  threatsLayer.replaceChildren();
+  officersLayer.replaceChildren();
+  $("geometryLayer").replaceChildren();
+  officerList.replaceChildren();
+  threatList.replaceChildren();
+
+  render();
+})();
+</script>
+
+
+
+</body></html>
