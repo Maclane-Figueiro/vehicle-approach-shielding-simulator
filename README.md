@@ -1,5 +1,7 @@
 # Vehicle Approach Shielding Simulator
 
+[![DOI](https://zenodo.org/badge/1382563614.svg)](https://doi.org/10.5281/zenodo.22907833)
+
 Interactive training simulator for police tactical positioning and vehicle engine-block cover during vehicle approaches.
 
 ## Author
