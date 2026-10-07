@@ -1042,6 +1042,20 @@ input[type=range]{ accent-color:#68f477; }
   .report-sheet h2 { page-break-after: avoid; }
   .report-sheet table { page-break-inside: avoid; }
 }
+/* ===== POSICIONAMENTO POR VOZ ===== */
+.voice-bar{padding:12px 14px;border-bottom:1px solid #323940;background:#151e1a}
+.voice-head{display:flex;flex-wrap:wrap;gap:9px;align-items:baseline;margin-bottom:10px}
+.voice-head strong{color:#aaffb5;font-size:14px}
+.voice-head span{color:#aeb7bc;font-size:12px}
+.voice-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.voice-actions select,.voice-actions input{height:36px;border:1px solid #46554b;border-radius:8px;background:#101613;color:#eef2f4;padding:6px 9px;font-size:14px}
+.voice-actions input{flex:1 1 260px;min-width:150px}
+.voice-bar p{margin:9px 0;color:#c3d0c6;font-size:13px;line-height:1.45}
+.voice-shortcuts{display:flex;flex-wrap:wrap;gap:6px}
+.voice-shortcuts button{padding:7px 9px;border:1px solid #3a5846;border-radius:7px;background:#1d3024;color:#dbf7df;cursor:pointer;font-size:12px}
+.voice-shortcuts button:hover{background:#294c33}
+@media(max-width:620px){.voice-actions select{flex:1}.voice-actions input{flex-basis:100%}}
+
 /* ===== SELETOR DE IDIOMA ===== */
 .topbar-right{
   display:flex;
@@ -1101,6 +1115,7 @@ input[type=range]{ accent-color:#68f477; }
   #stage{ min-height:510px; }
 }
 </style>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%23131719'/%3E%3Cpath d='M13 44 32 13 51 44' fill='none' stroke='%2372ff75' stroke-width='8'/%3E%3C/svg%3E">
 </head>
 
 <body>
@@ -1141,6 +1156,19 @@ input[type=range]{ accent-color:#68f477; }
         <button class="btn" id="loadSceneBtn" title="Carregar cena salva no navegador">📂 Carregar cena</button>
         <span class="toolbar-separator"></span>
         <button class="btn" id="trainingToggleBtn">🎯 Modo Treinamento</button>
+      </div>
+
+      <div class="voice-bar" aria-label="Comandos de voz">
+        <div class="voice-head"><strong>🎙 Posicionamento por voz</strong><span id="voiceSupport"></span></div>
+        <div class="voice-actions">
+          <button class="btn primary" id="voiceBtn" type="button" aria-pressed="false"></button>
+          <select id="voiceOfficer" aria-label="Oficial controlado por voz"></select>
+          <select id="voiceThreat" aria-label="Ameaça de referência"></select>
+          <input id="voiceText" type="text" aria-label="Comando de posicionamento" placeholder="Ex.: atrás da roda dianteira direita">
+          <button class="btn" id="voiceSend" type="button">Executar</button>
+        </div>
+        <p id="voiceFeedback" role="status" aria-live="polite"></p>
+        <div class="voice-shortcuts" id="voiceShortcuts"></div>
       </div>
 
       <div class="training-bar" id="trainingBar">
@@ -1437,7 +1465,7 @@ input[type=range]{ accent-color:#68f477; }
           arma curta não testada, tratada como resistente por inferência.
           <br>• <strong>Parede de bloco</strong> — resiste a arma curta, mas
           <strong>não</strong> resiste a fuzil (testado: 1 disparo atravessou).
-          <br>• <strong>Coluna</strong> — não testada; hipótese do usuário (pendente de
+          <br>• <strong>Coluna</strong> — não testada; hipótese do autor (pendente de
           validação) de que só protege arma curta. Fuzil já considerado capaz de
           perfurar.
           <br>• <strong>Roda</strong> — não testada; testes de campo pendentes. Hoje
@@ -1607,7 +1635,15 @@ input[type=range]{ accent-color:#68f477; }
     "Remover ameaça": "Remove threat",
     // cena (SVG)
     "Arraste para girar o ícone no próprio eixo": "Drag to spin the icon in place",
-    "EXPOSTO": "EXPOSED"
+    "EXPOSTO": "EXPOSED",
+    // barra de voz
+    "Comandos de voz": "Voice commands",
+    "🎙 Posicionamento por voz": "🎙 Voice positioning",
+    "Oficial controlado por voz": "Officer controlled by voice",
+    "Ameaça de referência": "Reference threat",
+    "Comando de posicionamento": "Positioning command",
+    "Ex.: atrás da roda dianteira direita": "e.g. behind the front right wheel",
+    "Executar": "Run"
   };
 
   const HTML_I18N = {
@@ -1634,7 +1670,7 @@ input[type=range]{ accent-color:#68f477; }
       "as \"short-term\" cover against rifle); handgun not tested, treated as resistant by inference." +
       "<br>• <strong>Block wall</strong> — resists handgun, but <strong>does not</strong> resist " +
       "rifle (tested: 1 shot went through)." +
-      "<br>• <strong>Pillar</strong> — not tested; the user's hypothesis (pending field validation) " +
+      "<br>• <strong>Pillar</strong> — not tested; the author's hypothesis (pending field validation) " +
       "is that it only protects against handguns. Rifle is already treated as capable of penetrating it." +
       "<br>• <strong>Wheel</strong> — not tested; field tests pending. For now it counts as cover " +
       "for both calibers, until real data exists."
@@ -1729,6 +1765,8 @@ input[type=range]{ accent-color:#68f477; }
     renderBestAngleReadout();
     renderMcProgress();
     if (lastMonteCarlo) renderMonteCarloResults(lastMonteCarlo.rows, lastMonteCarlo.trialsPerScenario);
+    else renderMcEmpty();
+    renderVoiceChrome();
     if ($("reportOverlay").classList.contains("open")) openReport();
     render();
 
@@ -1736,6 +1774,7 @@ input[type=range]{ accent-color:#68f477; }
   }
 
   const SVG_NS = "http://www.w3.org/2000/svg";
+  const OFFICER_NAMES = ["Steve", "Mike", "Joe", "Billy"];
   const SCALE = 100; // px per meter (also: 1 px = 1 cm for cm-based fields)
   const MAX_THREATS = 4;
   const MAX_OFFICERS = 4;
@@ -1831,8 +1870,8 @@ input[type=range]{ accent-color:#68f477; }
       curta: "hipotese",
       fuzil: "nao_resiste",
       note: {
-        pt: "Não testada neste relatório. Hipótese do usuário (pendente de validação em campo): só protege arma curta, e só em ângulo quase longitudinal — a ferramenta ainda não aplica a restrição de ângulo. Fuzil considerado capaz de perfurar.",
-        en: "Not tested in this report. User's hypothesis (pending field validation): only protects against handguns, and only at a near-longitudinal angle — the tool doesn't yet apply the angle restriction. Rifle is treated as capable of penetrating it."
+        pt: "Não testada neste relatório. Hipótese do autor (pendente de validação em campo): só protege arma curta, e só em ângulo quase longitudinal — a ferramenta ainda não aplica a restrição de ângulo. Fuzil considerado capaz de perfurar.",
+        en: "Not tested in this report. Author's hypothesis (pending field validation): only protects against handguns, and only at a near-longitudinal angle — the tool doesn't yet apply the angle restriction. Rifle is treated as capable of penetrating it."
       }
     },
     roda: {
@@ -1868,10 +1907,14 @@ input[type=range]{ accent-color:#68f477; }
     ],
 
     officers: [
-      { id: 1, x: 309, y: 910, crouched: false }
+      { id: 1, name: "Steve", x: 309, y: 910, crouched: false }
     ],
 
-    environment: [],
+    environment: [
+      { id: 1, type: "arvore", cx: 95, cy: 670, heading: 0 },
+      { id: 2, type: "poste", cx: 830, cy: 720, heading: 0 },
+      { id: 3, type: "parede", cx: 75, cy: 1180, heading: 0 }
+    ],
 
     manualZoom: 1,
     panX: 0,
@@ -2742,7 +2785,9 @@ input[type=range]{ accent-color:#68f477; }
       n.halo.setAttribute("stroke", color);
       n.tip.setAttribute("fill", color);
       n.labelBg.setAttribute("fill", color);
-      n.labelText.textContent = `${labelPrefix} ${index + 1}${a.weapon === "fuzil" ? " 🔫" : ""}`;
+      n.labelText.textContent = kind === "officer"
+        ? (a.name || OFFICER_NAMES[index])
+        : `${labelPrefix} ${index + 1}${a.weapon === "fuzil" ? " 🔫" : ""}`;
       n.rotateHandle.setAttribute("fill", color);
     });
   }
@@ -3039,7 +3084,7 @@ input[type=range]{ accent-color:#68f477; }
       const summary = officerSummary.get(o.id) || { exposedCount: 0, shieldLabel: null };
 
       n.dot.style.background = color;
-      n.name.textContent = `${L("Oficial", "Officer")} ${index + 1}`;
+      n.name.textContent = `${L("Oficial", "Officer")} ${index + 1} · ${o.name || OFFICER_NAMES[index]}`;
 
       if (summary.exposedCount > 0) {
         n.badge.textContent = L(`cabeça exposta a ${summary.exposedCount}`, `head exposed to ${summary.exposedCount}`);
@@ -3331,9 +3376,11 @@ input[type=range]{ accent-color:#68f477; }
     }
 
     const seat = getOfficerSeatWorld(state.officers.length, state.viatura);
+    const name = OFFICER_NAMES.find(c => !state.officers.some(o => o.name === c)) || OFFICER_NAMES[state.officers.length];
 
     state.officers.push({
       id: nextOfficerId++,
+      name,
       x: clamp(seat.x, -WORLD_BOUND, WORLD_BOUND),
       y: clamp(seat.y, -WORLD_BOUND, WORLD_BOUND),
       crouched: false
@@ -3341,7 +3388,7 @@ input[type=range]{ accent-color:#68f477; }
 
     render();
     const seatLabel = tx(OFFICER_SEAT_LOCAL[(state.officers.length - 1) % OFFICER_SEAT_LOCAL.length].label);
-    showToast(L(`Oficial ${state.officers.length} adicionado — ${seatLabel}`, `Officer ${state.officers.length} added — ${seatLabel}`));
+    showToast(L(`${name} adicionado — ${seatLabel}`, `${name} added — ${seatLabel}`));
   }
 
   function removeOfficer(id) {
@@ -3535,6 +3582,7 @@ input[type=range]{ accent-color:#68f477; }
   }
 
   function renderNow() {
+    updateVoiceSelectors();
     keepActorsClearOfCars();
 
     reconcileActorDom(state.threats, threatNodes, threatsLayer, threatColor, L("AMEAÇA", "THREAT"), "threat", onActorPointerDown("threat"));
@@ -3970,6 +4018,7 @@ input[type=range]{ accent-color:#68f477; }
       const seat = getOfficerSeatWorld(i, state.viatura);
       return {
         id: i + 1,
+        name: OFFICER_NAMES[i],
         x: clamp(seat.x, -WORLD_BOUND, WORLD_BOUND),
         y: clamp(seat.y, -WORLD_BOUND, WORLD_BOUND),
         crouched: false
@@ -4173,7 +4222,12 @@ input[type=range]{ accent-color:#68f477; }
     if (data.engine) Object.assign(fresh.engine, data.engine);
     if (typeof data.pillarWidth === "number") fresh.pillarWidth = data.pillarWidth;
     fresh.threats = Array.isArray(data.threats) ? data.threats.map(t => ({ ...t })) : fresh.threats;
-    fresh.officers = Array.isArray(data.officers) ? data.officers.map(o => ({ ...o })) : fresh.officers;
+    fresh.officers = Array.isArray(data.officers)
+      ? data.officers.map((o, i) => {
+          const n = o.name === "Stive" ? "Steve" : o.name;
+          return { ...o, name: n || OFFICER_NAMES[i] };
+        })
+      : fresh.officers;
     fresh.environment = Array.isArray(data.environment) ? data.environment.map(e => ({ ...e })) : [];
 
     if (fresh.threats.length < MIN_ACTORS) { showToast(L("Cena inválida: sem ameaças", "Invalid scene: no threats")); return; }
@@ -4524,7 +4578,7 @@ function buildReportHTML() {
 
   const renderRows = rows => rows.map(r => `
     <tr>
-      <td>${L("Oficial", "Officer")} ${r.officerIdx}</td>
+      <td>${L("Oficial", "Officer")} ${r.officerIdx}${state.officers[r.officerIdx - 1]?.name ? " · " + escapeHtml(state.officers[r.officerIdx - 1].name) : ""}</td>
       <td>${r.stance}</td>
       <td>${L("Ameaça", "Threat")} ${r.threatIdx}</td>
       <td>${reportWeaponLabel(r.weapon)}</td>
@@ -4545,7 +4599,8 @@ function buildReportHTML() {
 
   const R = { resiste: L("Resiste", "Resists"), transfixa: L("Transfixa", "Penetrates"),
     naoResiste: L("Não resiste", "Does not resist"), hipotese: L("Hipótese (não testada)", "Hypothesis (not tested)"),
-    satura: L("Cede sob saturação", "Fails under saturation") };
+    satura: L("Cede sob saturação", "Fails under saturation"),
+    inferido: L("Resiste (inferido)", "Resists (inferred)") };
 
   const ballisticsRows = [
     [L("Motor do veículo", "Vehicle engine"), R.resiste, R.resiste,
@@ -4554,18 +4609,18 @@ function buildReportHTML() {
     [L("Porta / lataria", "Door / body panel"), R.transfixa, R.transfixa,
       L("Um único disparo de 9 mm transfixou as duas portas.",
         "A single 9 mm round went through both doors.")],
-    [L("Tronco de árvore (≥50 cm)", "Tree trunk (≥50 cm)"), R.resiste, R.resiste,
-      L("Parou fogo sustentado dos dois calibres de fuzil testados.",
-        "Stopped sustained fire from both rifle calibers tested.")],
-    [L("Poste de concreto armado", "Reinforced concrete pole"), R.resiste, R.satura,
-      L("Resiste a 7,62 e 5,56 em disparo único; transfixado com 3 tiros de 7,62 ou 6 de 5,56 no mesmo ponto.",
-        "Resists 7.62 and 5.56 on a single shot; penetrated by 3 rounds of 7.62 or 6 of 5.56 at the same point.")],
-    [L("Parede de bloco rebocada", "Plastered block wall"), R.naoResiste, R.naoResiste,
-      L("Um único disparo de 7,62 ou 5,56 atravessou completamente.",
-        "A single 7.62 or 5.56 round went completely through.")],
+    [L("Tronco de árvore (≥50 cm)", "Tree trunk (≥50 cm)"), R.inferido, R.resiste,
+      L("Parou fogo sustentado de fuzil 7,62/5,56 e carabina .30. Arma curta não testada — inferida por ser o anteparo mais resistente do teste.",
+        "Stopped sustained 7.62/5.56 rifle and .30 carbine fire. Handgun not tested — inferred, as the most resistant barrier in the test.")],
+    [L("Poste de concreto armado", "Reinforced concrete pole"), R.inferido, R.satura,
+      L("Resiste a 7,62 e 5,56 em disparo único; transfixado com 3 tiros de 7,62 ou 6 de 5,56 no mesmo ponto. Arma curta não testada — inferida, por ser mais fraca que o fuzil já contido.",
+        "Resists 7.62 and 5.56 on a single shot; penetrated by 3 rounds of 7.62 or 6 of 5.56 at the same point. Handgun not tested — inferred, being weaker than the rifle already stopped.")],
+    [L("Parede de bloco rebocada", "Plastered block wall"), R.resiste, R.naoResiste,
+      L("Deteve pistola, revólver, carabina .30 e espingarda (só perfuração da 1ª face). Um único disparo de 7,62 ou 5,56 atravessou completamente.",
+        "Stopped pistol, revolver, .30 carbine and shotgun (only 1st-face perforation). A single 7.62 or 5.56 round went completely through.")],
     [L("Coluna A/B/C", "A/B/C pillar"), R.hipotese, R.naoResiste,
-      L("Não testada. Hipótese do usuário: protege arma curta em ângulo longitudinal.",
-        "Not tested. User's hypothesis: protects against handgun at a longitudinal angle.")],
+      L("Não testada. Hipótese do autor: protege arma curta em ângulo longitudinal.",
+        "Not tested. Author's hypothesis: protects against handgun at a longitudinal angle.")],
     [L("Roda", "Wheel"), R.hipotese, R.hipotese,
       L("Não testada no relatório AGSP 2017.", "Not tested in the AGSP 2017 report.")]
   ].map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join("");
@@ -4813,7 +4868,14 @@ document.addEventListener("keydown", e => {
   let monteCarloRows = null;
   let lastMonteCarlo = null;
   // estado do texto de progresso, para reescrever ao trocar de idioma
-  let mcProgressState = { kind: "done", total: 400 };
+  let mcProgressState = null;
+
+  function renderMcEmpty() {
+    $("mcResults").innerHTML = `<p class="mc-note">${L(
+      "Nenhuma simulação executada ainda. Escolha o número de simulações por cenário e clique em “Rodar simulação” — os resultados são calculados na hora, neste navegador.",
+      "No simulation run yet. Choose the number of simulations per scenario and click “Run simulation” — results are computed on the spot, in this browser."
+    )}</p>`;
+  }
 
   function renderMcProgress() {
     const p = $("mcProgress");
@@ -4968,7 +5030,10 @@ document.addEventListener("keydown", e => {
   }
 
   function exportMonteCarloCsv() {
-    if (!monteCarloRows) return;
+    if (!monteCarloRows) {
+      showToast(L("Rode a simulação antes de exportar", "Run the simulation before exporting"));
+      return;
+    }
     const header = L(
       "cenario,angulo_otimo_deg,protecao_0_pct,protecao_otima_pct,ganho_pp,solucao_total_em_0,solucao_total_no_otimo\n",
       "scenario,optimal_angle_deg,protection_0_pct,protection_optimal_pct,gain_pp,full_solution_at_0,full_solution_at_optimal\n"
@@ -4994,17 +5059,371 @@ document.addEventListener("keydown", e => {
 
   $("mcExportBtn").addEventListener("click", exportMonteCarloCsv);
 
-  // Popula a seção de Monte Carlo com um resultado inicial "de exemplo"
-  // (mesmos números que estavam hardcoded no HTML original).
-  renderMonteCarloResults(
-    [
-      ...Array.from({ length: 100 }, (_, i) => ({ scenarioId: "padrao", absAngle: 9, gainPct: 9.1, anySolutionAtBest: true })),
-      ...Array.from({ length: 100 }, () => ({ scenarioId: "angulo", absAngle: 10, gainPct: 20.3, anySolutionAtBest: true })),
-      ...Array.from({ length: 100 }, () => ({ scenarioId: "multiplas", absAngle: 26, gainPct: 20.6, anySolutionAtBest: true })),
-      ...Array.from({ length: 100 }, () => ({ scenarioId: "retaguarda", absAngle: 24, gainPct: 11.1, anySolutionAtBest: true }))
-    ],
-    100
-  );
+  renderMcEmpty();
+
+  /* ------------------------------------------------------------
+     POSICIONAMENTO POR VOZ / VOICE POSITIONING
+     O destino é sempre calculado em relação à ameaça escolhida,
+     nunca por direções fixas da tela. Aceita comandos em PT e EN.
+  ------------------------------------------------------------ */
+
+  const voiceNormalize = value => value.toLowerCase().normalize("NFD")
+    .replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+
+  const VOICE_SHORTCUTS = [
+    { pt: ["Roda dianteira direita", "atrás da roda dianteira direita"], en: ["Front right wheel", "behind the front right wheel"] },
+    { pt: ["Roda dianteira esquerda", "atrás da roda dianteira esquerda"], en: ["Front left wheel", "behind the front left wheel"] },
+    { pt: ["Motor", "atrás do motor"], en: ["Engine", "behind the engine"] },
+    { pt: ["Árvore", "atrás da árvore"], en: ["Tree", "behind the tree"] },
+    { pt: ["Poste", "atrás do poste"], en: ["Pole", "behind the pole"] },
+    { pt: ["Parede", "atrás da parede"], en: ["Wall", "behind the wall"] },
+    { pt: ["Viatura", "atrás da viatura"], en: ["Patrol car", "behind the patrol car"] }
+  ];
+
+  // Mensagem atual guardada nos dois idiomas, para reescrever ao trocar de idioma.
+  let voiceMessage = null;
+  let voiceListening = false;
+  let voiceRecognition = null;
+
+  function voiceHelpText() {
+    return {
+      pt: "Diga “Steve, vá para a árvore” ou “Mike, atrás do poste”. Sem nome ou número, move o oficial selecionado. “Atrás” é sempre em relação à ameaça escolhida.",
+      en: "Say “Steve, go to the tree” or “Mike, behind the pole”. With no name or number, the selected officer moves. “Behind” is always relative to the chosen threat."
+    };
+  }
+
+  function voiceFeedback(pt, en) {
+    voiceMessage = { pt, en: en ?? pt };
+    $("voiceFeedback").textContent = tx(voiceMessage);
+  }
+
+  function renderVoiceShortcuts() {
+    const box = $("voiceShortcuts");
+    box.replaceChildren();
+    VOICE_SHORTCUTS.forEach(s => {
+      const [label, command] = s[LANG] || s.pt;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = label;
+      btn.addEventListener("click", () => {
+        $("voiceText").value = command;
+        runVoiceCommand(command);
+      });
+      box.appendChild(btn);
+    });
+  }
+
+  function renderVoiceChrome() {
+    const btn = $("voiceBtn");
+    btn.textContent = voiceListening ? L("Ouvindo…", "Listening…") : L("Iniciar escuta", "Start listening");
+    $("voiceSupport").textContent = voiceRecognition
+      ? L("Toque para falar ou digite um comando.", "Tap to speak or type a command.")
+      : L(
+          "Voz indisponível neste navegador. Use o ditado do teclado no campo de texto ou os botões.",
+          "Voice not available in this browser. Use keyboard dictation in the text field or the buttons."
+        );
+    if (voiceRecognition) voiceRecognition.lang = LANG === "en" ? "en-US" : "pt-BR";
+    renderVoiceShortcuts();
+    updateVoiceSelectors();
+    $("voiceFeedback").textContent = tx(voiceMessage || voiceHelpText());
+  }
+
+  function updateVoiceSelectors() {
+    const update = (id, actors, noun) => {
+      const select = $(id), previous = select.value;
+      select.replaceChildren();
+      actors.forEach((actor, i) => {
+        const option = document.createElement("option");
+        option.value = String(actor.id);
+        option.textContent = noun + " " + (i + 1) + (id === "voiceOfficer" ? " · " + (actor.name || OFFICER_NAMES[i]) : "");
+        select.appendChild(option);
+      });
+      if (actors.some(a => String(a.id) === previous)) select.value = previous;
+    };
+    update("voiceOfficer", state.officers, L("Oficial", "Officer"));
+    update("voiceThreat", state.threats, L("Ameaça", "Threat"));
+  }
+
+  function voiceTarget(command, threat) {
+    const q = voiceNormalize(command);
+    if (/\b(agach|abaix|crouch|duck|kneel)/.test(q)) return { stance: true };
+    if (/\b(levant|em pe|fique de pe|stand up|standing|get up)/.test(q)) return { stance: false };
+
+    if (/\b(roda|pneu|wheel|tire|tyre)/.test(q)) {
+      const front = /dianteir|frente|front/.test(q);
+      const rear = /traseir|retaguarda|rear/.test(q);
+      const right = /direit|right/.test(q), left = /esquerd|left/.test(q);
+      if ((!front && !rear) || (!right && !left) || (right && left)) {
+        return { error: {
+          pt: "Diga dianteira ou traseira, e direita ou esquerda.",
+          en: "Say front or rear, and right or left."
+        } };
+      }
+      const index = (rear ? 2 : 0) + (right ? 1 : 0);
+      const wheel = getWheelObjects(state.viatura)[index];
+      const w = wheel.labelI18n || { pt: wheel.label, en: wheel.label };
+      return { object: { ...wheel, requiresCrouch: true }, label: { pt: "da " + w.pt, en: "the " + w.en } };
+    }
+
+    if (/\b(motor|cofre|engine|hood|bonnet)/.test(q)) {
+      return {
+        object: { corners: getEngineCorners(state.viatura), ratingKey: "motor", requiresCrouch: true },
+        label: { pt: "do motor", en: "the engine" }
+      };
+    }
+
+    const type = /arvor|tree/.test(q) ? "arvore" : /poste|pole/.test(q) ? "poste" : /pared|muro|wall/.test(q) ? "parede" : null;
+    if (type) {
+      const names = {
+        arvore: { pt: "da árvore", en: "the tree", none: { pt: "Não há árvore nesta cena.", en: "There is no tree in this scene." } },
+        poste: { pt: "do poste", en: "the pole", none: { pt: "Não há poste nesta cena.", en: "There is no pole in this scene." } },
+        parede: { pt: "da parede", en: "the wall", none: { pt: "Não há parede nesta cena.", en: "There is no wall in this scene." } }
+      }[type];
+      const options = getEnvironmentCoverObjects().filter(o => o.ratingKey === type);
+      if (!options.length) {
+        return { error: {
+          pt: names.none.pt + " Carregue outra cena ou reposicione um elemento existente.",
+          en: names.none.en + " Load another scene or reposition an existing element."
+        } };
+      }
+      const distToThreat = o => {
+        const c = objectCentroid(o);
+        return Math.hypot(c.x - threat.x, c.y - threat.y);
+      };
+      options.sort((a, b) => distToThreat(a) - distToThreat(b));
+      return { object: options[0], label: { pt: names.pt, en: names.en } };
+    }
+
+    if (/\b(viatura|carro|veiculo|car|vehicle|patrol|cruiser)/.test(q)) {
+      const car = /abordad|suspeit|stopped|suspect/.test(q) ? state.frontCar : state.viatura;
+      const c = [
+        { x: -car.width / 2, y: -car.length / 2 }, { x: car.width / 2, y: -car.length / 2 },
+        { x: -car.width / 2, y: car.length / 2 }, { x: car.width / 2, y: car.length / 2 }
+      ].map(v => carLocalToWorld(car, v));
+      return {
+        object: { corners: c, ratingKey: null, requiresCrouch: false },
+        label: car === state.viatura
+          ? { pt: "da viatura", en: "the patrol car" }
+          : { pt: "do carro abordado", en: "the stopped vehicle" },
+        visualOnly: true
+      };
+    }
+
+    return { error: {
+      pt: "Comando não reconhecido. Experimente “atrás da roda dianteira direita” ou toque em um dos botões.",
+      en: "Command not recognized. Try “behind the front right wheel” or tap one of the buttons."
+    } };
+  }
+
+  function positionFromThreat(obj, threat, officer) {
+    const center = objectCentroid(obj);
+    const dx = center.x - threat.x, dy = center.y - threat.y;
+    const length = Math.hypot(dx, dy);
+    if (length < 2) return null;
+    const ux = dx / length, uy = dy / length;
+    const radius = obj.shape === "circle" ? obj.radius
+      : Math.max(...obj.corners.map(p => Math.hypot(p.x - center.x, p.y - center.y)));
+    const geometry = geometryForObject(threat, obj);
+    if (!geometry) return null;
+    const candidates = [];
+    const activeObjects = getActiveCoverObjects();
+    const clearance = 12; // mantém a cabeça com folga dentro da sombra escolhida
+    // Motor e rodas ficam dentro do contorno do carro: a busca vai além do
+    // veículo inteiro, não só alguns centímetros além do componente.
+    for (let offset = radius + 48; offset <= 1500; offset += 16) {
+      for (let lateral = -200; lateral <= 200; lateral += 16) {
+        const p = { x: center.x + ux * offset - uy * lateral, y: center.y + uy * offset + ux * lateral };
+        if (isInsideCar(state.viatura, p, ACTOR_CAR_MARGIN + 8) ||
+            isInsideCar(state.frontCar, p, ACTOR_CAR_MARGIN + 8)) continue;
+        if (Math.abs(p.x) > WORLD_BOUND || Math.abs(p.y) > WORLD_BOUND) continue;
+        if (!isPointShielded(threat, p, geometry)) continue;
+        const insideShadow = [
+          { x: p.x + clearance, y: p.y }, { x: p.x - clearance, y: p.y },
+          { x: p.x, y: p.y + clearance }, { x: p.x, y: p.y - clearance }
+        ].every(sample => isPointShielded(threat, sample, geometry));
+        if (!insideShadow) continue;
+        const crouched = officer.crouched || !!obj.requiresCrouch;
+        const exposedTo = state.threats.filter(t =>
+          !findShield(t, p, crouched, objectsForWeapon(activeObjects, t.weapon || "curta"))
+        );
+        candidates.push({ p, exposedTo, score: Math.hypot(p.x - officer.x, p.y - officer.y) });
+      }
+    }
+    candidates.sort((a, b) => a.exposedTo.length - b.exposedTo.length || a.score - b.score);
+    return candidates[0] || null;
+  }
+
+  function runVoiceCommand(raw) {
+    const command = voiceNormalize(raw || "");
+    if (!command) return voiceFeedback("Digite ou fale um comando.", "Type or speak a command.");
+    const q = `“${raw}” — `;
+
+    const requested = command.match(/\b(?:oficial|officer|policial|policia|police)\s*(?:numero\s*|number\s*)?(1|2|3|4|um|uma|dois|duas|tres|quatro|one|two|three|four)\b/);
+    const actorNumbers = { um: 1, uma: 1, dois: 2, duas: 2, tres: 3, quatro: 4, one: 1, two: 2, three: 3, four: 4 };
+    const requestedIndex = requested ? (actorNumbers[requested[1]] || Number(requested[1])) - 1 : null;
+
+    // variações comuns do reconhecimento de fala para cada nome
+    const nameMatch = command.match(/\b(steve|stive|estive|stiv|steven|mike|maik|maike|joe|jo|djoe|joel|billy|bili|billie|bily)\b/);
+    const names = {
+      steve: "Steve", stive: "Steve", estive: "Steve", stiv: "Steve", steven: "Steve",
+      mike: "Mike", maik: "Mike", maike: "Mike",
+      joe: "Joe", jo: "Joe", djoe: "Joe", joel: "Joe",
+      billy: "Billy", bili: "Billy", billie: "Billy", bily: "Billy"
+    };
+    const requestedName = nameMatch ? names[nameMatch[1]] : null;
+
+    if (requestedIndex !== null && requestedIndex >= state.officers.length) {
+      return voiceFeedback(
+        q + `O oficial ${requestedIndex + 1} ainda não está na cena. Clique em “+ Adicionar oficial”.`,
+        q + `Officer ${requestedIndex + 1} is not in the scene yet. Click “+ Add officer”.`
+      );
+    }
+
+    const officer = requestedName
+      ? state.officers.find(o => o.name === requestedName)
+      : requestedIndex !== null ? state.officers[requestedIndex]
+      : state.officers.find(o => String(o.id) === $("voiceOfficer").value) || state.officers[0];
+
+    if (!officer) {
+      return voiceFeedback(
+        q + `${requestedName} ainda não está na cena. Clique em “+ Adicionar oficial”.`,
+        q + `${requestedName} is not in the scene yet. Click “+ Add officer”.`
+      );
+    }
+
+    $("voiceOfficer").value = String(officer.id);
+    const threat = state.threats.find(t => String(t.id) === $("voiceThreat").value) || state.threats[0];
+    const threatNo = state.threats.indexOf(threat) + 1;
+    const target = voiceTarget(command, threat);
+
+    if ("stance" in target) {
+      officer.crouched = target.stance;
+      render();
+      return voiceFeedback(
+        q + officer.name + (officer.crouched ? " agachado." : " em pé."),
+        q + officer.name + (officer.crouched ? " crouched." : " standing.")
+      );
+    }
+
+    if (target.error) return voiceFeedback(q + target.error.pt, q + target.error.en);
+
+    const destination = positionFromThreat(target.object, threat, officer);
+    if (!destination) {
+      return voiceFeedback(
+        q + "Não encontrei um ponto livre atrás desse objeto em relação à ameaça. Ajuste a cena ou escolha outro ponto.",
+        q + "No clear spot found behind that object relative to the threat. Adjust the scene or choose another point."
+      );
+    }
+
+    officer.x = destination.p.x;
+    officer.y = destination.p.y;
+    if (target.object.requiresCrouch) officer.crouched = true;
+    officer.facing = angle(officer, threat);
+    render();
+
+    const weapon = threat.weapon || "curta";
+    const ratingVal = target.object.ratingKey ? BALLISTIC_RATING[target.object.ratingKey]?.[weapon] : null;
+    const rating = target.visualOnly
+      ? { pt: " A lataria não é considerada proteção balística — só o motor e as rodas contam.", en: " The car body is not treated as ballistic protection — only the engine and wheels count." }
+      : !objectResistsWeapon(target.object, weapon)
+        ? { pt: " Atenção: este objeto não resiste à arma dessa ameaça.", en: " Warning: this object does not resist this threat's weapon." }
+      : ratingVal === "hipotese"
+        ? { pt: " Resistência balística ainda não validada em teste.", en: " Ballistic resistance not yet validated by testing." }
+      : ratingVal === "satura"
+        ? { pt: " Pode ceder sob disparos repetidos no mesmo ponto.", en: " May fail under repeated hits at the same point." }
+      : { pt: "", en: "" };
+
+    const exposedList = destination.exposedTo.map(t => state.threats.indexOf(t) + 1).join(", ");
+    const exposure = destination.exposedTo.length
+      ? { pt: ` Ainda exposto à(s) ameaça(s) ${exposedList}.`, en: ` Still exposed to threat(s) ${exposedList}.` }
+      : { pt: " Coberto de todas as ameaças da cena.", en: " Covered from every threat in the scene." };
+
+    voiceFeedback(
+      q + `${officer.name} posicionado atrás ${target.label.pt}, em relação à ameaça ${threatNo}.` + exposure.pt + rating.pt,
+      q + `${officer.name} moved behind ${target.label.en}, relative to threat ${threatNo}.` + exposure.en + rating.en
+    );
+  }
+
+  $("voiceSend").addEventListener("click", () => runVoiceCommand($("voiceText").value));
+  $("voiceText").addEventListener("keydown", e => { if (e.key === "Enter") runVoiceCommand(e.currentTarget.value); });
+
+  (function setupSpeech() {
+    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!Recognition || !window.isSecureContext) {
+      $("voiceBtn").disabled = true;
+      return;
+    }
+    const recognition = new Recognition();
+    voiceRecognition = recognition;
+    let heard = false, failed = false;
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      voiceListening = true; heard = false; failed = false;
+      $("voiceBtn").setAttribute("aria-pressed", "true");
+      renderVoiceChrome();
+      voiceFeedback(
+        "Microfone ligado. Fale um comando completo, como “Steve, atrás do motor”.",
+        "Microphone on. Say a full command, such as “Steve, behind the engine”."
+      );
+    };
+    recognition.onspeechstart = () => voiceFeedback("Ouvindo sua fala…", "Listening…");
+    recognition.onresult = e => {
+      heard = true;
+      const phrase = e.results?.[0]?.[0]?.transcript || "";
+      $("voiceText").value = phrase;
+      runVoiceCommand(phrase);
+    };
+    recognition.onerror = e => {
+      failed = true;
+      const messages = {
+        "not-allowed": ["Acesso ao microfone negado. Abra o site no Chrome ou Edge e permita o microfone nas configurações do navegador.",
+                        "Microphone access denied. Open the site in Chrome or Edge and allow the microphone in the browser settings."],
+        "service-not-allowed": ["O navegador bloqueou o reconhecimento de fala. Use o ditado do teclado no campo de texto.",
+                                "The browser blocked speech recognition. Use keyboard dictation in the text field."],
+        "audio-capture": ["Nenhum microfone disponível. Verifique o microfone e a permissão do navegador.",
+                          "No microphone available. Check the microphone and the browser permission."],
+        "network": ["O serviço de reconhecimento de fala não respondeu. Use o ditado do teclado no campo de texto.",
+                    "The speech recognition service did not respond. Use keyboard dictation in the text field."],
+        "no-speech": ["Nenhuma fala detectada. Clique em Iniciar escuta e fale logo em seguida.",
+                      "No speech detected. Click Start listening and speak right away."],
+        "aborted": ["Escuta interrompida.", "Listening stopped."]
+      };
+      const m = messages[e.error] || [
+        `Falha no reconhecimento (${e.error}). Use o ditado do teclado no campo de texto.`,
+        `Recognition failed (${e.error}). Use keyboard dictation in the text field.`
+      ];
+      voiceFeedback(m[0], m[1]);
+    };
+    recognition.onend = () => {
+      voiceListening = false;
+      $("voiceBtn").setAttribute("aria-pressed", "false");
+      renderVoiceChrome();
+      if (!heard && !failed) {
+        voiceFeedback(
+          "A escuta terminou sem transcrição. Tente novamente ou use o ditado do teclado no campo de texto.",
+          "Listening ended without a transcript. Try again or use keyboard dictation in the text field."
+        );
+      }
+    };
+
+    $("voiceBtn").addEventListener("click", () => {
+      if (voiceListening) { recognition.stop(); return; }
+      try {
+        recognition.lang = LANG === "en" ? "en-US" : "pt-BR";
+        recognition.start();
+      } catch (err) {
+        voiceFeedback(
+          "Não foi possível iniciar a escuta. Aguarde um instante e tente novamente.",
+          "Could not start listening. Wait a moment and try again."
+        );
+      }
+    });
+  })();
+
+  renderVoiceChrome();
 
   /* ------------------------------------------------------------
      INITIALIZATION
