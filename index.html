@@ -1056,6 +1056,30 @@ input[type=range]{ accent-color:#68f477; }
 .voice-shortcuts button:hover{background:#294c33}
 @media(max-width:620px){.voice-actions select{flex:1}.voice-actions input{flex-basis:100%}}
 
+/* ===== LINHA DE VISÃO ===== */
+.sight-controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:12px 15px;border-bottom:1px solid #323940}
+.sight-controls label{display:flex;align-items:center;gap:7px;color:#aab3b8;font-size:11px;font-weight:700}
+.sight-controls select{height:34px;border:1px solid #394149;border-radius:8px;background:#101316;color:#eef2f4;padding:5px 8px;font-size:13px}
+.sight-seg{display:inline-flex;align-items:center;gap:4px}
+.sight-seg > span{color:#aab3b8;font-size:11px;font-weight:700;margin-right:3px}
+.sight-seg button{padding:7px 10px;border:1px solid #394149;border-radius:7px;background:#161a1d;color:#c4cbcf;font-size:11px;font-weight:800;cursor:pointer}
+.sight-seg button.active{border-color:#59cd76;background:#193e28;color:#aaffb5}
+.sight-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px 15px 4px}
+.sight-panel{margin:0;min-width:0}
+.sight-panel figcaption{margin:0 0 7px;color:#eef2f4;font-size:12px;font-weight:800}
+.sight-panel svg{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #30373c}
+.sight-verdict ul{list-style:none;margin:9px 0 0;padding:0;display:grid;gap:4px}
+.sight-verdict li{display:flex;align-items:baseline;gap:7px;color:#c4cbcf;font-size:12px;line-height:1.4}
+.sight-verdict li i{flex:0 0 auto;width:9px;height:9px;border-radius:50%;transform:translateY(1px)}
+.sight-verdict b{color:#eef2f4}
+.sight-insight{margin:10px 15px 0;padding:10px 12px;border:1px solid rgba(114,255,117,.2);border-radius:9px;background:rgba(45,217,105,.06);color:#c9f5d0;font-size:12.5px;line-height:1.5}
+.sight-insight:empty{display:none}
+.sight-legend{display:flex;flex-wrap:wrap;gap:6px 14px;padding:10px 15px 0;color:#aeb7bc;font-size:11px}
+.sight-legend span{display:inline-flex;align-items:center;gap:6px}
+.sight-legend i{width:9px;height:9px;border-radius:50%}
+.sight-note{margin:8px 15px 14px;color:#7f8a91;font-size:10.5px;line-height:1.55}
+@media(max-width:900px){.sight-grid{grid-template-columns:1fr}}
+
 /* ===== SELETOR DE IDIOMA ===== */
 .topbar-right{
   display:flex;
@@ -1276,6 +1300,7 @@ input[type=range]{ accent-color:#68f477; }
 
           <g id="environmentLayer"></g>
           <g id="geometryLayer"></g>
+          <g id="sightLayer"></g>
           <g id="threatsLayer"></g>
           <g id="officersLayer"></g>
 
@@ -1378,6 +1403,21 @@ input[type=range]{ accent-color:#68f477; }
         </div>
 
         <div class="field full" style="margin-top:12px">
+          <label for="rimInches">⬤ Aro da roda (sem o pneu)</label>
+          <div class="input-wrap">
+            <select id="rimInches" style="width:100%;height:36px;border:1px solid #394149;border-radius:8px;background:#101316;color:#f5f7f8;padding:6px 9px">
+              <option value="15">15 pol. · 38 cm</option>
+              <option value="16">16 pol. · 41 cm</option>
+              <option value="17">17 pol. · 43 cm</option>
+              <option value="18">18 pol. · 46 cm</option>
+              <option value="19">19 pol. · 48 cm</option>
+              <option value="20">20 pol. · 51 cm</option>
+            </select>
+          </div>
+          <div class="dual-unit">Viaturas maiores (SUVs, picapes, viaturas americanas) costumam usar aro 17 a 20.</div>
+        </div>
+
+        <div class="field full" style="margin-top:12px">
           <label for="pillarWidth">⬥ Largura das colunas A/B/C</label>
           <div class="input-wrap">
             <input id="pillarWidth" type="number" min="5" max="14" step=".5">
@@ -1476,6 +1516,48 @@ input[type=range]{ accent-color:#68f477; }
     </aside>
 
   </main>
+
+  <section class="profile-card" id="sightCard">
+    <div class="profile-toolbar">
+      <span class="profile-title">LINHA DE VISÃO — policial e ameaça</span>
+      <span class="profile-hint">O que cada um enxerga do outro, com alturas reais, e o que realmente para um disparo.</span>
+    </div>
+    <div class="sight-controls">
+      <label>Oficial <select id="sightOfficer"></select></label>
+      <label>Ameaça <select id="sightThreat"></select></label>
+      <div class="sight-seg" role="group" aria-label="Postura do oficial">
+        <button type="button" data-sight-stance="standing">Em pé</button>
+        <button type="button" data-sight-stance="crouched">Agachado</button>
+        <button type="button" data-sight-stance="prone">Deitado</button>
+      </div>
+      <div class="sight-seg" role="group" aria-label="Visada do oficial">
+        <span>Visada</span>
+        <button type="button" data-visada="-1">Esquerda</button>
+        <button type="button" data-visada="0">Centro</button>
+        <button type="button" data-visada="1">Direita</button>
+      </div>
+    </div>
+    <div class="sight-grid">
+      <figure class="sight-panel">
+        <figcaption id="sightThreatTitle"></figcaption>
+        <svg id="sightThreatView" viewBox="0 0 520 300" role="img" aria-label="Visão da ameaça"></svg>
+        <div class="sight-verdict" id="sightThreatVerdict"></div>
+      </figure>
+      <figure class="sight-panel">
+        <figcaption id="sightOfficerTitle"></figcaption>
+        <svg id="sightOfficerView" viewBox="0 0 520 300" role="img" aria-label="Visão do policial"></svg>
+        <div class="sight-verdict" id="sightOfficerVerdict"></div>
+      </figure>
+    </div>
+    <p class="sight-insight" id="sightInsight" role="status" aria-live="polite"></p>
+    <div class="sight-legend">
+      <span><i style="background:#7dffa0"></i>coberto — anteparo resiste à arma</span>
+      <span><i style="background:#e8c25a"></i>oculto — lataria ou vidro, não para disparo</span>
+      <span><i style="background:#ff6b6b"></i>exposto</span>
+      <span><i style="background:#ff9d3f"></i>ameaça visível para o policial</span>
+    </div>
+    <p class="sight-note">Alturas usadas: lataria 0,25–1,08 m; motor 0,30–1,00 m; roda: aro escolhido (sem pneu), a partir de 0,10 m, e o pneu só oculta; colunas 1,08–1,45 m; parede 2,0 m; poste e árvore inteiros. Olhos a 1,62 m em pé e 0,88 m agachado. A visada desloca a cabeça 30 cm e o tronco 15 cm para o lado. O vão sob o carro (abaixo de 0,25 m) fica aberto, exceto nas rodas. Visualização geométrica para instrução, não certificação balística.</p>
+  </section>
 
   <section class="profile-card">
     <div class="profile-toolbar">
@@ -1643,7 +1725,34 @@ input[type=range]{ accent-color:#68f477; }
     "Ameaça de referência": "Reference threat",
     "Comando de posicionamento": "Positioning command",
     "Ex.: atrás da roda dianteira direita": "e.g. behind the front right wheel",
-    "Executar": "Run"
+    "Executar": "Run",
+    "⏹ Parar escuta": "⏹ Stop listening",
+    "Deitado": "Prone",
+    "⬤ Aro da roda (sem o pneu)": "⬤ Wheel rim (without the tire)",
+    "15 pol. · 38 cm": "15 in · 38 cm",
+    "16 pol. · 41 cm": "16 in · 41 cm",
+    "17 pol. · 43 cm": "17 in · 43 cm",
+    "18 pol. · 46 cm": "18 in · 46 cm",
+    "19 pol. · 48 cm": "19 in · 48 cm",
+    "20 pol. · 51 cm": "20 in · 51 cm",
+    "Viaturas maiores (SUVs, picapes, viaturas americanas) costumam usar aro 17 a 20.": "Larger patrol vehicles (SUVs, pickups, US patrol cars) usually run 17- to 20-inch rims.",
+    // linha de visão
+    "LINHA DE VISÃO — policial e ameaça": "LINE OF SIGHT — officer and threat",
+    "O que cada um enxerga do outro, com alturas reais, e o que realmente para um disparo.": "What each one sees of the other, with real heights, and what actually stops a round.",
+    "Oficial": "Officer",
+    "Ameaça": "Threat",
+    "Postura do oficial": "Officer stance",
+    "Visada do oficial": "Officer lean",
+    "Visada": "Lean",
+    "Esquerda": "Left",
+    "Centro": "Center",
+    "Direita": "Right",
+    "Visão da ameaça": "Threat's view",
+    "Visão do policial": "Officer's view",
+    "coberto — anteparo resiste à arma": "covered — barrier resists the weapon",
+    "oculto — lataria ou vidro, não para disparo": "concealed — car body or glass, does not stop rounds",
+    "ameaça visível para o policial": "threat visible to the officer",
+    "Alturas usadas: lataria 0,25–1,08 m; motor 0,30–1,00 m; roda: aro escolhido (sem pneu), a partir de 0,10 m, e o pneu só oculta; colunas 1,08–1,45 m; parede 2,0 m; poste e árvore inteiros. Olhos a 1,62 m em pé e 0,88 m agachado. A visada desloca a cabeça 30 cm e o tronco 15 cm para o lado. O vão sob o carro (abaixo de 0,25 m) fica aberto, exceto nas rodas. Visualização geométrica para instrução, não certificação balística.": "Heights used: car body 0.25–1.08 m; engine 0.30–1.00 m; wheel: selected rim (no tire), from 0.10 m up, and the tire only conceals; pillars 1.08–1.45 m; wall 2.0 m; pole and tree full height. Eyes at 1.62 m standing and 0.88 m crouched. The lean shifts the head 30 cm and the torso 15 cm sideways. The gap under the car (below 0.25 m) is open, except at the wheels. Geometric visualization for instruction, not ballistic certification."
   };
 
   const HTML_I18N = {
@@ -1817,7 +1926,7 @@ input[type=range]{ accent-color:#68f477; }
   ];
 
   const ENV_DIMENSIONS = {
-    poste: { radius: 17.5, label: { pt: "poste (concreto armado)", en: "pole (reinforced concrete)" } },
+    poste: { radius: 25, label: { pt: "poste (concreto armado)", en: "pole (reinforced concrete)" } },
     arvore: { radius: 25, label: { pt: "árvore (tronco)", en: "tree (trunk)" } },
     parede: { length: 250, thickness: 20, label: { pt: "parede (bloco)", en: "wall (block)" } }
   };
@@ -1900,6 +2009,7 @@ input[type=range]{ accent-color:#68f477; }
 
     engine: { width: 76, depth: 60, frontGap: 42 },
     pillarWidth: 9,
+    rimInches: 15,
 
     threats: [
       { id: 1, x: 300, y: 90, weapon: "curta" },
@@ -2180,11 +2290,60 @@ input[type=range]{ accent-color:#68f477; }
     actor.y = clamp(world.y, -WORLD_BOUND, WORLD_BOUND);
   }
 
+  /* Parede, poste e árvore são obstáculos sólidos: o ator pode encostar,
+     mas não atravessar. ACTOR_BODY_R é o "raio" do corpo visto de cima. */
+  const ACTOR_BODY_R = 24;
+
+  function envObstacleAt(p, margin = ACTOR_BODY_R) {
+    return state.environment.some(env => {
+      if (env.type === "parede") {
+        const local = carWorldToLocal(env, p);
+        return Math.abs(local.x) < ENV_DIMENSIONS.parede.length / 2 + margin &&
+               Math.abs(local.y) < ENV_DIMENSIONS.parede.thickness / 2 + margin;
+      }
+      return Math.hypot(p.x - env.cx, p.y - env.cy) < ENV_DIMENSIONS[env.type].radius + margin;
+    });
+  }
+
+  // empurra o ponto para fora de qualquer obstáculo, até encostar na borda
+  function envPushOut(point, margin = ACTOR_BODY_R) {
+    let p = { x: point.x, y: point.y };
+    for (let pass = 0; pass < 3; pass++) {
+      let moved = false;
+      state.environment.forEach(env => {
+        if (env.type === "parede") {
+          const hl = ENV_DIMENSIONS.parede.length / 2 + margin;
+          const ht = ENV_DIMENSIONS.parede.thickness / 2 + margin;
+          const local = carWorldToLocal(env, p);
+          if (Math.abs(local.x) < hl && Math.abs(local.y) < ht) {
+            if (hl - Math.abs(local.x) < ht - Math.abs(local.y)) local.x = (local.x < 0 ? -1 : 1) * hl;
+            else local.y = (local.y < 0 ? -1 : 1) * ht;
+            p = carLocalToWorld(env, local);
+            moved = true;
+          }
+        } else {
+          const min = ENV_DIMENSIONS[env.type].radius + margin;
+          const dx = p.x - env.cx, dy = p.y - env.cy;
+          const d = Math.hypot(dx, dy);
+          if (d < min) {
+            const ux = d < 0.5 ? 1 : dx / d, uy = d < 0.5 ? 0 : dy / d;
+            p = { x: env.cx + ux * min, y: env.cy + uy * min };
+            moved = true;
+          }
+        }
+      });
+      if (!moved) break;
+    }
+    return p;
+  }
+
   function keepActorsClearOfCars() {
     const margin = ACTOR_CAR_MARGIN + 15;
     [...state.officers, ...state.threats].forEach(actor => {
       if (isInsideCar(state.viatura, actor, ACTOR_CAR_MARGIN)) pushClearOfCar(state.viatura, actor, margin);
       if (isInsideCar(state.frontCar, actor, ACTOR_CAR_MARGIN)) pushClearOfCar(state.frontCar, actor, margin);
+      const q = envPushOut(actor);
+      actor.x = q.x; actor.y = q.y;
     });
   }
 
@@ -2691,6 +2850,16 @@ input[type=range]{ accent-color:#68f477; }
         transform="translate(6 8)" filter="url(#shadow)"></ellipse>
       <circle class="actor-halo" r="38"></circle>
       <g class="actorRot">
+        <g class="prone-shape" style="display:none">
+          <rect x="-17" y="44" width="12" height="104" rx="6" fill="#1c2227"></rect>
+          <rect x="5" y="44" width="12" height="104" rx="6" fill="#1c2227"></rect>
+          <rect x="-23" y="-14" width="46" height="62" rx="14" fill="#161c21" stroke="#060809" stroke-width="2"></rect>
+          <path d="M-17 -8Q0 -14 17 -8L16 38Q0 44 -16 38Z" fill="#154a79" stroke="#218bd6" stroke-width="1.5"></path>
+          <line x1="-19" y1="-6" x2="-7" y2="-52" stroke="#1a2025" stroke-width="10" stroke-linecap="round"></line>
+          <line x1="19" y1="-6" x2="7" y2="-52" stroke="#1a2025" stroke-width="10" stroke-linecap="round"></line>
+          <circle cx="0" cy="-26" r="12" fill="url(#headGradient)" stroke="#151719" stroke-width="3"></circle>
+        </g>
+        <g class="upright-shape">
         <rect x="-18" y="${legsY}" width="12" height="${legsH}" rx="6" fill="#1c2227"></rect>
         <rect x="6" y="${legsY}" width="12" height="${legsH}" rx="6" fill="#1c2227"></rect>
         <rect x="-25" y="-24" width="50" height="50" rx="16" fill="#161c21" stroke="#060809" stroke-width="2"></rect>
@@ -2701,6 +2870,7 @@ input[type=range]{ accent-color:#68f477; }
         <line x1="-22" y1="-5" x2="-9" y2="-42" stroke="#1a2025" stroke-width="11" stroke-linecap="round"></line>
         <line x1="22" y1="-5" x2="9" y2="-42" stroke="#1a2025" stroke-width="11" stroke-linecap="round"></line>
         <circle cx="0" cy="-29" r="13" fill="url(#headGradient)" stroke="#151719" stroke-width="3"></circle>
+        </g>
         <path class="actor-tip" d="M-5 -52L0 -64L5 -52Z"></path>
       </g>
       <g class="actorLabelGroup">
@@ -2873,7 +3043,9 @@ input[type=range]{ accent-color:#68f477; }
 
       if (o.facing === undefined) o.facing = angle(o, engineWorldCenter());
 
-      const scale = o.crouched ? 0.82 : 1;
+      const scale = o.prone ? 1 : o.crouched ? 0.82 : 1;
+      n.group.querySelector(".prone-shape").style.display = o.prone ? "" : "none";
+      n.group.querySelector(".upright-shape").style.display = o.prone ? "none" : "";
 
       n.group.setAttribute("transform", `translate(${o.x} ${o.y}) scale(${scale})`);
       n.group.querySelector(".actorRot").setAttribute("transform", `rotate(${deg(o.facing) + 90})`);
@@ -3034,6 +3206,7 @@ input[type=range]{ accent-color:#68f477; }
         <div class="stance-row">
           <button class="stance-btn" data-stance="standing">Em pé</button>
           <button class="stance-btn" data-stance="crouched">Agachado</button>
+          <button class="stance-btn" data-stance="prone">Deitado</button>
         </div>
       </span>
       <button class="icon-btn" title="Remover oficial">✕</button>
@@ -3057,6 +3230,8 @@ input[type=range]{ accent-color:#68f477; }
 
       const standingBtn = row.querySelector('[data-stance="standing"]');
       const crouchedBtn = row.querySelector('[data-stance="crouched"]');
+      const proneBtn = row.querySelector('[data-stance="prone"]');
+      proneBtn.addEventListener("click", () => setOfficerProne(o.id));
       const removeBtn = row.querySelector(".icon-btn");
 
       standingBtn.addEventListener("click", () => setOfficerCrouch(o.id, false));
@@ -3070,6 +3245,7 @@ input[type=range]{ accent-color:#68f477; }
         badge: row.querySelector(".badge"),
         standingBtn,
         crouchedBtn,
+        proneBtn,
         removeBtn
       });
     });
@@ -3095,7 +3271,8 @@ input[type=range]{ accent-color:#68f477; }
       }
 
       n.standingBtn.classList.toggle("active", !o.crouched);
-      n.crouchedBtn.classList.toggle("active", !!o.crouched);
+      n.crouchedBtn.classList.toggle("active", !!o.crouched && !o.prone);
+      n.proneBtn.classList.toggle("active", !!o.prone);
       n.removeBtn.disabled = state.officers.length <= MIN_ACTORS;
     });
 
@@ -3245,6 +3422,7 @@ input[type=range]{ accent-color:#68f477; }
   const SHOOTER_EYE_CM = 162;
   const STANDING_HEAD_CM = 175;
   const CROUCHED_HEAD_CM = 98;
+  const PRONE_HEAD_CM = 34;
 
   function profileY(heightCm) {
     return PROFILE_GROUND_Y - heightCm * PROFILE_PX_PER_CM;
@@ -3263,7 +3441,7 @@ input[type=range]{ accent-color:#68f477; }
 
   function buildProfileOfficer(x, o, index) {
     const color = officerColor(index);
-    const heightCm = o.crouched ? CROUCHED_HEAD_CM : STANDING_HEAD_CM;
+    const heightCm = o.prone ? PRONE_HEAD_CM : o.crouched ? CROUCHED_HEAD_CM : STANDING_HEAD_CM;
     const headY = profileY(heightCm);
     const headR = 9;
     const shoulderY = headY + headR * 1.7;
@@ -3291,7 +3469,7 @@ input[type=range]{ accent-color:#68f477; }
         <circle cx="${x}" cy="${headY + headR}" r="${headR}" fill="url(#headGradient)"
           stroke="#101416" stroke-width="1.2"></circle>
         <text x="${x}" y="${headY - 6}" text-anchor="middle" fill="${color}"
-          font-size="9" font-weight="900">${L("OF.", "OFC.")} ${index + 1} · ${o.crouched ? L("agachado", "crouched") : L("em pé", "standing")}</text>
+          font-size="9" font-weight="900">${L("OF.", "OFC.")} ${index + 1} · ${o.prone ? L("deitado", "prone") : o.crouched ? L("agachado", "crouched") : L("em pé", "standing")}</text>
         <text x="${x}" y="${PROFILE_GROUND_Y + 14}" text-anchor="middle" fill="${statusColor}"
           font-size="9" font-weight="800">${statusText}</text>
       </g>
@@ -3405,13 +3583,32 @@ input[type=range]{ accent-color:#68f477; }
     const o = state.officers.find(o => o.id === id);
     if (!o) return;
     o.crouched = crouched;
+    o.prone = false;
     render();
+  }
+
+  // Deitado: conta como "baixo" no cálculo de cima (como agachado) e, na Linha de Visão,
+  // usa o corpo deitado. A cabeça é virada para a ameaça: corpo perpendicular ao anteparo.
+  function setOfficerProne(id, threatId) {
+    const o = state.officers.find(o => o.id === id);
+    if (!o) return;
+    o.crouched = true;
+    o.prone = true;
+    const t = state.threats.find(t => t.id === threatId) || nearestThreat(o);
+    if (t) o.facing = angle(o, t);
+    render();
+  }
+
+  function nearestThreat(p) {
+    let best = null, bd = Infinity;
+    state.threats.forEach(t => { const d = Math.hypot(t.x - p.x, t.y - p.y); if (d < bd) { bd = d; best = t; } });
+    return best;
   }
 
   function toggleOfficerCrouch(id) {
     const o = state.officers.find(o => o.id === id);
     if (!o) return;
-    setOfficerCrouch(id, !o.crouched);
+    setOfficerCrouch(id, o.prone ? false : !o.crouched);
   }
 
   function setThreatDistanceFromNearestOfficer(id, meters) {
@@ -3430,8 +3627,8 @@ input[type=range]{ accent-color:#68f477; }
       y: clamp(nearest.y + Math.sin(bearing) * dist, -WORLD_BOUND, WORLD_BOUND)
     };
 
-    if (isInsideCar(state.frontCar, candidate, ACTOR_CAR_MARGIN) || isInsideCar(state.viatura, candidate, ACTOR_CAR_MARGIN)) {
-      showToast(L("Essa distância colocaria a ameaça sobre um veículo", "That distance would place the threat on top of a vehicle"));
+    if (isInsideCar(state.frontCar, candidate, ACTOR_CAR_MARGIN) || isInsideCar(state.viatura, candidate, ACTOR_CAR_MARGIN) || envObstacleAt(candidate)) {
+      showToast(L("Essa distância colocaria a ameaça sobre um veículo ou obstáculo", "That distance would place the threat on top of a vehicle or obstacle"));
       render();
       return;
     }
@@ -3536,6 +3733,7 @@ input[type=range]{ accent-color:#68f477; }
     if (document.activeElement !== engineWidth) engineWidth.value = state.engine.width.toFixed(0);
     if (document.activeElement !== engineDepth) engineDepth.value = state.engine.depth.toFixed(0);
     if (document.activeElement !== pillarWidth) pillarWidth.value = state.pillarWidth.toFixed(1);
+    $("rimInches").value = String(state.rimInches || 15);
 
     pillarWidthDual.textContent = fmtCmDual(state.pillarWidth);
   }
@@ -3568,7 +3766,7 @@ input[type=range]{ accent-color:#68f477; }
   }
 
   function profileSignature() {
-    return state.officers.map(o => `${o.id}|${o.crouched ? 1 : 0}`).join(";")
+    return state.officers.map(o => `${o.id}|${o.crouched ? 1 : 0}|${o.prone ? 1 : 0}`).join(";")
       + "|w" + state.officers.length;
   }
 
@@ -3605,6 +3803,7 @@ input[type=range]{ accent-color:#68f477; }
     updateThreatVisuals();
     updateOfficerVisuals();
     renderPairs();
+    renderSight();
     renderMetrics();
 
     const profileSig = profileSignature();
@@ -3803,11 +4002,13 @@ input[type=range]{ accent-color:#68f477; }
         y: clamp(p.y - drag.offsetY, -WORLD_BOUND, WORLD_BOUND)
       };
 
+      // encosta em parede/poste/árvore sem atravessar
+      const slid = envPushOut(candidate);
       const blocked =
-        isInsideCar(state.frontCar, candidate, ACTOR_CAR_MARGIN) ||
-        isInsideCar(state.viatura, candidate, ACTOR_CAR_MARGIN);
+        isInsideCar(state.frontCar, slid, ACTOR_CAR_MARGIN) ||
+        isInsideCar(state.viatura, slid, ACTOR_CAR_MARGIN);
 
-      if (!blocked) { actor.x = candidate.x; actor.y = candidate.y; }
+      if (!blocked) { actor.x = slid.x; actor.y = slid.y; }
     }
 
     if (drag.type === "threatRotate" || drag.type === "officerRotate") {
@@ -3980,6 +4181,12 @@ input[type=range]{ accent-color:#68f477; }
 
   [showEngineCover, showPillarCover, showWheelCover, showContour, showExposure, showLabels].forEach(c => {
     c.addEventListener("change", render);
+  });
+
+  $("rimInches").addEventListener("change", e => {
+    state.rimInches = clamp(Number(e.target.value) || 15, 15, 20);
+    render();
+    showToast(L(`Aro ${state.rimInches} pol. (${(state.rimInches * 2.54).toFixed(0)} cm)`, `${state.rimInches}-inch rim (${(state.rimInches * 2.54).toFixed(0)} cm)`));
   });
 
   $("addThreatBtn").addEventListener("click", addThreat);
@@ -4185,6 +4392,7 @@ input[type=range]{ accent-color:#68f477; }
         frontCar: { ...state.frontCar },
         engine: { ...state.engine },
         pillarWidth: state.pillarWidth,
+        rimInches: state.rimInches,
         threats: state.threats.map(t => ({ ...t })),
         officers: state.officers.map(o => ({ ...o })),
         environment: state.environment.map(e => ({ ...e })),
@@ -4221,6 +4429,7 @@ input[type=range]{ accent-color:#68f477; }
     if (data.frontCar) Object.assign(fresh.frontCar, data.frontCar);
     if (data.engine) Object.assign(fresh.engine, data.engine);
     if (typeof data.pillarWidth === "number") fresh.pillarWidth = data.pillarWidth;
+    if (typeof data.rimInches === "number") fresh.rimInches = clamp(Math.round(data.rimInches), 15, 20);
     fresh.threats = Array.isArray(data.threats) ? data.threats.map(t => ({ ...t })) : fresh.threats;
     fresh.officers = Array.isArray(data.officers)
       ? data.officers.map((o, i) => {
@@ -4438,7 +4647,7 @@ function computeCurrentPairs() {
         threatIdx: ti + 1,
         weapon: t.weapon || "curta",
         distanceM: distM,
-        stance: o.crouched ? L("agachado", "crouched") : L("em pé", "standing"),
+        stance: o.prone ? L("deitado", "prone") : o.crouched ? L("agachado", "crouched") : L("em pé", "standing"),
         covered: !!shield,
         coverObject: shield ? shield.obj.label : null
       });
@@ -4542,7 +4751,10 @@ function buildReportHTML() {
 
   const allStancesCrouched = state.officers.every(o => o.crouched);
   const allStancesStanding = state.officers.every(o => !o.crouched);
-  const currentStanceLabel = allStancesCrouched ? L("Agachado (todos)", "Crouched (all)")
+  const allProne = state.officers.every(o => o.prone);
+  const currentStanceLabel = allProne ? L("Deitado (todos)", "Prone (all)")
+    : state.officers.some(o => o.prone) ? L("Mista", "Mixed")
+    : allStancesCrouched ? L("Agachado (todos)", "Crouched (all)")
     : allStancesStanding ? L("Em pé (todos)", "Standing (all)") : L("Mista", "Mixed");
 
   const envText = state.environment.length
@@ -5061,6 +5273,600 @@ document.addEventListener("keydown", e => {
 
   renderMcEmpty();
 
+
+  /* ------------------------------------------------------------
+     LINHA DE VISÃO / LINE OF SIGHT
+     Modelo 3D simples: cada anteparo tem uma "pegada" no chão
+     (polígono ou círculo) e uma faixa de altura [zMin, zMax].
+     Para cada ponto do corpo do alvo, traça-se um raio a partir
+     dos olhos do observador. O ponto é:
+       - coberto: um anteparo que resiste à arma intercepta o raio
+       - oculto:  só lataria/vidro/anteparo que não resiste intercepta
+       - exposto: nada intercepta
+     Alturas em cm (1 px da cena = 1 cm).
+  ------------------------------------------------------------ */
+
+  const SIGHT = {
+    eyeStanding: 162, eyeCrouched: 88, eyeProne: 15,
+    rollProne: 60,   // deitado: "visada" vira rolar o corpo inteiro para o lado
+    tireSidewall: 10,
+    leanHead: 30, leanTorso: 15,
+    body: {
+      standing: { legs: [0, 90], torso: [90, 150], headC: 164, headR: 11 },
+      crouched: { legs: [0, 50], torso: [50, 84], headC: 91, headR: 10 }
+    },
+    heights: {
+      body: [25, 108],     // lataria (só oculta)
+      engine: [30, 100],   // bloco do motor
+      // roda: calculada a partir do aro escolhido (state.rimInches)
+      pillar: [108, 145],  // colunas A/B/C
+      poste: [0, 900], arvore: [0, 400], parede: [0, 200]
+    }
+  };
+
+  const sightState = { officerId: null, threatId: null, visada: 0 };
+
+  const vsub = (a, b) => ({ x: a.x - b.x, y: a.y - b.y });
+  const vdot = (a, b) => a.x * b.x + a.y * b.y;
+  const vlen = a => Math.hypot(a.x, a.y);
+  const vnorm = a => { const l = vlen(a) || 1; return { x: a.x / l, y: a.y / l }; };
+  const rightOf = u => ({ x: -u.y, y: u.x });   // direita de quem olha na direção u (tela, y para baixo)
+  const leftOf = u => ({ x: u.y, y: -u.x });
+
+  function carPerimeter(car) {
+    const w = car.width / 2, l = car.length / 2;
+    return [{ x: -w, y: -l }, { x: w, y: -l }, { x: w, y: l }, { x: -w, y: l }].map(p => carLocalToWorld(car, p));
+  }
+  // os helpers do simulador devolvem os cantos em ordem TL, TR, BL, BR
+  const rectToPerimeter = c => [c[0], c[1], c[3], c[2]];
+
+  function buildOccluders() {
+    const H = SIGHT.heights;
+    const occ = [];
+    [state.frontCar, state.viatura].forEach(car => occ.push({
+      poly: carPerimeter(car), z: H.body, cover: false, ratingKey: null,
+      label: car === state.viatura ? { pt: "lataria da viatura", en: "patrol car body" } : { pt: "lataria do carro abordado", en: "stopped vehicle body" }
+    }));
+    occ.push({
+      poly: rectToPerimeter(getEngineCorners(state.viatura)), z: H.engine,
+      cover: showEngineCover.checked, ratingKey: "motor", label: { pt: "motor", en: "engine" }
+    });
+    // Roda: o aro (metal) é o que pode parar disparo; o pneu (borracha) só oculta.
+    // Aro de N polegadas = disco vertical de N × 2,54 cm, começando 10 cm acima do chão
+    // (altura do flanco do pneu). Largura do aro: 6" no aro 15, +0,5" por polegada.
+    {
+      const car = state.viatura;
+      const sx = car.width / 200, sy = car.length / 500;
+      const o0 = carLocalToWorld(car, { x: 0, y: 0 });
+      const ax = vsub(carLocalToWorld(car, { x: 0, y: 1 }), o0);   // eixo longitudinal do carro
+      const sd = vsub(carLocalToWorld(car, { x: 1, y: 0 }), o0);   // eixo lateral
+      const rimIn = state.rimInches || 15;
+      const R = rimIn * 2.54 / 2, zc = SIGHT.tireSidewall + R;
+      const rimHw = (6 + (rimIn - 15) * 0.5) * 2.54 / 2;
+      const tireR = R + SIGHT.tireSidewall;
+      const labels = getWheelObjects(car).map(w => w.labelI18n);
+      WHEEL_LOCAL_RECTS.forEach((w, i) => {
+        const cx = (w.x + w.w / 2) * sx, cy = (w.y + w.h / 2) * sy, tireHw = (w.w * sx) / 2;
+        const c = carLocalToWorld(car, { x: cx, y: cy });
+        const box = (hw, hl) => [
+          { x: cx - hw, y: cy - hl }, { x: cx + hw, y: cy - hl },
+          { x: cx + hw, y: cy + hl }, { x: cx - hw, y: cy + hl }
+        ].map(p => carLocalToWorld(car, p));
+        occ.push({
+          poly: box(tireHw, tireR), z: [0, zc + tireR], tire: true,
+          disk: { c, axis: ax, side: sd, r: tireR, zc, hw: tireHw },
+          cover: false, ratingKey: null, label: { pt: "pneu", en: "tire" }
+        });
+        occ.push({
+          poly: box(rimHw, R), z: [zc - R, zc + R],
+          disk: { c, axis: ax, side: sd, r: R, zc, hw: rimHw },
+          cover: showWheelCover.checked, ratingKey: "roda", label: labels[i]
+        });
+      });
+    }
+    getPillarObjects(state.viatura).forEach(p => occ.push({
+      poly: rectToPerimeter(p.corners), z: H.pillar,
+      cover: showPillarCover.checked, ratingKey: "coluna", label: p.labelI18n
+    }));
+    state.environment.forEach(env => {
+      const label = ENV_DIMENSIONS[env.type].label;
+      if (env.type === "parede") {
+        occ.push({ poly: rectToPerimeter(getParedeCorners(env)), z: H.parede, cover: true, ratingKey: "parede", label });
+      } else {
+        occ.push({ circle: { c: { x: env.cx, y: env.cy }, r: ENV_DIMENSIONS[env.type].radius }, z: H[env.type], cover: true, ratingKey: env.type, label });
+      }
+    });
+    return occ;
+  }
+
+  // intervalo [t0, t1] do segmento p0→p1 dentro da pegada do anteparo (ou null)
+  function clipSegment(p0, p1, o) {
+    const d = vsub(p1, p0);
+    if (o.circle) {
+      const f = vsub(p0, o.circle.c);
+      const a = vdot(d, d), b = 2 * vdot(f, d), c = vdot(f, f) - o.circle.r ** 2;
+      const disc = b * b - 4 * a * c;
+      if (a < 1e-9 || disc < 0) return null;
+      const s = Math.sqrt(disc);
+      const t0 = Math.max(0, (-b - s) / (2 * a)), t1 = Math.min(1, (-b + s) / (2 * a));
+      return t0 <= t1 ? [t0, t1] : null;
+    }
+    const poly = o.poly;
+    const cen = poly.reduce((acc, p) => ({ x: acc.x + p.x / poly.length, y: acc.y + p.y / poly.length }), { x: 0, y: 0 });
+    let t0 = 0, t1 = 1;
+    for (let i = 0; i < poly.length; i++) {
+      const a = poly[i], b = poly[(i + 1) % poly.length];
+      let n = { x: b.y - a.y, y: -(b.x - a.x) };
+      if (vdot(n, vsub(cen, a)) < 0) n = { x: -n.x, y: -n.y };
+      const num = vdot(n, vsub(p0, a)), den = vdot(n, d);
+      if (Math.abs(den) < 1e-9) { if (num < 0) return null; continue; }
+      const t = -num / den;
+      if (den > 0) t0 = Math.max(t0, t); else t1 = Math.min(t1, t);
+      if (t0 > t1) return null;
+    }
+    return [t0, t1];
+  }
+
+  function rayBlockers(eye, pt, occ) {
+    const out = [];
+    occ.forEach(o => {
+      const iv = clipSegment(eye, pt, o);
+      if (!iv) return;
+      const za = eye.z + (pt.z - eye.z) * iv[0], zb = eye.z + (pt.z - eye.z) * iv[1];
+      if (!(Math.max(za, zb) >= o.z[0] && Math.min(za, zb) <= o.z[1])) return;
+      if (o.disk) {
+        // roda redonda: o raio precisa passar dentro do círculo do aro, não só da "caixa"
+        const k = o.disk;
+        for (let n = 0; n <= 8; n++) {
+          const t = iv[0] + (iv[1] - iv[0]) * n / 8;
+          const w = { x: eye.x + (pt.x - eye.x) * t, y: eye.y + (pt.y - eye.y) * t };
+          const along = vdot(vsub(w, k.c), k.axis), z = eye.z + (pt.z - eye.z) * t;
+          if (along * along + (z - k.zc) ** 2 <= k.r * k.r) { out.push(o); return; }
+        }
+        return;
+      }
+      out.push(o);
+    });
+    return out;
+  }
+
+  // pontos do corpo do alvo; "lean" é o deslocamento lateral da visada (só policial)
+  const stanceOf = a => a.prone ? "prone" : a.crouched ? "crouched" : "standing";
+  const facingVec = (a, fallbackTarget) => a.facing !== undefined
+    ? { x: Math.cos(a.facing), y: Math.sin(a.facing) }
+    : vnorm(vsub(fallbackTarget, a));
+
+  // pontos-chave do corpo deitado (cabeça à frente, na direção em que o policial olha)
+  function proneFrame(actor, f, lean) {
+    const sh = { x: lean.dir.x * lean.amount, y: lean.dir.y * lean.amount };
+    const along = d => ({ x: actor.x + f.x * d + sh.x, y: actor.y + f.y * d + sh.y });
+    return { head: along(28), shoulders: along(8), hips: along(-45), knees: along(-95), feet: along(-150) };
+  }
+
+  function bodySamples(actor, stance, lean, f) {
+    const s = [];
+    if (stance === "prone") {
+      const fr = proneFrame(actor, f, lean);
+      const perp = rightOf(f);
+      const at = (base, lat, z) => ({ x: base.x + perp.x * lat, y: base.y + perp.y * lat, z });
+      [[0, 30], [-7, 22], [7, 22], [0, 15]].forEach(([l, z]) => s.push({ part: "head", ...at(fr.head, l, z) }));
+      [fr.shoulders, fr.hips].forEach(b => [-17, 0, 17].forEach(l => s.push({ part: "torso", ...at(b, l, l === 0 ? 26 : 16) })));
+      [fr.knees, fr.feet].forEach(b => [-10, 10].forEach(l => s.push({ part: "legs", ...at(b, l, 10) })));
+      s.push({ part: "legs", ...at(fr.feet, 0, 22) });   // calcanhares (se levantados)
+      return s;
+    }
+    const B = stance === "crouched" ? SIGHT.body.crouched : SIGHT.body.standing;
+    const leanDir = lean.dir, hx = lean.amount, tx_ = lean.amount * (SIGHT.leanTorso / SIGHT.leanHead);
+    const perp = lean.perp;
+    const at = (lat, z, shift) => ({
+      x: actor.x + perp.x * lat + leanDir.x * shift,
+      y: actor.y + perp.y * lat + leanDir.y * shift, z
+    });
+    const h = B.headC;
+    [[0, h + 5], [-6, h], [6, h], [0, h - 6]].forEach(([l, z]) => s.push({ part: "head", ...at(l, z, hx) }));
+    const [tb, tt] = B.torso;
+    [-16, 0, 16].forEach(l => [tt - 8, tb + 8].forEach(z => s.push({ part: "torso", ...at(l, z, tx_) })));
+    const lt = B.legs[1];
+    [-9, 9].forEach(l => [lt - 10, lt / 2, 8].forEach(z => s.push({ part: "legs", ...at(l, z, 0) })));
+    return s;
+  }
+
+  function eyePoint(actor, stance, lean, f) {
+    if (stance === "prone") {
+      const fr = proneFrame(actor, f, lean);
+      return { x: fr.head.x, y: fr.head.y, z: SIGHT.eyeProne };
+    }
+    return {
+      x: actor.x + lean.dir.x * lean.amount,
+      y: actor.y + lean.dir.y * lean.amount,
+      z: stance === "crouched" ? SIGHT.eyeCrouched : SIGHT.eyeStanding
+    };
+  }
+
+  function classify(samples, eye, occ, weapon) {
+    return samples.map(p => {
+      const blockers = rayBlockers(eye, p, occ);
+      const covering = weapon ? blockers.filter(o => o.cover && objectResistsWeapon({ ratingKey: o.ratingKey }, weapon)) : [];
+      const status = covering.length ? "covered" : blockers.length ? "hidden" : "exposed";
+      return { ...p, status, by: covering.length ? covering : blockers };
+    });
+  }
+
+  function summarizeParts(results) {
+    const parts = {};
+    ["head", "torso", "legs"].forEach(part => {
+      const rs = results.filter(r => r.part === part);
+      const exposed = rs.filter(r => r.status === "exposed").length;
+      const covered = rs.filter(r => r.status === "covered").length;
+      const status = covered === rs.length ? "covered" : exposed ? "exposed" : "hidden";
+      const labels = new Map();
+      rs.filter(r => r.status === status).forEach(r => r.by.forEach(o => labels.set(o.label.pt, o.label)));
+      parts[part] = { status, frac: exposed / rs.length, labels: [...labels.values()] };
+    });
+    return parts;
+  }
+
+  const PART_NAMES = { head: { pt: "Cabeça", en: "Head" }, torso: { pt: "Tronco", en: "Torso" }, legs: { pt: "Pernas", en: "Legs" } };
+  const SIGHT_COLORS = { covered: "#7dffa0", hidden: "#e8c25a", exposed: "#ff6b6b", visible: "#ff9d3f", unseen: "#7d878d" };
+
+  function convexHull(pts) {
+    const p = pts.slice().sort((a, b) => a.x - b.x || a.y - b.y);
+    if (p.length < 3) return p;
+    const cross = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+    const lower = [], upper = [];
+    for (const q of p) { while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], q) <= 0) lower.pop(); lower.push(q); }
+    for (let i = p.length - 1; i >= 0; i--) { const q = p[i]; while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], q) <= 0) upper.pop(); upper.push(q); }
+    upper.pop(); lower.pop();
+    return lower.concat(upper);
+  }
+
+  // ---------- figura humana (vista de frente), em cm relativos ao pé ----------
+  // devolve partes { legs, torso, head } como listas de formas SVG simples
+  function figureShapes(crouched, kind, weapon) {
+    // kind: "officer" (fardado, colete, boné) ou "threat" (civil, com arma)
+    const s = [];
+    if (!crouched) {
+      s.push({ part: "legs", d: "M-17 0 L-17 4 Q-17 8 -12 8 L-4 8 L-3 88 L3 88 L4 8 L12 8 Q17 8 17 4 L17 0 Z", fill: "boot" });
+      s.push({ part: "legs", d: "M-16 10 L-15 90 L-1 90 L-2 12 Z M16 10 L15 90 L1 90 L2 12 Z", fill: "pants" });
+      s.push({ part: "torso", d: "M-17 90 L-19 128 Q-23 146 -12 150 L12 150 Q23 146 19 128 L17 90 Z", fill: "shirt" });
+      if (kind === "officer") s.push({ part: "torso", d: "M-15 96 L-16 140 L16 140 L15 96 Z", fill: "vest" });
+      s.push({ part: "torso", d: "M-23 147 Q-28 140 -27 120 L-26 98 Q-24 94 -21 98 L-20 120 L-18 140 Z M23 147 Q28 140 27 120 L26 98 Q24 94 21 98 L20 120 L18 140 Z", fill: "shirt" });
+      if (kind === "threat") {
+        s.push({ part: "torso", d: weapon === "fuzil"
+          ? "M-14 112 L18 140 L21 136 L-11 108 Z M-2 118 L4 118 L4 108 L-2 108 Z"
+          : "M-5 128 L5 128 L5 120 L-5 120 Z", fill: "gun" });
+      }
+      s.push({ part: "head", circle: { cx: 0, cy: 164, r: 11 }, fill: "skin" });
+      s.push({ part: "head", d: kind === "officer" ? "M-12 167 Q-12 178 0 178 Q12 178 12 167 L16 165 L-16 165 Z" : "M-11 168 Q-10 177 0 177 Q10 177 11 168 Q6 172 0 172 Q-6 172 -11 168 Z", fill: kind === "officer" ? "cap" : "hair" });
+      s.push({ part: "head", d: "M-4 150 L-4 154 L4 154 L4 150 Z", fill: "skin" });
+    } else {
+      // ajoelhado: joelho esquerdo no chão, perna direita com pé apoiado
+      s.push({ part: "legs", d: "M-22 0 L-22 6 L-6 6 L-6 0 Z M6 0 L6 6 L20 6 L20 0 Z", fill: "boot" });
+      s.push({ part: "legs", d: "M-20 6 L-19 22 Q-18 30 -10 30 L-4 30 L-6 6 Z", fill: "pants" });
+      s.push({ part: "legs", d: "M8 6 L7 40 Q8 48 16 48 L20 48 L20 6 Z", fill: "pants" });
+      s.push({ part: "legs", d: "M-16 28 L-17 50 L17 50 L16 40 L-2 30 Z", fill: "pants" });
+      s.push({ part: "torso", d: "M-16 48 L-18 72 Q-22 82 -12 84 L12 84 Q22 82 18 72 L16 48 Z", fill: "shirt" });
+      if (kind === "officer") s.push({ part: "torso", d: "M-14 52 L-15 78 L15 78 L14 52 Z", fill: "vest" });
+      s.push({ part: "torso", d: "M-21 82 Q-26 76 -24 62 Q-20 56 -12 60 L-8 66 L-18 70 Z M21 82 Q26 76 24 62 Q20 56 12 60 L8 66 L18 70 Z", fill: "shirt" });
+      s.push({ part: "head", circle: { cx: 0, cy: 92, r: 10 }, fill: "skin" });
+      s.push({ part: "head", d: kind === "officer" ? "M-11 95 Q-11 105 0 105 Q11 105 11 95 L15 93 L-15 93 Z" : "M-10 96 Q-9 104 0 104 Q9 104 10 96 Q5 100 0 100 Q-5 100 -10 96 Z", fill: kind === "officer" ? "cap" : "hair" });
+    }
+    return s;
+  }
+
+  const FIG_COLORS = {
+    officer: { boot: "#0d1013", pants: "#1d2a3a", shirt: "#2a3b52", vest: "#121a24", skin: "#c99a74", cap: "#0f1724", hair: "#2a1f17", gun: "#0b0b0b" },
+    threat: { boot: "#1a1a1a", pants: "#3b3f45", shirt: "#5a4b44", vest: "#2c2c2c", skin: "#b88a66", cap: "#222", hair: "#241a14", gun: "#0b0b0b" }
+  };
+
+  // desenha a visão a partir de "eye" olhando para "target"
+  function drawView(svg, opts) {
+    const { eye, target, results, occ, targetCrouched, lean, mode, targetKind, weapon } = opts;
+    const W = 520, Hh = 300, GROUND = 282, PXCM = 1.15, CX = W / 2;
+    const id = svg.id;
+    const u = vnorm(vsub(target, eye));
+    const right = rightOf(u);
+    const D = Math.max(1, vdot(vsub(target, eye), u));
+    const proj = (pt, z, s) => {
+      const rel = vsub(pt, eye);
+      const ss = s ?? vdot(rel, u);
+      const k = D / Math.max(ss, 5);
+      return { x: CX + vdot(rel, right) * k * PXCM, y: GROUND - (eye.z + (z - eye.z) * k) * PXCM };
+    };
+    const yOf = z => GROUND - z * PXCM;
+    const horizon = yOf(eye.z);
+
+    let html = `<defs>
+      <clipPath id="${id}-clip"><rect x="0" y="0" width="${W}" height="${Hh}"/></clipPath>
+      <linearGradient id="${id}-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f2a33"/><stop offset="1" stop-color="#4b5963"/></linearGradient>
+      <linearGradient id="${id}-gnd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a4d4e"/><stop offset="1" stop-color="#2b2d2e"/></linearGradient>
+      <linearGradient id="${id}-metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d7dde0"/><stop offset=".55" stop-color="#8f989d"/><stop offset="1" stop-color="#5b6368"/></linearGradient>
+      <linearGradient id="${id}-concrete" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6f706b"/><stop offset=".45" stop-color="#c2c2bb"/><stop offset="1" stop-color="#6a6b66"/></linearGradient>
+      <linearGradient id="${id}-bark" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a281b"/><stop offset=".5" stop-color="#7a5636"/><stop offset="1" stop-color="#352418"/></linearGradient>
+      <pattern id="${id}-blocks" width="22" height="12" patternUnits="userSpaceOnUse">
+        <rect width="22" height="12" fill="#a39b90"/><path d="M0 11.5H22M11 0V6M0 6H22M5.5 6V12M16.5 6V12" stroke="#6f685f" stroke-width="1"/>
+      </pattern>
+      <radialGradient id="${id}-rim"><stop offset="0" stop-color="#d9dee1"/><stop offset=".7" stop-color="#9aa3a8"/><stop offset="1" stop-color="#5d656a"/></radialGradient>
+      <pattern id="${id}-hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect width="7" height="7" fill="#f0c83c" fill-opacity=".18"/><line x1="0" y1="0" x2="0" y2="7" stroke="#f0c83c" stroke-width="2" stroke-opacity=".7"/>
+      </pattern>
+    </defs>`;
+    html += `<g clip-path="url(#${id}-clip)">`;
+    html += `<rect width="${W}" height="${Math.max(0, horizon)}" fill="url(#${id}-sky)"/>`;
+    html += `<rect y="${Math.max(0, horizon)}" width="${W}" height="${Hh}" fill="url(#${id}-gnd)"/>`;
+    html += `<line x1="0" y1="${horizon}" x2="${W}" y2="${horizon}" stroke="#cfe3ea" stroke-opacity=".28" stroke-dasharray="6 6"/>`;
+    html += `<text x="8" y="${horizon - 6}" fill="#dfe8ec" fill-opacity=".75" font-size="10" font-weight="700">${L("altura dos olhos", "eye height")} ${(eye.z / 100).toFixed(2)} m</text>`;
+
+    // ---- figura do alvo ----
+    const partStatus = summarizeParts(results);
+    const statusColor = st => mode === "threat" ? SIGHT_COLORS[st] : (st === "exposed" ? SIGHT_COLORS.visible : SIGHT_COLORS.unseen);
+    const leanCm = part => {
+      if (!lean || !lean.amount) return 0;
+      const amt = part === "head" ? lean.amount : part === "torso" ? lean.amount * SIGHT.leanTorso / SIGHT.leanHead : 0;
+      return vdot(lean.dir, right) * amt;
+    };
+    const pal = FIG_COLORS[targetKind];
+    if (opts.targetStance === "prone") {
+      // deitado: corpo desenhado em perspectiva, cabeça à frente
+      const fr = proneFrame(target, opts.targetFacing, lean || { dir: { x: 0, y: 0 }, amount: 0 });
+      const P = (pt, z) => proj(pt, z);
+      const kAt = pt => D / Math.max(vdot(vsub(pt, eye), u), 5) * PXCM;
+      const capsule = (a, za, b, zb, wCm, fill, part) => {
+        const pa = P(a, za), pb = P(b, zb);
+        const w = wCm * (kAt(a) + kAt(b)) / 2;
+        const tint = statusColor(partStatus[part].status);
+        return `<line x1="${pa.x.toFixed(1)}" y1="${pa.y.toFixed(1)}" x2="${pb.x.toFixed(1)}" y2="${pb.y.toFixed(1)}" stroke="${fill}" stroke-width="${w.toFixed(1)}" stroke-linecap="round"/>`
+          + `<line x1="${pa.x.toFixed(1)}" y1="${pa.y.toFixed(1)}" x2="${pb.x.toFixed(1)}" y2="${pb.y.toFixed(1)}" stroke="${tint}" stroke-opacity=".38" stroke-width="${w.toFixed(1)}" stroke-linecap="round"/>`;
+      };
+      const perp = rightOf(opts.targetFacing);
+      const off = (pt, l) => ({ x: pt.x + perp.x * l, y: pt.y + perp.y * l });
+      const items = [
+        { d: vdot(vsub(fr.feet, eye), u), svg: capsule(off(fr.hips, -10), 10, off(fr.feet, -10), 9, 15, pal.pants, "legs") + capsule(off(fr.hips, 10), 10, off(fr.feet, 10), 9, 15, pal.pants, "legs") },
+        { d: vdot(vsub(fr.hips, eye), u), svg: capsule(fr.shoulders, 16, fr.hips, 14, 40, pal.shirt, "torso") + capsule(fr.shoulders, 18, fr.hips, 16, 28, pal.vest, "torso") },
+        { d: vdot(vsub(fr.head, eye), u) + 1, svg: capsule(off(fr.shoulders, -18), 14, off(fr.head, -10), 16, 9, pal.shirt, "torso") + capsule(off(fr.shoulders, 18), 14, off(fr.head, 10), 16, 9, pal.shirt, "torso") },
+        { d: vdot(vsub(fr.head, eye), u), svg: (() => {
+            const c = P(fr.head, 22), r = 11 * kAt(fr.head);
+            const tint = statusColor(partStatus.head.status);
+            return `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${r.toFixed(1)}" fill="${pal.skin}" stroke="#06080a"/>`
+              + `<path d="M${(c.x - r).toFixed(1)} ${c.y.toFixed(1)} A${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${(c.x + r).toFixed(1)} ${c.y.toFixed(1)} Z" fill="${pal.cap}"/>`
+              + `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${r.toFixed(1)}" fill="${tint}" fill-opacity=".38" stroke="${tint}"/>`;
+          })() }
+      ];
+      // desenha do mais distante para o mais próximo do observador
+      items.sort((a, b) => b.d - a.d).forEach(it => { html += it.svg; });
+    } else {
+    html += `<ellipse cx="${CX}" cy="${GROUND}" rx="${30 * PXCM}" ry="5" fill="#000" fill-opacity=".35"/>`;
+    const shapes = figureShapes(targetCrouched, targetKind, weapon);
+    ["base", "tint"].forEach(layer => {
+      shapes.forEach(sh => {
+        const tr = `translate(${CX + leanCm(sh.part) * PXCM} ${GROUND}) scale(${PXCM} ${-PXCM})`;
+        const fill = layer === "base" ? pal[sh.fill] : statusColor(partStatus[sh.part].status);
+        const extra = layer === "base"
+          ? `stroke="#06080a" stroke-width="${0.6 / PXCM}"`
+          : `fill-opacity=".38" stroke="${fill}" stroke-opacity=".9" stroke-width="${0.9 / PXCM}"`;
+        if (layer === "tint" && sh.fill === "gun") return;
+        html += sh.circle
+          ? `<circle transform="${tr}" cx="${sh.circle.cx}" cy="${sh.circle.cy}" r="${sh.circle.r}" fill="${fill}" ${extra}/>`
+          : `<path transform="${tr}" d="${sh.d}" fill="${fill}" ${extra}/>`;
+      });
+    });
+    }
+
+    // ---- anteparos entre o observador e o alvo (os mais distantes primeiro) ----
+    const drawable = [];
+    occ.forEach(o => {
+      let pts = [], sMin = Infinity;
+      if (o.circle) {
+        const rel = vsub(o.circle.c, eye);
+        const s = vdot(rel, u);
+        if (s < 5 || s > D - 3) return;
+        sMin = s;
+        const l = vdot(rel, right), k = D / s;
+        [l - o.circle.r, l + o.circle.r].forEach(ll => o.z.forEach(z => {
+          pts.push({ x: CX + ll * k * PXCM, y: GROUND - (eye.z + (z - eye.z) * k) * PXCM });
+        }));
+      } else {
+        const ss = o.poly.map(p => vdot(vsub(p, eye), u));
+        if (Math.min(...ss) > D - 3 || Math.max(...ss) < 5) return;
+        sMin = o.disk ? Math.max(5, vdot(vsub(o.disk.c, eye), u)) : Math.max(5, Math.min(...ss));
+        o.poly.forEach((p, i) => o.z.forEach(z => pts.push(proj(p, z, Math.max(ss[i], 5)))));
+      }
+      const relevant = results.some(r => rayBlockers(eye, r, [o]).length);
+      if (relevant) drawable.push({ o, pts, sMin });
+    });
+    const styleFor = o => {
+      if (!o.ratingKey) return { fill: `url(#${id}-metal)`, op: .42, stroke: "#e8edf0", dash: "6 4", tag: { pt: "lataria", en: "car body" } };
+      switch (o.ratingKey) {
+        case "motor": return { fill: `url(#${id}-hatch)`, op: 1, stroke: "#f0c83c", dash: "4 3", tag: { pt: "motor (no cofre)", en: "engine (under hood)" } };
+        case "roda": return { fill: "#15191c", op: .78, stroke: "#8a94ff", dash: "", tag: { pt: `aro ${state.rimInches || 15}"`, en: `${state.rimInches || 15}" rim` } };
+        case "coluna": return { fill: "#cfe3ea", op: .55, stroke: "#cfe3ea", dash: "", tag: { pt: "coluna", en: "pillar" } };
+        case "poste": return { fill: `url(#${id}-concrete)`, op: .82, stroke: "#d6d6cf", dash: "", tag: { pt: "poste", en: "pole" } };
+        case "arvore": return { fill: `url(#${id}-bark)`, op: .85, stroke: "#9b6f47", dash: "", tag: { pt: "árvore", en: "tree" } };
+        case "parede": return { fill: `url(#${id}-blocks)`, op: .82, stroke: "#d8d3ca", dash: "", tag: { pt: "parede", en: "wall" } };
+        default: return { fill: "#9a938a", op: .6, stroke: "#9a938a", dash: "", tag: o.label };
+      }
+    };
+    drawable.sort((a, b) => b.sMin - a.sMin).forEach(({ o, pts }) => {
+      const st = styleFor(o);
+      if (o.disk) {
+        const k = o.disk;
+        const rel = vsub(k.c, eye), s = Math.max(vdot(rel, u), 5), f = D / s;
+        const cxp = CX + vdot(rel, right) * f * PXCM;
+        const cyp = GROUND - (eye.z + (k.zc - eye.z) * f) * PXCM;
+        const ry = k.r * f * PXCM;
+        const rx = Math.max(3, (Math.abs(vdot(k.axis, right)) * k.r + Math.abs(vdot(k.side, right)) * k.hw) * f * PXCM);
+        if (o.tire) {
+          html += `<ellipse cx="${cxp.toFixed(1)}" cy="${cyp.toFixed(1)}" rx="${rx.toFixed(1)}" ry="${ry.toFixed(1)}" fill="#111416" fill-opacity=".86" stroke="#3a4046" stroke-width="1.4"/>`;
+          html += `<ellipse cx="${cxp.toFixed(1)}" cy="${cyp.toFixed(1)}" rx="${(rx * .93).toFixed(1)}" ry="${(ry * .93).toFixed(1)}" fill="none" stroke="#262b2f" stroke-width="2" stroke-dasharray="3 3"/>`;
+          return;
+        }
+        let g = `<g>`;
+        g += `<ellipse cx="${cxp.toFixed(1)}" cy="${cyp.toFixed(1)}" rx="${rx.toFixed(1)}" ry="${ry.toFixed(1)}" fill="url(#${id}-rim)" fill-opacity=".85" stroke="#8a94ff" stroke-width="1.6"/>`;
+        g += `<ellipse cx="${cxp.toFixed(1)}" cy="${cyp.toFixed(1)}" rx="${(rx * .78).toFixed(1)}" ry="${(ry * .78).toFixed(1)}" fill="none" stroke="#2a2f33" stroke-width="1.2"/>`;
+        for (let a = 0; a < 5; a++) {
+          const ang = a * 2 * Math.PI / 5 - Math.PI / 2;
+          g += `<line x1="${(cxp + Math.cos(ang) * rx * .2).toFixed(1)}" y1="${(cyp + Math.sin(ang) * ry * .2).toFixed(1)}" x2="${(cxp + Math.cos(ang) * rx * .76).toFixed(1)}" y2="${(cyp + Math.sin(ang) * ry * .76).toFixed(1)}" stroke="#30363b" stroke-width="${Math.max(1.5, ry * .12).toFixed(1)}" stroke-linecap="round"/>`;
+        }
+        g += `<ellipse cx="${cxp.toFixed(1)}" cy="${cyp.toFixed(1)}" rx="${(rx * .2).toFixed(1)}" ry="${(ry * .2).toFixed(1)}" fill="#1b1f22" stroke="#9aa3a8" stroke-width="1"/>`;
+        g += `</g>`;
+        html += g;
+        const ty = Math.max(14, cyp - ry - 6);
+        html += `<text x="${clamp(cxp, 40, W - 40).toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle" font-size="10" font-weight="800"
+          fill="#8a94ff" stroke="#0b0d0f" stroke-width="3" paint-order="stroke">${tx(st.tag)}</text>`;
+        return;
+      }
+      const hull = convexHull(pts);
+      if (hull.length < 3) return;
+      const ptsAttr = hull.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+      html += `<polygon points="${ptsAttr}" fill="${st.fill}" fill-opacity="${st.op}" stroke="${st.stroke}" stroke-opacity=".9" stroke-width="1.4" ${st.dash ? `stroke-dasharray="${st.dash}"` : ""} stroke-linejoin="round"/>`;
+      // rótulo no topo do anteparo, se couber na tela
+      const top = hull.reduce((a, b) => (b.y < a.y ? b : a));
+      const cx = hull.reduce((a, b) => a + b.x, 0) / hull.length;
+      const ty = Math.max(14, Math.min(Hh - 6, top.y - 5));
+      if (cx > 10 && cx < W - 10) {
+        html += `<text x="${clamp(cx, 40, W - 40).toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle" font-size="10" font-weight="800"
+          fill="${st.stroke}" stroke="#0b0d0f" stroke-width="3" paint-order="stroke">${tx(st.tag)}</text>`;
+      }
+    });
+
+    // ---- pontos de amostra por cima (raio-X) ----
+    results.forEach(r => {
+      const p = proj(r, r.z, D);
+      html += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.2" fill="${statusColor(r.status)}" stroke="#0b0d0f" stroke-width="1"/>`;
+    });
+    html += `</g>`;
+    html += `<text x="${W - 8}" y="16" text-anchor="end" fill="#e8edf0" font-size="10.5" font-weight="700" stroke="#0b0d0f" stroke-width="3" paint-order="stroke">${(D / 100).toFixed(1)} m · ${(D / 100 * 3.28084).toFixed(0)} ft</text>`;
+    svg.innerHTML = html;
+  }
+
+  function partListHtml(parts, mode) {
+    return ["head", "torso", "legs"].map(k => {
+      const p = parts[k];
+      const names = p.labels.map(tx).join(", ");
+      let text, color;
+      if (mode === "threat") {
+        if (p.status === "covered") { text = L(`coberta por ${names}`, `covered by ${names}`); color = SIGHT_COLORS.covered; }
+        else if (p.status === "hidden") { text = L(`oculta por ${names} — não para disparo`, `concealed by ${names} — does not stop rounds`); color = SIGHT_COLORS.hidden; }
+        else { text = p.frac >= 0.99 ? L("exposta", "exposed") : L(`parcialmente exposta (${Math.round(p.frac * 100)}%)`, `partly exposed (${Math.round(p.frac * 100)}%)`); color = SIGHT_COLORS.exposed; }
+      } else {
+        if (p.status === "exposed") { text = p.frac >= 0.99 ? L("visível", "visible") : L(`parcialmente visível (${Math.round(p.frac * 100)}%)`, `partly visible (${Math.round(p.frac * 100)}%)`); color = SIGHT_COLORS.visible; }
+        else { text = L(`fora de vista (${names})`, `out of sight (${names})`); color = SIGHT_COLORS.unseen; }
+      }
+      return `<li><i style="background:${color}"></i><b>${tx(PART_NAMES[k])}:</b> ${text}</li>`;
+    }).join("");
+  }
+
+  function updateSightSelectors() {
+    const fill = (id, actors, noun, stateKey) => {
+      const sel = $(id);
+      const keep = actors.some(a => a.id === sightState[stateKey]) ? sightState[stateKey] : (actors[0] && actors[0].id);
+      sightState[stateKey] = keep;
+      sel.replaceChildren();
+      actors.forEach((a, i) => {
+        const opt = document.createElement("option");
+        opt.value = String(a.id);
+        opt.textContent = `${noun} ${i + 1}${a.name ? " · " + a.name : ""}`;
+        sel.appendChild(opt);
+      });
+      sel.value = String(keep);
+    };
+    fill("sightOfficer", state.officers, L("Oficial", "Officer"), "officerId");
+    fill("sightThreat", state.threats, L("Ameaça", "Threat"), "threatId");
+  }
+
+  function renderSight() {
+    updateSightSelectors();
+    const officer = state.officers.find(o => o.id === sightState.officerId);
+    const threat = state.threats.find(t => t.id === sightState.threatId);
+    const layer = $("sightLayer");
+    if (!officer || !threat) { layer.replaceChildren(); return; }
+
+    const oStance = stanceOf(officer);
+    document.querySelectorAll("[data-sight-stance]").forEach(b => {
+      const on = b.dataset.sightStance === oStance;
+      b.classList.toggle("active", on); b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    document.querySelectorAll("[data-visada]").forEach(b => {
+      const on = Number(b.dataset.visada) === sightState.visada;
+      b.classList.toggle("active", on); b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+
+    const occ = buildOccluders();
+    const uOT = vnorm(vsub(threat, officer));          // policial → ameaça
+    // visada: -1 = esquerda do policial, +1 = direita do policial (30 cm de cabeça, 15 cm de tronco)
+    // deitado: visada vira rolar o corpo inteiro (60 cm)
+    const leanAmt = oStance === "prone" ? SIGHT.rollProne : SIGHT.leanHead;
+    const officerLean = { dir: leftOf(uOT), amount: -sightState.visada * leanAmt, perp: rightOf(uOT) };
+    const noLean = { dir: { x: 0, y: 0 }, amount: 0, perp: rightOf(uOT) };
+    const fOfficer = facingVec(officer, threat);
+
+    const weapon = threat.weapon || "curta";
+    const threatEye = eyePoint(threat, "standing", noLean, null);
+    const officerSamples = bodySamples(officer, oStance, officerLean, fOfficer);
+    const threatView = classify(officerSamples, threatEye, occ, weapon);
+    const officerEye = eyePoint(officer, oStance, officerLean, fOfficer);
+    const threatSamples = bodySamples(threat, "standing", noLean, null);
+    const officerView = classify(threatSamples, officerEye, occ, null);
+
+    const tIdx = state.threats.indexOf(threat) + 1, oIdx = state.officers.indexOf(officer);
+    const oName = officer.name || `${L("Oficial", "Officer")} ${oIdx + 1}`;
+    const weaponLabel = weapon === "fuzil" ? L("fuzil", "rifle") : L("arma curta", "handgun");
+
+    drawView($("sightThreatView"), { eye: threatEye, target: officer, results: threatView, occ, targetCrouched: !!officer.crouched, targetStance: oStance, targetFacing: fOfficer, lean: officerLean, mode: "threat", targetKind: "officer" });
+    drawView($("sightOfficerView"), { eye: officerEye, target: threat, results: officerView, occ, targetCrouched: false, lean: null, mode: "officer", targetKind: "threat", weapon });
+
+    const tp = summarizeParts(threatView), op = summarizeParts(officerView);
+    $("sightThreatTitle").textContent = L(`Ameaça ${tIdx} (${weaponLabel}) olhando para ${oName}`, `Threat ${tIdx} (${weaponLabel}) looking at ${oName}`);
+    $("sightOfficerTitle").textContent = L(`${oName} olhando para a ameaça ${tIdx}`, `${oName} looking at threat ${tIdx}`);
+    $("sightThreatVerdict").innerHTML = `<ul>${partListHtml(tp, "threat")}</ul>`;
+    $("sightOfficerVerdict").innerHTML = `<ul>${partListHtml(op, "officer")}</ul>`;
+
+    // leitura combinada
+    const seesThreat = Object.values(op).some(p => p.status === "exposed");
+    const headExposed = tp.head.status === "exposed";
+    const anyExposed = Object.values(tp).some(p => p.status === "exposed");
+    const anyHiddenOnly = Object.values(tp).some(p => p.status === "hidden");
+    let msg;
+    if (!seesThreat && !anyExposed) msg = L(`${oName} está fora de vista, mas também não vê a ameaça. Experimente a visada à esquerda ou à direita para observar.`,
+      `${oName} is out of sight but cannot see the threat either. Try the left or right lean to observe.`);
+    else if (seesThreat && headExposed) msg = L(`Troca de visada: ao ver a ameaça desta posição, a cabeça de ${oName} também fica exposta.`,
+      `Sight trade-off: seeing the threat from here also exposes ${oName}'s head.`);
+    else if (seesThreat && !anyExposed) msg = L(`${oName} vê a ameaça sem ficar exposto a ela.`, `${oName} sees the threat without being exposed to it.`);
+    else if (anyExposed) msg = L(`Atenção: parte do corpo de ${oName} está exposta à ameaça ${tIdx}.`, `Warning: part of ${oName}'s body is exposed to threat ${tIdx}.`);
+    else msg = "";
+    if (anyHiddenOnly) msg += (msg ? " " : "") + L("Lembre: lataria e vidro escondem, mas não param disparo.", "Remember: car body and glass conceal, but do not stop rounds.");
+    if (oStance === "prone") {
+      // corpo perpendicular ao anteparo = alinhado com a linha de tiro (cabeça para a ameaça)
+      const misalign = Math.round(Math.acos(clamp(vdot(fOfficer, uOT), -1, 1)) * 180 / Math.PI);
+      if (misalign > 30) msg += " " + L(
+        `Corpo desalinhado ${misalign}° da linha da ameaça: deitado, o corpo deve ficar perpendicular ao anteparo, cabeça voltada para a ameaça e pernas em linha atrás — senão pés ou cabeça saem da proteção. Gire o ícone pela alça clara.`,
+        `Body is ${misalign}° off the threat line: when prone, keep the body perpendicular to the cover, head toward the threat and legs in line behind — otherwise feet or head leave the protection. Rotate the icon with the light handle.`);
+      msg += " " + L(
+        "Deitado: para reagir, role para a direita ou a esquerda (use a visada). Calcanhares no chão. Atenção ao ricochete rente ao chão e ao vão sob o carro, que funciona nos dois sentidos. Avise a equipe de que está deitado.",
+        "Prone: to react, roll right or left (use the lean). Heels down. Watch for rounds skipping along the ground and for the gap under the car, which works both ways. Tell your team you are prone.");
+    }
+    $("sightInsight").textContent = msg.trim();
+
+    // linha de visão na cena
+    const eyeMark = officerLean.amount ? `<circle cx="${officerEye.x}" cy="${officerEye.y}" r="9" fill="none" stroke="#ffffff" stroke-width="2" vector-effect="non-scaling-stroke"/>` : "";
+    layer.innerHTML = `
+      <line x1="${threat.x}" y1="${threat.y}" x2="${officerEye.x}" y2="${officerEye.y}" stroke="#ffffff" stroke-opacity=".75"
+        stroke-width="1.6" stroke-dasharray="2 6" stroke-linecap="round" vector-effect="non-scaling-stroke"></line>${eyeMark}`;
+  }
+
+  $("sightOfficer").addEventListener("change", e => { sightState.officerId = Number(e.target.value); render(); });
+  $("sightThreat").addEventListener("change", e => { sightState.threatId = Number(e.target.value); render(); });
+  document.querySelectorAll("[data-sight-stance]").forEach(b => b.addEventListener("click", () => {
+    const o = state.officers.find(x => x.id === sightState.officerId);
+    if (!o) return;
+    if (b.dataset.sightStance === "prone") setOfficerProne(o.id, sightState.threatId);
+    else setOfficerCrouch(o.id, b.dataset.sightStance === "crouched");
+  }));
+  document.querySelectorAll("[data-visada]").forEach(b => b.addEventListener("click", () => {
+    sightState.visada = Number(b.dataset.visada);
+    render();
+  }));
+
   /* ------------------------------------------------------------
      POSICIONAMENTO POR VOZ / VOICE POSITIONING
      O destino é sempre calculado em relação à ameaça escolhida,
@@ -5076,8 +5882,11 @@ document.addEventListener("keydown", e => {
     { pt: ["Motor", "atrás do motor"], en: ["Engine", "behind the engine"] },
     { pt: ["Árvore", "atrás da árvore"], en: ["Tree", "behind the tree"] },
     { pt: ["Poste", "atrás do poste"], en: ["Pole", "behind the pole"] },
-    { pt: ["Parede", "atrás da parede"], en: ["Wall", "behind the wall"] },
-    { pt: ["Viatura", "atrás da viatura"], en: ["Patrol car", "behind the patrol car"] }
+    { pt: ["Muro", "atrás do muro"], en: ["Wall", "behind the wall"] },
+    { pt: ["Coluna", "atrás da coluna"], en: ["Pillar", "behind the pillar"] },
+    { pt: ["Viatura — lado esquerdo", "atrás da viatura do lado esquerdo"], en: ["Patrol car — left", "behind the patrol car on the left side"] },
+    { pt: ["Viatura — lado direito", "atrás da viatura do lado direito"], en: ["Patrol car — right", "behind the patrol car on the right side"] },
+    { pt: ["Porta-malas", "atrás do porta-malas da viatura"], en: ["Trunk", "behind the patrol car trunk"] }
   ];
 
   // Mensagem atual guardada nos dois idiomas, para reescrever ao trocar de idioma.
@@ -5087,8 +5896,8 @@ document.addEventListener("keydown", e => {
 
   function voiceHelpText() {
     return {
-      pt: "Diga “Steve, vá para a árvore” ou “Mike, atrás do poste”. Sem nome ou número, move o oficial selecionado. “Atrás” é sempre em relação à ameaça escolhida.",
-      en: "Say “Steve, go to the tree” or “Mike, behind the pole”. With no name or number, the selected officer moves. “Behind” is always relative to the chosen threat."
+      pt: "Diga “Steve, atrás do motor”, “Mike, atrás do muro”, “Joe, coluna B do lado do motorista” “Billy, atrás do porta-malas” ou “Steve, deita”. Sem nome, move o oficial selecionado. “Atrás” é sempre em relação à ameaça escolhida.",
+      en: "Say “Steve, behind the engine”, “Mike, behind the wall”, “Joe, pillar B on the driver side” “Billy, behind the trunk” or “Steve, go prone”. With no name, the selected officer moves. “Behind” is always relative to the chosen threat."
     };
   }
 
@@ -5115,9 +5924,15 @@ document.addEventListener("keydown", e => {
 
   function renderVoiceChrome() {
     const btn = $("voiceBtn");
-    btn.textContent = voiceListening ? L("Ouvindo…", "Listening…") : L("Iniciar escuta", "Start listening");
+    btn.textContent = voiceListening ? L("⏹ Parar escuta", "⏹ Stop listening") : L("Iniciar escuta", "Start listening");
+    const localFile = location.protocol === "file:";
     $("voiceSupport").textContent = voiceRecognition
-      ? L("Toque para falar ou digite um comando.", "Tap to speak or type a command.")
+      ? (localFile
+          ? L("Aberto como arquivo local: o navegador pode pedir o microfone a cada vez. No site tacticalcoverlab.org a permissão fica salva.",
+              "Opened as a local file: the browser may ask for the microphone each time. On tacticalcoverlab.org the permission is remembered.")
+          : voiceListening
+            ? L("Escutando continuamente — fale um comando por vez.", "Listening continuously — say one command at a time.")
+            : L("Clique uma vez para ligar o microfone, ou digite um comando.", "Click once to turn the microphone on, or type a command."))
       : L(
           "Voz indisponível neste navegador. Use o ditado do teclado no campo de texto ou os botões.",
           "Voice not available in this browser. Use keyboard dictation in the text field or the buttons."
@@ -5125,7 +5940,7 @@ document.addEventListener("keydown", e => {
     if (voiceRecognition) voiceRecognition.lang = LANG === "en" ? "en-US" : "pt-BR";
     renderVoiceShortcuts();
     updateVoiceSelectors();
-    $("voiceFeedback").textContent = tx(voiceMessage || voiceHelpText());
+    $("voiceFeedback").textContent = tx(voiceMessage && (voiceMessage.pt || voiceMessage.en) ? voiceMessage : voiceHelpText());
   }
 
   function updateVoiceSelectors() {
@@ -5145,14 +5960,20 @@ document.addEventListener("keydown", e => {
   }
 
   function voiceTarget(command, threat) {
-    const q = voiceNormalize(command);
+    // tira expressões de posição ("atrás do", "por trás da", "vai para") para não confundir
+    // "atrás" com "roda de trás"
+    const q = " " + voiceNormalize(command)
+      .replace(/\b(?:por\s+tras|atras)\s+d(?:a|o|e|as|os)\b/g, " ")
+      .replace(/\b(?:vai|va|vem|ir|corre|corra|abriga|abrigue|abrigar|fica|fique|go|move|get)\s+(?:para|pra|pro|ao|a|na|no|to|behind)?\b/g, " ")
+      + " ";
+    if (/\b(deit|deita|deite|prone|lie down|go prone)/.test(q)) return { stance: "prone" };
     if (/\b(agach|abaix|crouch|duck|kneel)/.test(q)) return { stance: true };
     if (/\b(levant|em pe|fique de pe|stand up|standing|get up)/.test(q)) return { stance: false };
 
-    if (/\b(roda|pneu|wheel|tire|tyre)/.test(q)) {
-      const front = /dianteir|frente|front/.test(q);
-      const rear = /traseir|retaguarda|rear/.test(q);
-      const right = /direit|right/.test(q), left = /esquerd|left/.test(q);
+    if (/\b(roda|rodas|pneu|pneus|wheel|tire|tyre)/.test(q)) {
+      const front = /dianteir|frente|frontal|front/.test(q);
+      const rear = /traseir|retaguarda|\btras\b|rear|back/.test(q);
+      const right = /direit|right|passageir|passenger/.test(q), left = /esquerd|left|motorista|driver/.test(q);
       if ((!front && !rear) || (!right && !left) || (right && left)) {
         return { error: {
           pt: "Diga dianteira ou traseira, e direita ou esquerda.",
@@ -5165,19 +5986,35 @@ document.addEventListener("keydown", e => {
       return { object: { ...wheel, requiresCrouch: true }, label: { pt: "da " + w.pt, en: "the " + w.en } };
     }
 
-    if (/\b(motor|cofre|engine|hood|bonnet)/.test(q)) {
+    // colunas A/B/C: "atrás da coluna", "coluna B", "coluna A do lado do motorista"
+    if (/\b(coluna|colunas|pilar|pilares|pillar|pillars)\b/.test(q)) {
+      const letter = (q.match(/\b(?:coluna|pilar|pillar)\s+([abc])\b/) || [])[1];
+      const side = /esquerd|motorista|left|driver/.test(q) ? "L" : /direit|passageir|right|passenger/.test(q) ? "R" : null;
+      const all = getPillarObjects(state.viatura);
+      const candidates = all.filter(p => {
+        const [, key, sd] = p.key.split("-");
+        return (!letter || key.toLowerCase() === letter) && (!side || sd === side);
+      });
+      if (!candidates.length) return { error: { pt: "Coluna não encontrada. Diga A, B ou C.", en: "Pillar not found. Say A, B or C." } };
+      const asCand = p => ({ object: { ...p, requiresCrouch: false }, label: { pt: "da " + p.labelI18n.pt, en: "the " + p.labelI18n.en } });
+      return { candidates: candidates.map(asCand), fallback: all.map(asCand), specific: !!(letter || side) };
+    }
+
+    if (/\b(motor|cofre|capo|bloco|engine|hood|bonnet|block)/.test(q)) {
       return {
         object: { corners: getEngineCorners(state.viatura), ratingKey: "motor", requiresCrouch: true },
         label: { pt: "do motor", en: "the engine" }
       };
     }
 
-    const type = /arvor|tree/.test(q) ? "arvore" : /poste|pole/.test(q) ? "poste" : /pared|muro|wall/.test(q) ? "parede" : null;
+    const type = /arvor|tronco|\btree/.test(q) ? "arvore"
+      : /\bpost|pole|lamp/.test(q) ? "poste"
+      : /pared|muro|mureta|wall/.test(q) ? "parede" : null;
     if (type) {
       const names = {
         arvore: { pt: "da árvore", en: "the tree", none: { pt: "Não há árvore nesta cena.", en: "There is no tree in this scene." } },
         poste: { pt: "do poste", en: "the pole", none: { pt: "Não há poste nesta cena.", en: "There is no pole in this scene." } },
-        parede: { pt: "da parede", en: "the wall", none: { pt: "Não há parede nesta cena.", en: "There is no wall in this scene." } }
+        parede: { pt: "do muro", en: "the wall", none: { pt: "Não há muro nesta cena.", en: "There is no wall in this scene." } }
       }[type];
       const options = getEnvironmentCoverObjects().filter(o => o.ratingKey === type);
       if (!options.length) {
@@ -5194,17 +6031,29 @@ document.addEventListener("keydown", e => {
       return { object: options[0], label: { pt: names.pt, en: names.en } };
     }
 
-    if (/\b(viatura|carro|veiculo|car|vehicle|patrol|cruiser)/.test(q)) {
+    const trunk = /porta.?malas|traseira|trunk|rear of/.test(q);
+    if (trunk || /\b(viatura|vtr|carro|veiculo|car|vehicle|patrol|cruiser)/.test(q)) {
       const car = /abordad|suspeit|stopped|suspect/.test(q) ? state.frontCar : state.viatura;
       const c = [
         { x: -car.width / 2, y: -car.length / 2 }, { x: car.width / 2, y: -car.length / 2 },
         { x: -car.width / 2, y: car.length / 2 }, { x: car.width / 2, y: car.length / 2 }
       ].map(v => carLocalToWorld(car, v));
+      // lado do carro (direita = lado do passageiro) e/ou atrás do porta-malas
+      const side = /esquerd|motorista|left|driver/.test(q) ? -1 : /direit|passageir|right|passenger/.test(q) ? 1 : 0;
+      const filter = (side || trunk) ? (p => {
+        const l = carWorldToLocal(car, p);
+        if (side && Math.sign(l.x) !== side) return false;
+        if (trunk && l.y < car.length / 2) return false;
+        return true;
+      }) : null;
+      const base = car === state.viatura ? { pt: "da viatura", en: "the patrol car" } : { pt: "do carro abordado", en: "the stopped vehicle" };
+      let label = trunk
+        ? (car === state.viatura ? { pt: "do porta-malas da viatura", en: "the patrol car's trunk" } : { pt: "do porta-malas do carro abordado", en: "the stopped vehicle's trunk" })
+        : base;
+      if (side) label = { pt: label.pt + (side < 0 ? ", lado esquerdo" : ", lado direito"), en: label.en + (side < 0 ? ", left side" : ", right side") };
       return {
         object: { corners: c, ratingKey: null, requiresCrouch: false },
-        label: car === state.viatura
-          ? { pt: "da viatura", en: "the patrol car" }
-          : { pt: "do carro abordado", en: "the stopped vehicle" },
+        label, filter, trunk,
         visualOnly: true
       };
     }
@@ -5215,7 +6064,7 @@ document.addEventListener("keydown", e => {
     } };
   }
 
-  function positionFromThreat(obj, threat, officer) {
+  function positionFromThreat(obj, threat, officer, filter) {
     const center = objectCentroid(obj);
     const dx = center.x - threat.x, dy = center.y - threat.y;
     const length = Math.hypot(dx, dy);
@@ -5236,6 +6085,8 @@ document.addEventListener("keydown", e => {
         if (isInsideCar(state.viatura, p, ACTOR_CAR_MARGIN + 8) ||
             isInsideCar(state.frontCar, p, ACTOR_CAR_MARGIN + 8)) continue;
         if (Math.abs(p.x) > WORLD_BOUND || Math.abs(p.y) > WORLD_BOUND) continue;
+        if (envObstacleAt(p, ACTOR_BODY_R)) continue;
+        if (filter && !filter(p)) continue;
         if (!isPointShielded(threat, p, geometry)) continue;
         const insideShadow = [
           { x: p.x + clearance, y: p.y }, { x: p.x - clearance, y: p.y },
@@ -5263,12 +6114,12 @@ document.addEventListener("keydown", e => {
     const requestedIndex = requested ? (actorNumbers[requested[1]] || Number(requested[1])) - 1 : null;
 
     // variações comuns do reconhecimento de fala para cada nome
-    const nameMatch = command.match(/\b(steve|stive|estive|stiv|steven|mike|maik|maike|joe|jo|djoe|joel|billy|bili|billie|bily)\b/);
+    const nameMatch = command.match(/\b(steve|stive|estive|esteve|isteve|stiv|estiv|steven|mike|maik|maike|maique|maiki|mique|mic|joe|jo|jou|djo|djoe|joel|billy|bili|billie|bily|bil|bile)\b/);
     const names = {
-      steve: "Steve", stive: "Steve", estive: "Steve", stiv: "Steve", steven: "Steve",
-      mike: "Mike", maik: "Mike", maike: "Mike",
-      joe: "Joe", jo: "Joe", djoe: "Joe", joel: "Joe",
-      billy: "Billy", bili: "Billy", billie: "Billy", bily: "Billy"
+      steve: "Steve", stive: "Steve", estive: "Steve", esteve: "Steve", isteve: "Steve", stiv: "Steve", estiv: "Steve", steven: "Steve",
+      mike: "Mike", maik: "Mike", maike: "Mike", maique: "Mike", maiki: "Mike", mique: "Mike", mic: "Mike",
+      joe: "Joe", jo: "Joe", jou: "Joe", djo: "Joe", djoe: "Joe", joel: "Joe",
+      billy: "Billy", bili: "Billy", billie: "Billy", bily: "Billy", bil: "Billy", bile: "Billy"
     };
     const requestedName = nameMatch ? names[nameMatch[1]] : null;
 
@@ -5297,8 +6148,14 @@ document.addEventListener("keydown", e => {
     const target = voiceTarget(command, threat);
 
     if ("stance" in target) {
-      officer.crouched = target.stance;
-      render();
+      if (target.stance === "prone") {
+        setOfficerProne(officer.id, threat.id);
+        return voiceFeedback(
+          q + officer.name + " deitado, com a cabeça voltada para a ameaça " + threatNo + ". Para reagir, role para a direita ou a esquerda.",
+          q + officer.name + " prone, head toward threat " + threatNo + ". To react, roll right or left."
+        );
+      }
+      setOfficerCrouch(officer.id, target.stance);
       return voiceFeedback(
         q + officer.name + (officer.crouched ? " agachado." : " em pé."),
         q + officer.name + (officer.crouched ? " crouched." : " standing.")
@@ -5307,7 +6164,34 @@ document.addEventListener("keydown", e => {
 
     if (target.error) return voiceFeedback(q + target.error.pt, q + target.error.en);
 
-    const destination = positionFromThreat(target.object, threat, officer);
+    // várias opções (ex.: "atrás da coluna"): escolhe a que deixa o policial menos exposto
+    if (target.candidates) {
+      let best = null;
+      target.candidates.forEach(cand => {
+        const d = positionFromThreat(cand.object, threat, officer);
+        if (!d) return;
+        if (!best || d.exposedTo.length < best.d.exposedTo.length ||
+            (d.exposedTo.length === best.d.exposedTo.length && d.score < best.d.score)) best = { d, cand };
+      });
+      if (best) { target.object = best.cand.object; target.label = best.cand.label; }
+      else if (target.fallback) {
+        // a coluna pedida não tem ponto protegido em relação a essa ameaça: usa a melhor das outras
+        target.fallback.forEach(cand => {
+          const d = positionFromThreat(cand.object, threat, officer);
+          if (!d) return;
+          if (!best || d.exposedTo.length < best.d.exposedTo.length ||
+              (d.exposedTo.length === best.d.exposedTo.length && d.score < best.d.score)) best = { d, cand };
+        });
+        if (best) {
+          target.object = best.cand.object; target.label = best.cand.label;
+          target.swapNote = {
+            pt: " (a coluna pedida não protege em relação a essa ameaça — usei a mais próxima que protege)",
+            en: " (the requested pillar does not cover against this threat — used the nearest one that does)"
+          };
+        } else target.object = target.candidates[0].object;
+      } else target.object = target.candidates[0].object;
+    }
+    const destination = positionFromThreat(target.object, threat, officer, target.filter);
     if (!destination) {
       return voiceFeedback(
         q + "Não encontrei um ponto livre atrás desse objeto em relação à ameaça. Ajuste a cena ou escolha outro ponto.",
@@ -5333,15 +6217,31 @@ document.addEventListener("keydown", e => {
         ? { pt: " Pode ceder sob disparos repetidos no mesmo ponto.", en: " May fail under repeated hits at the same point." }
       : { pt: "", en: "" };
 
+    if (target.trunk) {
+      rating.pt += " Em linha reta, o motor fica no caminho, mas longe dele a proteção só vale bem rente ao chão: confira na Linha de Visão.";
+      rating.en += " In a straight line the engine is in the way, but far from it the protection only holds very close to the ground: check the Line of Sight.";
+    }
     const exposedList = destination.exposedTo.map(t => state.threats.indexOf(t) + 1).join(", ");
     const exposure = destination.exposedTo.length
       ? { pt: ` Ainda exposto à(s) ameaça(s) ${exposedList}.`, en: ` Still exposed to threat(s) ${exposedList}.` }
       : { pt: " Coberto de todas as ameaças da cena.", en: " Covered from every threat in the scene." };
 
+    const swap = target.swapNote || { pt: "", en: "" };
     voiceFeedback(
-      q + `${officer.name} posicionado atrás ${target.label.pt}, em relação à ameaça ${threatNo}.` + exposure.pt + rating.pt,
-      q + `${officer.name} moved behind ${target.label.en}, relative to threat ${threatNo}.` + exposure.en + rating.en
+      q + `${officer.name} posicionado atrás ${target.label.pt}${swap.pt}, em relação à ameaça ${threatNo}.` + exposure.pt + rating.pt,
+      q + `${officer.name} moved behind ${target.label.en}${swap.en}, relative to threat ${threatNo}.` + exposure.en + rating.en
     );
+  }
+
+  // O reconhecimento devolve várias transcrições possíveis: usa a primeira que vira um comando válido.
+  function bestTranscript(alternatives) {
+    const threat = state.threats.find(t => String(t.id) === $("voiceThreat").value) || state.threats[0];
+    for (const alt of alternatives) {
+      if (!alt) continue;
+      const t = voiceTarget(alt, threat);
+      if (!t.error) return alt;
+    }
+    return alternatives.find(Boolean) || "";
   }
 
   $("voiceSend").addEventListener("click", () => runVoiceCommand($("voiceText").value));
@@ -5355,41 +6255,59 @@ document.addEventListener("keydown", e => {
     }
     const recognition = new Recognition();
     voiceRecognition = recognition;
-    let heard = false, failed = false;
-    recognition.continuous = false;
+    // Escuta contínua: o microfone é pedido uma vez e fica ligado até o instrutor clicar em "Parar escuta".
+    let wanted = false, starting = false, restartTimer = null;
+    recognition.continuous = true;
     recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+    recognition.maxAlternatives = 5;
+
+    const startNow = () => {
+      if (starting) return;
+      starting = true;
+      try {
+        recognition.lang = LANG === "en" ? "en-US" : "pt-BR";
+        recognition.start();
+      } catch (err) {
+        starting = false;
+      }
+    };
 
     recognition.onstart = () => {
-      voiceListening = true; heard = false; failed = false;
+      starting = false;
+      voiceListening = true;
       $("voiceBtn").setAttribute("aria-pressed", "true");
       renderVoiceChrome();
-      voiceFeedback(
-        "Microfone ligado. Fale um comando completo, como “Steve, atrás do motor”.",
-        "Microphone on. Say a full command, such as “Steve, behind the engine”."
-      );
+      if (!voiceMessage || voiceMessage.listening) {
+        voiceFeedback(
+          "Microfone ligado. Fale comandos completos, como “Steve, atrás do motor”. Clique em Parar escuta para desligar.",
+          "Microphone on. Say full commands, such as “Steve, behind the engine”. Click Stop listening to turn it off."
+        );
+        voiceMessage.listening = true;
+      }
     };
-    recognition.onspeechstart = () => voiceFeedback("Ouvindo sua fala…", "Listening…");
     recognition.onresult = e => {
-      heard = true;
-      const phrase = e.results?.[0]?.[0]?.transcript || "";
-      $("voiceText").value = phrase;
-      runVoiceCommand(phrase);
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const res = e.results[i];
+        if (!res.isFinal) continue;
+        const alternatives = Array.from(res).map(a => (a.transcript || "").trim());
+        const phrase = bestTranscript(alternatives);
+        if (!phrase) continue;
+        $("voiceText").value = phrase;
+        runVoiceCommand(phrase);
+      }
     };
     recognition.onerror = e => {
-      failed = true;
+      if (e.error === "no-speech" || e.error === "aborted") return; // silêncio: continua escutando
+      if (["not-allowed", "service-not-allowed", "audio-capture"].includes(e.error)) wanted = false;
       const messages = {
-        "not-allowed": ["Acesso ao microfone negado. Abra o site no Chrome ou Edge e permita o microfone nas configurações do navegador.",
-                        "Microphone access denied. Open the site in Chrome or Edge and allow the microphone in the browser settings."],
+        "not-allowed": ["Acesso ao microfone negado. Permita o microfone para este site nas configurações do navegador.",
+                        "Microphone access denied. Allow the microphone for this site in the browser settings."],
         "service-not-allowed": ["O navegador bloqueou o reconhecimento de fala. Use o ditado do teclado no campo de texto.",
                                 "The browser blocked speech recognition. Use keyboard dictation in the text field."],
         "audio-capture": ["Nenhum microfone disponível. Verifique o microfone e a permissão do navegador.",
                           "No microphone available. Check the microphone and the browser permission."],
-        "network": ["O serviço de reconhecimento de fala não respondeu. Use o ditado do teclado no campo de texto.",
-                    "The speech recognition service did not respond. Use keyboard dictation in the text field."],
-        "no-speech": ["Nenhuma fala detectada. Clique em Iniciar escuta e fale logo em seguida.",
-                      "No speech detected. Click Start listening and speak right away."],
-        "aborted": ["Escuta interrompida.", "Listening stopped."]
+        "network": ["O serviço de reconhecimento de fala não respondeu. Tentando de novo…",
+                    "The speech recognition service did not respond. Retrying…"]
       };
       const m = messages[e.error] || [
         `Falha no reconhecimento (${e.error}). Use o ditado do teclado no campo de texto.`,
@@ -5398,28 +6316,29 @@ document.addEventListener("keydown", e => {
       voiceFeedback(m[0], m[1]);
     };
     recognition.onend = () => {
+      starting = false;
+      if (wanted) {
+        // o navegador encerra a escuta depois de um tempo de silêncio: religa sozinho
+        clearTimeout(restartTimer);
+        restartTimer = setTimeout(startNow, 300);
+        return;
+      }
       voiceListening = false;
       $("voiceBtn").setAttribute("aria-pressed", "false");
       renderVoiceChrome();
-      if (!heard && !failed) {
-        voiceFeedback(
-          "A escuta terminou sem transcrição. Tente novamente ou use o ditado do teclado no campo de texto.",
-          "Listening ended without a transcript. Try again or use keyboard dictation in the text field."
-        );
-      }
     };
 
     $("voiceBtn").addEventListener("click", () => {
-      if (voiceListening) { recognition.stop(); return; }
-      try {
-        recognition.lang = LANG === "en" ? "en-US" : "pt-BR";
-        recognition.start();
-      } catch (err) {
-        voiceFeedback(
-          "Não foi possível iniciar a escuta. Aguarde um instante e tente novamente.",
-          "Could not start listening. Wait a moment and try again."
-        );
+      if (wanted) {
+        wanted = false;
+        clearTimeout(restartTimer);
+        try { recognition.stop(); } catch (err) {}
+        voiceFeedback("Escuta desligada.", "Listening stopped.");
+        return;
       }
+      wanted = true;
+      voiceMessage = { pt: "", en: "", listening: true };
+      startNow();
     });
   })();
 
