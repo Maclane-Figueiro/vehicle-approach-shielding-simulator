@@ -4,6 +4,8 @@
 
 Interactive training simulator for police tactical positioning and vehicle engine-block cover during vehicle approaches.
 
+**Live version:** https://tacticalcoverlab.org
+
 ## Author
 
 **Maclane Antonio Chagas Figueiro**
@@ -18,7 +20,21 @@ September 13, 2026 (first version, v01).
 
 ## How to use
 
-Download `simulator.html` and open it in any modern web browser. No installation required.
+Open https://tacticalcoverlab.org in any modern web browser. No installation required.
+
+To use it offline (for example, in a classroom without internet), download `index.html` and open it in a browser.
+
+## Main features
+
+- Top-down geometric simulation of patrol car and stopped vehicle, with engine, A/B/C pillars and wheels as cover
+- Urban environment elements (tree, pole, wall) with cover rated by threat weapon (handgun or rifle)
+- Ballistic basis from the 1st Ballistic Impact Test of the 20th BPM/M (AGSP, Brazilian Army, Oct 31, 2017), distinguishing tested results, inferences and hypotheses pending validation
+- Best-angle calculation, profile view, training mode with scenarios, and printable technical report
+- Voice positioning (e.g., "Steve, behind the engine")
+- Bilingual interface (Portuguese / English)
+- Monte Carlo validation of the optimal patrol car angle, computed in the browser
+
+This is an educational geometric tool. It does not represent ballistic performance certification.
 
 ## Version history
 
@@ -26,12 +42,13 @@ Previous versions are preserved unchanged in the `previous-versions/` folder. Da
 
 Earlier drafts (v01–v07, dated 2026-09-13) are preserved privately by the author.
 
-| Version | Date | Notes |
-|---|---|---|
-| v08 | 2026-09-20 | Engine Block Shielding – geometric simulator (Portuguese) |
-| v09 | 2026-09-20 | Renamed to Vehicle Approach Shielding |
-| v10 | 2026-09-20 | English version (saved as a complete web page, including browser-generated auxiliary files) |
-| v11 | 2026-09-21 | Current version (same as `simulator.html`) |
+| Version | Date       | Notes |
+| ------- | ---------- | ----- |
+| v08     | 2026-09-20 | Engine Block Shielding – geometric simulator (Portuguese) |
+| v09     | 2026-09-20 | Renamed to Vehicle Approach Shielding |
+| v10     | 2026-09-20 | English version (saved as a complete web page, including browser-generated auxiliary files) |
+| v11     | 2026-09-21 | Technical report, save/load scene, accessibility and performance improvements |
+| v12     | 2026-10-07 | Current version (`index.html`): bilingual PT/EN interface, voice positioning, named officers, ballistic table aligned with the calculation, Monte Carlo results only from real runs |
 
 ## Copyright
 
