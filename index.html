@@ -824,6 +824,97 @@ input[type=range]{ accent-color:#68f477; }
 .heading-grip{ cursor:grab; }
 .heading-grip:active{ cursor:grabbing; }
 .heading-handle{ fill:#ffd936; stroke:#3a2f00; stroke-width:2; }
+/* ===== STREET VIEW ===== */
+.sv-controls{ display:flex; flex-wrap:wrap; gap:8px; padding:10px 14px 12px; }
+.sv-controls .btn{ font-size:13px; }
+.sv-controls .btn.active{ border-color:#59cd76; color:#b6f5c3; background:#1f2d24; }
+.sv-controls a.btn{ text-decoration:none; display:inline-flex; align-items:center; }
+.sv-frame{ position:relative; margin:0 14px; aspect-ratio:16/9; max-height:560px; border-radius:10px; overflow:hidden; background:#101315; border:1px solid #2a3137; }
+.sv-frame iframe{ width:100%; height:100%; border:0; display:block; }
+#svCard .sight-note{ padding:10px 14px 14px; margin:0; }
+
+.sv-overlay{ position:absolute; inset:0; width:100%; height:100%; display:none; pointer-events:none; }
+.sv-frame.frozen .sv-overlay{ display:block; pointer-events:auto; cursor:not-allowed; }
+.sv-overlay .sv-tag{ font:700 12px system-ui,sans-serif; fill:#fff; paint-order:stroke; stroke:#000; stroke-width:3px; }
+.sv-overlay .sv-hint{ font:600 11px system-ui,sans-serif; fill:#fff; paint-order:stroke; stroke:#000; stroke-width:3px; opacity:.85; }
+.sv-toggle{ display:inline-flex; align-items:center; gap:6px; font-size:13px; color:#dfe4e6; margin-left:4px; }
+
+.sv-pick{ display:inline-flex; align-items:center; gap:6px; font-size:13px; color:#c2c7ca; }
+.sv-pick select{ min-height:32px; border-radius:7px; background:#111518; color:#e9edef; border:1px solid #394149; padding:0 6px; }
+
+.sv-adjust{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; padding:0 14px 10px; }
+.sv-adjust .btn{ min-height:30px; padding:4px 10px; font-size:12.5px; }
+.sv-adj-title{ font-size:12.5px; color:#c2c7ca; margin-right:4px; }
+.sv-adj-label{ font-size:12px; color:#9fe6ae; margin-left:4px; }
+
+.sv-link{ display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; padding:0 14px 10px; }
+.sv-link-help{ font-size:12px; color:#9aa4aa; }
+.sv-link input{ flex:1 1 260px; min-width:0; min-height:32px; padding:5px 9px; border-radius:7px; border:1px solid #394149; background:#111518; color:#e9edef; font-size:12.5px; }
+.sv-link .btn{ min-height:32px; padding:4px 10px; font-size:12.5px; }
+
+/* ===== ANTEPAROS MANUAIS ===== */
+.env-add-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+.env-add-row .add-btn{ margin-top:0; }
+.env-sel-row{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-top:8px; }
+.env-sel-row span{ flex:1 1 100%; color:#9aa4aa; font-size:12px; line-height:1.4; }
+.env-sel-row .btn{ min-height:30px; padding:5px 9px; font-size:12.5px; }
+.env-sel-row .btn:disabled{ opacity:.4; cursor:not-allowed; }
+.env-drag{ cursor:grab; }
+.env-drag:active{ cursor:grabbing; }
+
+/* ===== LOCAL REAL (OpenStreetMap) ===== */
+.osm-overlay{
+  position:fixed; inset:0; z-index:1100; display:none;
+  background:rgba(0,0,0,.78); overflow-y:auto; padding:24px 16px;
+}
+.osm-overlay.open{ display:block; }
+.osm-dialog{
+  max-width:860px; margin:0 auto; padding:16px 18px 14px;
+  background:#1b2024; border:1px solid #323940; border-radius:14px;
+  box-shadow:0 20px 60px rgba(0,0,0,.5); color:#e9edef;
+}
+.osm-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.osm-head h2{ margin:0; font-size:18px; }
+.osm-lead{ margin:6px 0 12px; color:#c2c7ca; font-size:13px; line-height:1.45; }
+.osm-search{ display:flex; gap:8px; }
+.osm-search input{
+  flex:1; min-width:0; min-height:36px; padding:7px 10px; border-radius:8px;
+  border:1px solid #394149; background:#111518; color:#e9edef; font-size:14px;
+}
+.osm-results{ display:flex; flex-direction:column; gap:4px; margin:8px 0 0; }
+.osm-results:empty{ display:none; }
+.osm-result{
+  text-align:left; padding:7px 10px; border-radius:8px; cursor:pointer;
+  border:1px solid #323940; background:#22282d; color:#dfe4e6; font-size:12.5px;
+}
+.osm-result:hover{ background:#2c343a; border-color:#505a63; }
+.osm-map{
+  height:min(420px,55vh); margin-top:10px; border-radius:10px; overflow:hidden;
+  border:1px solid #323940; background:#2a2f33;
+}
+.osm-controls{ display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; margin-top:10px; font-size:13px; }
+.osm-controls label{ display:flex; align-items:center; gap:6px; margin:0; font-size:13px; font-weight:500; color:#dfe4e6; text-transform:none; letter-spacing:0; }
+.osm-controls label[hidden]{ display:none; }
+.osm-controls input[type=range]{ width:150px; accent-color:#ffd936; }
+.osm-controls select{ margin-left:6px; min-height:32px; border-radius:7px; background:#111518; color:#e9edef; border:1px solid #394149; }
+.osm-controls .btn.primary{ margin-left:auto; }
+.osm-status{ min-height:18px; margin:10px 0 4px; color:#9fe6ae; font-size:13px; line-height:1.45; }
+.osm-status.is-error{ color:#ffb4a8; }
+.osm-map.is-off{ display:flex; align-items:center; justify-content:center; height:auto; min-height:64px; padding:14px; color:#c2c7ca; font-size:13px; text-align:center; }
+.osm-note{ margin:4px 0 0; color:#9aa2a7; font-size:11.5px; line-height:1.45; }
+.realmap-caption{
+  position:absolute; right:70px; top:13px; max-width:min(300px,calc(100% - 96px));
+  padding:6px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.1);
+  background:rgba(8,10,11,.72); color:#dfe4e6; font-size:11.5px; line-height:1.35;
+  pointer-events:none;
+}
+@media (max-width:640px){
+  .osm-dialog{ padding:12px; }
+  .osm-controls .btn.primary{ margin-left:0; width:100%; }
+  .realmap-on .canvas-title-overlay{ display:none !important; }
+  .realmap-caption{ left:13px; right:62px; max-width:none; }
+}
+
 /* ===== LAUDO TÉCNICO ===== */
 .report-overlay {
   position: fixed;
@@ -1178,6 +1269,7 @@ input[type=range]{ accent-color:#68f477; }
         <button class="btn" id="saveSceneBtn" title="Salvar cena atual no navegador">💾 Salvar cena</button>
         <button class="btn" id="generateReportBtn" title="Gerar laudo técnico para impressão">📄 Gerar laudo técnico</button>
         <button class="btn" id="loadSceneBtn" title="Carregar cena salva no navegador">📂 Carregar cena</button>
+        <button class="btn" id="osmOpenBtn" title="Montar o cenário numa rua real (OpenStreetMap)">🗺 Local real</button>
         <span class="toolbar-separator"></span>
         <button class="btn" id="trainingToggleBtn">🎯 Modo Treinamento</button>
       </div>
@@ -1271,6 +1363,7 @@ input[type=range]{ accent-color:#68f477; }
           <rect x="-9000" y="-9000" width="18800" height="19000" fill="#4b4d4d"></rect>
           <rect x="-9000" y="-9000" width="18800" height="19000" fill="#4b4d4d" filter="url(#asphaltNoise)"></rect>
 
+          <g id="backdropLayer"></g>
           <line id="laneLine" x1="450" y1="-9000" x2="450" y2="9000" stroke="#e8e2c8" stroke-opacity=".22" stroke-width="6" stroke-dasharray="40 34"></line>
 
           <ellipse id="frontCarShadow" fill="#000" opacity=".42" filter="url(#shadow)" cx="466" cy="283" rx="119.03999999999999" ry="277.02"></ellipse>
@@ -1320,6 +1413,8 @@ input[type=range]{ accent-color:#68f477; }
           <p>Motor, colunas e rodas da viatura como cobertura.</p>
           <p>Não representa certificação de desempenho balístico.</p>
         </div>
+
+        <div class="realmap-caption" id="realMapCaption" data-i18n-skip hidden></div>
 
         <!-- MELHORIA #3: removida a classe hint-dismissed inicial que deixava a dica invisível -->
         <div class="hint" id="hintBox" style="display: none;">
@@ -1442,6 +1537,10 @@ input[type=range]{ accent-color:#68f477; }
             <span>Rótulos e notas</span>
             <label class="switch"><input id="showLabels" type="checkbox" checked=""><span class="slider"></span></label>
           </div>
+          <div class="switch-row">
+            <span>Imagem de satélite (local real)</span>
+            <label class="switch"><input id="showSatellite" type="checkbox" checked=""><span class="slider"></span></label>
+          </div>
         </div>
       </section>
 
@@ -1455,6 +1554,22 @@ input[type=range]{ accent-color:#68f477; }
         <div class="section-title">Ameaças <span id="threatCountLabel" style="color:#6d787f;font-weight:700">(2/4)</span></div>
         <div id="threatList" class="actor-list"></div>
         <button class="add-btn" id="addThreatBtn">+ Adicionar ameaça</button>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Anteparos do ambiente</div>
+        <div class="env-add-row">
+          <button class="add-btn" id="addPosteBtn">+ Poste</button>
+          <button class="add-btn" id="addArvoreBtn">+ Árvore</button>
+          <button class="add-btn" id="addMuroBtn">+ Muro</button>
+        </div>
+        <div class="env-sel-row">
+          <span id="envSelLabel" data-i18n-skip></span>
+          <button class="btn" id="envRotateBtn" disabled>↻ Girar 15°</button>
+          <button class="btn" id="envShorterBtn" disabled>− 50 cm</button>
+          <button class="btn" id="envLongerBtn" disabled>+ 50 cm</button>
+          <button class="btn" id="envDeleteBtn" disabled>✕ Remover</button>
+        </div>
       </section>
 
       <section class="section">
@@ -1556,7 +1671,46 @@ input[type=range]{ accent-color:#68f477; }
       <span><i style="background:#ff6b6b"></i>exposto</span>
       <span><i style="background:#ff9d3f"></i>ameaça visível para o policial</span>
     </div>
-    <p class="sight-note">Alturas usadas: lataria 0,25–1,08 m; motor 0,30–1,00 m; roda: aro escolhido (sem pneu), a partir de 0,10 m, e o pneu só oculta; colunas 1,08–1,45 m; parede 2,0 m; poste e árvore inteiros. Olhos a 1,62 m em pé e 0,88 m agachado. A visada desloca a cabeça 30 cm e o tronco 15 cm para o lado. O vão sob o carro (abaixo de 0,25 m) fica aberto, exceto nas rodas. Visualização geométrica para instrução, não certificação balística.</p>
+    <p class="sight-note">Alturas usadas: lataria 0,25–1,08 m; motor 0,30–1,00 m; roda: aro escolhido (sem pneu), a partir de 0,10 m, e o pneu só oculta; colunas 1,08–1,45 m; parede 2,0 m (local real: altura do OSM ou 3 m por andar); poste e árvore inteiros. Olhos a 1,62 m em pé e 0,88 m agachado. A visada desloca a cabeça 30 cm e o tronco 15 cm para o lado. O vão sob o carro (abaixo de 0,25 m) fica aberto, exceto nas rodas. Visualização geométrica para instrução, não certificação balística.</p>
+  </section>
+
+  <section class="profile-card" id="svCard" hidden>
+    <div class="profile-toolbar">
+      <span class="profile-title">STREET VIEW — o local de verdade</span>
+      <span class="profile-hint">Foto de rua do Google no ponto mais próximo, apontada para onde cada um olha.</span>
+    </div>
+    <div class="sv-controls">
+      <label class="sv-pick">Oficial <select id="svOfficer"></select></label>
+      <label class="sv-pick">Ameaça <select id="svThreat"></select></label>
+      <button class="btn" type="button" data-sv="viatura">🚓 Da viatura para o carro abordado</button>
+      <button class="btn" type="button" data-sv="officer">👮 Do oficial para a ameaça</button>
+      <button class="btn" type="button" data-sv="threat">⚠ Da ameaça para o oficial</button>
+      <a class="btn" id="svOpenLink" target="_blank" rel="noopener">Abrir no Google Maps ↗</a>
+      <label class="sv-toggle"><input type="checkbox" id="svFreeze" checked> Modo congelado: desenhar a cena sobre a foto</label>
+      <label class="sv-pick">Veículos <select id="svCarStyle"><option value="solid" selected>3D sólido</option><option value="ghost">3D translúcido</option><option value="line">Contorno</option></select></label>
+      <label class="sv-pick">Viatura <select id="svLivery"><option value="us" selected>Preta e branca (EUA)</option><option value="generic">Branca com faixa</option></select></label>
+      <label class="sv-toggle"><input type="checkbox" id="svShowEngine" checked> Mostrar o motor</label>
+    </div>
+    <div class="sv-adjust">
+      <span class="sv-adj-title">Alinhar o desenho com a foto</span>
+      <button class="btn" type="button" id="svAdjL" title="Mover o desenho 50 cm para a esquerda">◀</button>
+      <button class="btn" type="button" id="svAdjR" title="Mover o desenho 50 cm para a direita">▶</button>
+      <button class="btn" type="button" id="svAdjF" title="Afastar o desenho 50 cm">▲ mais longe</button>
+      <button class="btn" type="button" id="svAdjB" title="Aproximar o desenho 50 cm">▼ mais perto</button>
+      <button class="btn" type="button" id="svAdjRotL" title="Girar o desenho 2° para a esquerda">⟲ 2°</button>
+      <button class="btn" type="button" id="svAdjRotR" title="Girar o desenho 2° para a direita">⟳ 2°</button>
+      <button class="btn" type="button" id="svAdjReset">Zerar</button>
+      <span class="sv-adj-label" id="svAdjLabel" data-i18n-skip>Sem ajuste</span>
+    </div>
+    <div class="sv-link">
+      <span class="sv-adj-title">Alinhar exatamente:</span>
+      <span class="sv-link-help">clique em “Abrir no Google Maps”, copie o endereço da barra do navegador e cole aqui</span>
+      <input id="svLink" type="text" placeholder="https://www.google.com/maps/@…,3a,…" autocomplete="off">
+      <button class="btn" type="button" id="svLinkBtn">Alinhar pelo link</button>
+      <span class="sv-adj-label" id="svLinkMsg" data-i18n-skip></span>
+    </div>
+    <div class="sv-frame" id="svFrameWrap"><iframe id="svFrame" title="Street View" allowfullscreen loading="lazy"></iframe><svg id="svOverlay" class="sv-overlay" data-i18n-skip></svg></div>
+    <p class="sight-note" id="svNote" data-i18n-skip></p>
   </section>
 
   <section class="profile-card">
@@ -1603,6 +1757,32 @@ input[type=range]{ accent-color:#68f477; }
   </div>
   <div class="report-sheet" id="reportSheet"></div>
 </div>
+<div class="osm-overlay" id="osmOverlay" role="dialog" aria-modal="true" aria-labelledby="osmTitle">
+  <div class="osm-dialog">
+    <div class="osm-head">
+      <h2 id="osmTitle">🗺 Cenário em local real</h2>
+      <button class="btn" id="osmCloseBtn" type="button">Fechar</button>
+    </div>
+    <p class="osm-lead">Busque o endereço (ou cole coordenadas / link do Google Maps), clique no ponto exato da rua onde a viatura vai parar e monte o cenário. Ruas, postes, árvores, muros e edificações vêm do OpenStreetMap.</p>
+    <div class="osm-search">
+      <input id="osmQuery" type="search" placeholder="Endereço, cruzamento, referência ou coordenadas (-23.55, -46.63)" autocomplete="off">
+      <button class="btn primary" id="osmSearchBtn" type="button">Buscar</button>
+    </div>
+    <div class="osm-results" id="osmResults" data-i18n-skip></div>
+    <div class="osm-map" id="osmMap" data-i18n-skip></div>
+    <div class="osm-controls">
+      <label>Raio<select id="osmRadius"><option value="40">40 m</option><option value="60" selected>60 m</option><option value="80">80 m</option></select></label>
+      <label>Direção da viatura<select id="osmDirMode"><option value="auto" selected>Pela rua (automática)</option><option value="manual">Manual (seta amarela)</option></select></label>
+      <label id="osmBearingWrap" hidden>Rumo<input type="range" id="osmBearing" min="0" max="355" step="5" value="0"><span id="osmBearingVal" data-i18n-skip>0°</span></label>
+      <label><input type="checkbox" id="osmFlip"> Inverter sentido da via</label>
+      <label><input type="checkbox" id="osmSat" checked> Fundo com imagem de satélite</label>
+      <button class="btn primary" id="osmBuildBtn" type="button" disabled>Montar cenário</button>
+    </div>
+    <p class="osm-status" id="osmStatus" data-i18n-skip aria-live="polite"></p>
+    <p class="osm-note">A viatura para na faixa da direita, 3 m atrás do carro abordado, no ponto clicado. Muros e paredes de edificações entram como parede de bloco: resistem a arma curta, não a fuzil. Postes e árvores dependem do que foi mapeado no OpenStreetMap — confira no local. Dados © colaboradores do OpenStreetMap (ODbL).</p>
+  </div>
+</div>
+
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -1727,6 +1907,57 @@ input[type=range]{ accent-color:#68f477; }
     "Ex.: atrás da roda dianteira direita": "e.g. behind the front right wheel",
     "Executar": "Run",
     "⏹ Parar escuta": "⏹ Stop listening",
+    "🗺 Local real": "🗺 Real location",
+    "Montar o cenário numa rua real (OpenStreetMap)": "Build the scene on a real street (OpenStreetMap)",
+    "🗺 Cenário em local real": "🗺 Scene at a real location",
+    "Fechar": "Close",
+    "Busque o endereço (ou cole coordenadas / link do Google Maps), clique no ponto exato da rua onde a viatura vai parar e monte o cenário. Ruas, postes, árvores, muros e edificações vêm do OpenStreetMap.": "Search the address (or paste coordinates / a Google Maps link), click the exact point on the street where the patrol car will stop and build the scene. Streets, poles, trees, walls and buildings come from OpenStreetMap.",
+    "Endereço, cruzamento, referência ou coordenadas (-23.55, -46.63)": "Address, intersection, landmark or coordinates (-23.55, -46.63)",
+    "Buscar": "Search",
+    "Raio": "Radius",
+    "Inverter sentido da via": "Reverse street direction",
+    "Montar cenário": "Build scene",
+    "Direção da viatura": "Patrol car heading",
+    "Pela rua (automática)": "Along the street (automatic)",
+    "Manual (seta amarela)": "Manual (yellow arrow)",
+    "Rumo": "Heading",
+    "Fundo com imagem de satélite": "Satellite image background",
+    "Imagem de satélite (local real)": "Satellite image (real location)",
+    "Anteparos do ambiente": "Environment cover",
+    "STREET VIEW — o local de verdade": "STREET VIEW — the actual location",
+    "Foto de rua do Google no ponto mais próximo, apontada para onde cada um olha.": "Google street photo from the nearest point, aimed where each person is looking.",
+    "🚓 Da viatura para o carro abordado": "🚓 From the patrol car to the stopped vehicle",
+    "👮 Do oficial para a ameaça": "👮 From the officer to the threat",
+    "⚠ Da ameaça para o oficial": "⚠ From the threat to the officer",
+    "Abrir no Google Maps ↗": "Open in Google Maps ↗",
+    "Modo congelado: desenhar a cena sobre a foto": "Frozen mode: draw the scene over the photo",
+    "Alinhar o desenho com a foto": "Align the drawing with the photo",
+    "▲ mais longe": "▲ farther",
+    "▼ mais perto": "▼ closer",
+    "Zerar": "Reset",
+    "Mover o desenho 50 cm para a esquerda": "Move the drawing 50 cm left",
+    "Mover o desenho 50 cm para a direita": "Move the drawing 50 cm right",
+    "Afastar o desenho 50 cm": "Move the drawing 50 cm farther",
+    "Aproximar o desenho 50 cm": "Move the drawing 50 cm closer",
+    "Girar o desenho 2° para a esquerda": "Rotate the drawing 2° left",
+    "Girar o desenho 2° para a direita": "Rotate the drawing 2° right",
+    "Alinhar exatamente:": "Align exactly:",
+    "clique em “Abrir no Google Maps”, copie o endereço da barra do navegador e cole aqui": "click “Open in Google Maps”, copy the address from the browser bar and paste it here",
+    "Alinhar pelo link": "Align from link",
+    "Veículos": "Vehicles",
+    "3D sólido": "Solid 3D",
+    "3D translúcido": "See-through 3D",
+    "Contorno": "Outline",
+    "Viatura": "Patrol car",
+    "Preta e branca (EUA)": "Black and white (US)",
+    "Branca com faixa": "White with stripe",
+    "Mostrar o motor": "Show the engine",
+    "+ Poste": "+ Pole",
+    "+ Árvore": "+ Tree",
+    "+ Muro": "+ Wall",
+    "↻ Girar 15°": "↻ Rotate 15°",
+    "✕ Remover": "✕ Remove",
+    "A viatura para na faixa da direita, 3 m atrás do carro abordado, no ponto clicado. Muros e paredes de edificações entram como parede de bloco: resistem a arma curta, não a fuzil. Postes e árvores dependem do que foi mapeado no OpenStreetMap — confira no local. Dados © colaboradores do OpenStreetMap (ODbL).": "The patrol car stops in the right lane, 3 m behind the stopped vehicle, at the clicked point. Walls and building faces are treated as block walls: they resist handguns, not rifles. Poles and trees depend on what has been mapped in OpenStreetMap — check on site. Data © OpenStreetMap contributors (ODbL).",
     "Deitado": "Prone",
     "⬤ Aro da roda (sem o pneu)": "⬤ Wheel rim (without the tire)",
     "15 pol. · 38 cm": "15 in · 38 cm",
@@ -1752,7 +1983,7 @@ input[type=range]{ accent-color:#68f477; }
     "coberto — anteparo resiste à arma": "covered — barrier resists the weapon",
     "oculto — lataria ou vidro, não para disparo": "concealed — car body or glass, does not stop rounds",
     "ameaça visível para o policial": "threat visible to the officer",
-    "Alturas usadas: lataria 0,25–1,08 m; motor 0,30–1,00 m; roda: aro escolhido (sem pneu), a partir de 0,10 m, e o pneu só oculta; colunas 1,08–1,45 m; parede 2,0 m; poste e árvore inteiros. Olhos a 1,62 m em pé e 0,88 m agachado. A visada desloca a cabeça 30 cm e o tronco 15 cm para o lado. O vão sob o carro (abaixo de 0,25 m) fica aberto, exceto nas rodas. Visualização geométrica para instrução, não certificação balística.": "Heights used: car body 0.25–1.08 m; engine 0.30–1.00 m; wheel: selected rim (no tire), from 0.10 m up, and the tire only conceals; pillars 1.08–1.45 m; wall 2.0 m; pole and tree full height. Eyes at 1.62 m standing and 0.88 m crouched. The lean shifts the head 30 cm and the torso 15 cm sideways. The gap under the car (below 0.25 m) is open, except at the wheels. Geometric visualization for instruction, not ballistic certification."
+    "Alturas usadas: lataria 0,25–1,08 m; motor 0,30–1,00 m; roda: aro escolhido (sem pneu), a partir de 0,10 m, e o pneu só oculta; colunas 1,08–1,45 m; parede 2,0 m (local real: altura do OSM ou 3 m por andar); poste e árvore inteiros. Olhos a 1,62 m em pé e 0,88 m agachado. A visada desloca a cabeça 30 cm e o tronco 15 cm para o lado. O vão sob o carro (abaixo de 0,25 m) fica aberto, exceto nas rodas. Visualização geométrica para instrução, não certificação balística.": "Heights used: car body 0.25–1.08 m; engine 0.30–1.00 m; wheel: selected rim (no tire), from 0.10 m up, and the tire only conceals; pillars 1.08–1.45 m; wall 2.0 m (real location: OSM height or 3 m per floor); pole and tree full height. Eyes at 1.62 m standing and 0.88 m crouched. The lean shifts the head 30 cm and the torso 15 cm sideways. The gap under the car (below 0.25 m) is open, except at the wheels. Geometric visualization for instruction, not ballistic certification."
   };
 
   const HTML_I18N = {
@@ -1937,6 +2168,58 @@ input[type=range]{ accent-color:#68f477; }
     parede: { pt: "parede", en: "wall" }
   };
 
+  // Paredes podem ter comprimento e altura próprios (muros e fachadas do OpenStreetMap).
+  function wallLen(env) { return env.length || ENV_DIMENSIONS.parede.length; }
+  function wallThk(env) { return env.thickness || ENV_DIMENSIONS.parede.thickness; }
+  function envPad(env) { return env.type === "parede" ? wallLen(env) / 2 : ENV_DIMENSIONS[env.type].radius; }
+  function envLabel(env) {
+    if (env.type === "parede" && env.source === "building") return { pt: "edificação (parede de bloco)", en: "building (block wall)" };
+    if (env.type === "parede" && (env.source === "osm-wall" || env.source === "manual")) return { pt: "muro (bloco)", en: "wall (block)" };
+    return ENV_DIMENSIONS[env.type].label;
+  }
+
+  // interior das edificações do local real: o policial não entra
+  const bboxCache = new WeakMap();
+  function polyBox(poly) {
+    let b = bboxCache.get(poly);
+    if (!b) {
+      b = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity };
+      poly.forEach(p => { b.x0 = Math.min(b.x0, p.x); b.y0 = Math.min(b.y0, p.y); b.x1 = Math.max(b.x1, p.x); b.y1 = Math.max(b.y1, p.y); });
+      bboxCache.set(poly, b);
+    }
+    return b;
+  }
+  function pointInPoly(p, poly) {
+    const b = polyBox(poly);
+    if (p.x < b.x0 || p.x > b.x1 || p.y < b.y0 || p.y > b.y1) return false;
+    let inside = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const a = poly[i], c = poly[j];
+      if ((a.y > p.y) !== (c.y > p.y) && p.x < (c.x - a.x) * (p.y - a.y) / (c.y - a.y) + a.x) inside = !inside;
+    }
+    return inside;
+  }
+  function insideRealBuilding(p) {
+    const list = state.realMap && state.realMap.backdrop && state.realMap.backdrop.buildings;
+    if (!list) return null;
+    for (const poly of list) if (poly.length >= 3 && pointInPoly(p, poly)) return poly;
+    return null;
+  }
+  function pushOutOfPolygon(p, poly, margin) {
+    let best = null;
+    for (let i = 0; i < poly.length; i++) {
+      const a = poly[i], b = poly[(i + 1) % poly.length];
+      const abx = b.x - a.x, aby = b.y - a.y, l2 = abx * abx + aby * aby;
+      const t = l2 < 1 ? 0 : clamp(((p.x - a.x) * abx + (p.y - a.y) * aby) / l2, 0, 1);
+      const q = { x: a.x + abx * t, y: a.y + aby * t };
+      const d = Math.hypot(q.x - p.x, q.y - p.y);
+      if (!best || d < best.d) best = { q, d };
+    }
+    if (!best) return p;
+    const ux = best.d < 0.5 ? 1 : (best.q.x - p.x) / best.d, uy = best.d < 0.5 ? 0 : (best.q.y - p.y) / best.d;
+    return { x: best.q.x + ux * margin, y: best.q.y + uy * margin };
+  }
+
   const WEAPON_CLASSES = [
     { id: "curta", label: { pt: "Arma curta", en: "Handgun" } },
     { id: "fuzil", label: { pt: "Fuzil", en: "Rifle" } }
@@ -2025,6 +2308,8 @@ input[type=range]{ accent-color:#68f477; }
       { id: 2, type: "poste", cx: 830, cy: 720, heading: 0 },
       { id: 3, type: "parede", cx: 75, cy: 1180, heading: 0 }
     ],
+
+    realMap: null,
 
     manualZoom: 1,
     panX: 0,
@@ -2227,7 +2512,7 @@ input[type=range]{ accent-color:#68f477; }
     toast.textContent = message;
     toast.classList.add("show");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove("show"), 1800);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), Math.min(10000, Math.max(1800, String(message).length * 55)));
   }
 
   /* ------------------------------------------------------------
@@ -2298,22 +2583,24 @@ input[type=range]{ accent-color:#68f477; }
     return state.environment.some(env => {
       if (env.type === "parede") {
         const local = carWorldToLocal(env, p);
-        return Math.abs(local.x) < ENV_DIMENSIONS.parede.length / 2 + margin &&
-               Math.abs(local.y) < ENV_DIMENSIONS.parede.thickness / 2 + margin;
+        return Math.abs(local.x) < wallLen(env) / 2 + margin &&
+               Math.abs(local.y) < wallThk(env) / 2 + margin;
       }
       return Math.hypot(p.x - env.cx, p.y - env.cy) < ENV_DIMENSIONS[env.type].radius + margin;
-    });
+    }) || !!insideRealBuilding(p);
   }
 
   // empurra o ponto para fora de qualquer obstáculo, até encostar na borda
   function envPushOut(point, margin = ACTOR_BODY_R) {
     let p = { x: point.x, y: point.y };
+    const inBuilding = insideRealBuilding(p);
+    if (inBuilding) p = pushOutOfPolygon(p, inBuilding, margin);
     for (let pass = 0; pass < 3; pass++) {
       let moved = false;
       state.environment.forEach(env => {
         if (env.type === "parede") {
-          const hl = ENV_DIMENSIONS.parede.length / 2 + margin;
-          const ht = ENV_DIMENSIONS.parede.thickness / 2 + margin;
+          const hl = wallLen(env) / 2 + margin;
+          const ht = wallThk(env) / 2 + margin;
           const local = carWorldToLocal(env, p);
           if (Math.abs(local.x) < hl && Math.abs(local.y) < ht) {
             if (hl - Math.abs(local.x) < ht - Math.abs(local.y)) local.x = (local.x < 0 ? -1 : 1) * hl;
@@ -2410,8 +2697,8 @@ input[type=range]{ accent-color:#68f477; }
   }
 
   function getParedeCorners(wall) {
-    const halfL = ENV_DIMENSIONS.parede.length / 2;
-    const halfT = ENV_DIMENSIONS.parede.thickness / 2;
+    const halfL = wallLen(wall) / 2;
+    const halfT = wallThk(wall) / 2;
     return [
       { x: -halfL, y: -halfT }, { x: halfL, y: -halfT },
       { x: -halfL, y: halfT }, { x: halfL, y: halfT }
@@ -2423,8 +2710,10 @@ input[type=range]{ accent-color:#68f477; }
       if (env.type === "parede") {
         return {
           corners: getParedeCorners(env),
-          label: tx(ENV_DIMENSIONS.parede.label),
-          labelI18n: ENV_DIMENSIONS.parede.label,
+          label: tx(envLabel(env)),
+          labelI18n: envLabel(env),
+          source: env.source || null,
+          envId: env.id,
           key: `env-${env.id}`,
           requiresCrouch: false,
           ratingKey: "parede"
@@ -2436,6 +2725,8 @@ input[type=range]{ accent-color:#68f477; }
         radius: ENV_DIMENSIONS[env.type].radius,
         label: tx(ENV_DIMENSIONS[env.type].label),
         labelI18n: ENV_DIMENSIONS[env.type].label,
+        source: env.source || null,
+        envId: env.id,
         key: `env-${env.id}`,
         requiresCrouch: false,
         ratingKey: env.type
@@ -3666,9 +3957,12 @@ input[type=range]{ accent-color:#68f477; }
 
     state.threats.forEach(t => consider(t.x, t.y, 75));
     state.officers.forEach(o => consider(o.x, o.y, 75));
+    const focusX = (state.viatura.cx + state.frontCar.cx) / 2, focusY = (state.viatura.cy + state.frontCar.cy) / 2;
     state.environment.forEach(env => {
-      const pad = env.type === "parede" ? ENV_DIMENSIONS.parede.length / 2 : ENV_DIMENSIONS[env.type].radius;
-      consider(env.cx, env.cy, pad + 40);
+      if (state.realMap) {
+        if (Math.hypot(env.cx - focusX, env.cy - focusY) > 900) return;
+        consider(env.cx, env.cy, Math.min(envPad(env), 300) + 40);
+      } else consider(env.cx, env.cy, envPad(env) + 40);
     });
 
     minX -= margin; maxX += margin; minY -= margin; maxY += margin;
@@ -3761,8 +4055,8 @@ input[type=range]{ accent-color:#68f477; }
 
   function envSignature() {
     return state.environment.map(e =>
-      `${e.id}|${e.type}|${e.cx.toFixed(1)}|${e.cy.toFixed(1)}|${(e.heading || 0).toFixed(3)}`
-    ).join(";");
+      `${e.id}|${e.type}|${e.cx.toFixed(1)}|${e.cy.toFixed(1)}|${(e.heading || 0).toFixed(3)}|${e.length || 0}`
+    ).join(";") + "|sel" + envSelectedId;
   }
 
   function profileSignature() {
@@ -3794,6 +4088,8 @@ input[type=range]{ accent-color:#68f477; }
     updateFrontCar();
     updateViatura();
 
+    renderBackdrop();
+
     const envSig = envSignature();
     if (envSig !== lastEnvSig) {
       renderEnvironment();
@@ -3819,6 +4115,62 @@ input[type=range]{ accent-color:#68f477; }
     updateViewBox();
   }
 
+  // Fundo do local real: lotes/calçadas, ruas com a largura do OSM e edificações.
+  let lastBackdropRef, lastBackdropSat;
+  let lastCaption = null;
+  const SAT_TILE_URL = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+  function renderBackdrop() {
+    const rm = state.realMap;
+    $("laneLine").style.display = rm ? "none" : "";
+    refreshOsmStatus();
+    updateEnvSelUi();
+    syncStreetViewCard();
+    document.body.classList.toggle("realmap-on", !!rm);
+    const cap = $("realMapCaption");
+    if (rm) {
+      const place = rm.street || (rm.label ? rm.label.split(",")[0] : "") || `${rm.lat.toFixed(5)}, ${rm.lon.toFixed(5)}`;
+      const satOn = rm.imagery && $("showSatellite").checked;
+      const text = L(`📍 Local real: ${place} · dados © colaboradores do OpenStreetMap` + (satOn ? " · imagem © Esri, Maxar" : ""),
+        `📍 Real location: ${place} · data © OpenStreetMap contributors` + (satOn ? " · imagery © Esri, Maxar" : ""));
+      if (text !== lastCaption) { cap.textContent = text; lastCaption = text; }
+      cap.hidden = false;
+    } else cap.hidden = true;
+
+    const sat = !!(rm && rm.imagery && $("showSatellite").checked);
+    if (rm === lastBackdropRef && sat === lastBackdropSat) return;
+    lastBackdropRef = rm; lastBackdropSat = sat;
+    const layer = $("backdropLayer");
+    if (!rm || !rm.backdrop) { layer.replaceChildren(); return; }
+    const pts = arr => arr.map(p => `${p.x},${p.y}`).join(" ");
+    if (sat) {
+      const im = rm.imagery;
+      let h = `<rect x="-12000" y="-12000" width="24900" height="25000" fill="#2b2d2c"></rect>`;
+      h += `<g transform="translate(${im.tx} ${im.ty}) rotate(${im.deg.toFixed(3)}) translate(${-im.ox} ${-im.oy})">`;
+      im.tiles.forEach(t => {
+        const url = SAT_TILE_URL.replace("{z}", im.z).replace("{y}", t.y).replace("{x}", t.x);
+        h += `<image href="${url}" x="${t.px}" y="${t.py}" width="${t.w}" height="${t.h}" preserveAspectRatio="none"></image>`;
+      });
+      h += `</g><rect x="-12000" y="-12000" width="24900" height="25000" fill="#000" opacity=".07"></rect>`;
+      layer.innerHTML = h;
+      return;
+    }
+    let html = `<rect x="-12000" y="-12000" width="24900" height="25000" fill="#5c5b55"></rect>`;
+    const roads = rm.backdrop.roads || [];
+    roads.filter(r => !r.vehic).forEach(r => {
+      html += `<polyline points="${pts(r.pts)}" fill="none" stroke="#6f6d66" stroke-width="${r.width}" stroke-linecap="round" stroke-linejoin="round"></polyline>`;
+    });
+    roads.filter(r => r.vehic).forEach(r => {
+      html += `<polyline points="${pts(r.pts)}" fill="none" stroke="#4b4d4d" stroke-width="${r.width}" stroke-linecap="round" stroke-linejoin="round"></polyline>`;
+    });
+    roads.filter(r => r.vehic).forEach(r => {
+      html += `<polyline points="${pts(r.pts)}" fill="none" stroke="#e8e2c8" stroke-opacity=".22" stroke-width="6" stroke-dasharray="40 34"></polyline>`;
+    });
+    (rm.backdrop.buildings || []).forEach(b => {
+      html += `<polygon points="${pts(b)}" fill="#353a40" stroke="#24282c" stroke-width="3"></polygon>`;
+    });
+    layer.innerHTML = html;
+  }
+
   function renderEnvironment() {
     environmentLayer.replaceChildren();
 
@@ -3826,12 +4178,14 @@ input[type=range]{ accent-color:#68f477; }
       const g = document.createElementNS(SVG_NS, "g");
 
       if (env.type === "parede") {
-        const dim = ENV_DIMENSIONS.parede;
+        const len = wallLen(env), thk = wallThk(env);
+        const bld = env.source === "building";
+        const tag = bld ? "" : (env.source === "osm-wall" || env.source === "manual") ? (len >= 150 ? L("MURO", "WALL") : "") : L("PAREDE", "WALL");
         g.setAttribute("transform", `translate(${env.cx} ${env.cy}) rotate(${deg(env.heading)})`);
         g.innerHTML = `
-          <rect x="${-dim.length / 2}" y="${-dim.thickness / 2}" width="${dim.length}" height="${dim.thickness}"
-            fill="#9a938a" stroke="#57534d" stroke-width="2" rx="2"></rect>
-          <text y="${-dim.thickness / 2 - 8}" text-anchor="middle" font-size="11" font-weight="800" fill="#d8d3ca">${L("PAREDE", "WALL")}</text>
+          <rect x="${(-len / 2).toFixed(1)}" y="${-thk / 2}" width="${len.toFixed(1)}" height="${thk}"
+            fill="${bld ? "#8d857b" : "#9a938a"}" stroke="${bld ? "#4e4840" : "#57534d"}" stroke-width="2" rx="2"></rect>
+          ${tag ? `<text y="${-thk / 2 - 8}" text-anchor="middle" font-size="11" font-weight="800" fill="#d8d3ca">${tag}</text>` : ""}
         `;
       } else {
         const dim = ENV_DIMENSIONS[env.type];
@@ -3844,9 +4198,90 @@ input[type=range]{ accent-color:#68f477; }
         `;
       }
 
+      if (env.source !== "building") {
+        g.setAttribute("class", "env-drag");
+        g.dataset.envId = String(env.id);
+      }
+      if (env.id === envSelectedId) {
+        const ring = env.type === "parede"
+          ? `<rect x="${(-wallLen(env) / 2 - 8).toFixed(1)}" y="${-wallThk(env) / 2 - 8}" width="${(wallLen(env) + 16).toFixed(1)}" height="${wallThk(env) + 16}" rx="6" fill="none" stroke="#ffd936" stroke-width="3" stroke-dasharray="8 5"></rect>`
+          : `<circle r="${ENV_DIMENSIONS[env.type].radius + 9}" fill="none" stroke="#ffd936" stroke-width="3" stroke-dasharray="8 5"></circle>`;
+        g.insertAdjacentHTML("beforeend", ring);
+      }
       environmentLayer.appendChild(g);
     });
   }
+
+  /* ------------------------------------------------------------
+     ANTEPAROS MANUAIS (poste, árvore, muro) — úteis quando o mapa
+     do local real não tem esses elementos
+  ------------------------------------------------------------ */
+  let envSelectedId = null;
+
+  function selectedEnv() {
+    return state.environment.find(e => e.id === envSelectedId) || null;
+  }
+
+  function updateEnvSelUi() {
+    const env = selectedEnv();
+    if (!env) envSelectedId = null;
+    const isWall = !!env && env.type === "parede";
+    $("envRotateBtn").disabled = !isWall;
+    $("envShorterBtn").disabled = !isWall || wallLen(env) <= 60;
+    $("envLongerBtn").disabled = !isWall || wallLen(env) >= 3000;
+    $("envDeleteBtn").disabled = !env;
+    const label = env
+      ? L(`Selecionado: ${tx(envLabel(env))}${isWall ? ` · ${(wallLen(env) / 100).toFixed(1).replace(".", ",")} m` : ""}. Arraste para mover.`,
+          `Selected: ${tx(envLabel(env))}${isWall ? ` · ${(wallLen(env) / 100).toFixed(1)} m` : ""}. Drag to move.`)
+      : L("Acrescente postes, árvores e muros que existem no local. Toque num anteparo para selecionar; arraste para mover.",
+          "Add the poles, trees and walls that exist on site. Tap an object to select it; drag to move it.");
+    if ($("envSelLabel").textContent !== label) $("envSelLabel").textContent = label;
+  }
+
+  function addEnvObject(type) {
+    const car = state.viatura;
+    const offsets = [{ x: 240, y: -80 }, { x: 240, y: 120 }, { x: -240, y: -80 }, { x: -240, y: 120 }, { x: 330, y: 0 }, { x: -330, y: 0 }, { x: 240, y: 320 }, { x: -240, y: 320 }];
+    const r = type === "parede" ? 40 : ENV_DIMENSIONS[type].radius + 30;
+    let spot = null;
+    for (const o of offsets) {
+      const p = carLocalToWorld(car, o);
+      if (isInsideCar(state.viatura, p, r) || isInsideCar(state.frontCar, p, r)) continue;
+      if (envObstacleAt(p, r)) continue;
+      spot = p; break;
+    }
+    if (!spot) spot = carLocalToWorld(car, { x: 360, y: 0 });
+    const env = { id: nextEnvId++, type, cx: spot.x, cy: spot.y, heading: 0, source: "manual" };
+    if (type === "parede") Object.assign(env, { heading: normalizeAngle(car.heading + Math.PI / 2), length: 250, thickness: 20, height: 200 });
+    state.environment.push(env);
+    envSelectedId = env.id;
+    updateEnvSelUi();
+    render();
+  }
+
+  $("addPosteBtn").addEventListener("click", () => addEnvObject("poste"));
+  $("addArvoreBtn").addEventListener("click", () => addEnvObject("arvore"));
+  $("addMuroBtn").addEventListener("click", () => addEnvObject("parede"));
+  $("envRotateBtn").addEventListener("click", () => {
+    const env = selectedEnv(); if (!env) return;
+    env.heading = normalizeAngle((env.heading || 0) + Math.PI / 12);
+    updateEnvSelUi(); render();
+  });
+  $("envShorterBtn").addEventListener("click", () => {
+    const env = selectedEnv(); if (!env) return;
+    env.length = Math.max(50, wallLen(env) - 50); env.thickness = wallThk(env);
+    updateEnvSelUi(); render();
+  });
+  $("envLongerBtn").addEventListener("click", () => {
+    const env = selectedEnv(); if (!env) return;
+    env.length = Math.min(3000, wallLen(env) + 50); env.thickness = wallThk(env);
+    updateEnvSelUi(); render();
+  });
+  $("envDeleteBtn").addEventListener("click", () => {
+    const env = selectedEnv(); if (!env) return;
+    state.environment = state.environment.filter(e => e !== env);
+    envSelectedId = null;
+    updateEnvSelUi(); render();
+  });
 
   /* ------------------------------------------------------------
      POINTER INTERACTION
@@ -3974,6 +4409,21 @@ input[type=range]{ accent-color:#68f477; }
     stage.setPointerCapture(event.pointerId);
   }
 
+  environmentLayer.addEventListener("pointerdown", event => {
+    const g = event.target.closest && event.target.closest("[data-env-id]");
+    if (!g) return;
+    const env = state.environment.find(e => e.id === Number(g.dataset.envId));
+    if (!env) return;
+    event.preventDefault();
+    event.stopPropagation();
+    envSelectedId = env.id;
+    updateEnvSelUi();
+    const p = svgPoint(event);
+    drag = { type: "envMove", id: env.id, pointerId: event.pointerId, el: null, offsetX: p.x - env.cx, offsetY: p.y - env.cy };
+    try { environmentLayer.setPointerCapture(event.pointerId); } catch (e) {}
+    render();
+  });
+
   stage.addEventListener("pointerdown", beginPan);
 
   const hintBox = $("hintBox");
@@ -4016,6 +4466,15 @@ input[type=range]{ accent-color:#68f477; }
       const actor = list.find(a => a.id === drag.id);
       if (!actor) return;
       actor.facing = angle(actor, p);
+    }
+
+    if (drag.type === "envMove") {
+      const env = state.environment.find(e => e.id === drag.id);
+      if (env) {
+        const c = { x: clamp(p.x - drag.offsetX, -WORLD_BOUND, WORLD_BOUND), y: clamp(p.y - drag.offsetY, -WORLD_BOUND, WORLD_BOUND) };
+        const r = env.type === "parede" ? 15 : ENV_DIMENSIONS[env.type].radius;
+        if (!isInsideCar(state.viatura, c, r) && !isInsideCar(state.frontCar, c, r)) { env.cx = c.x; env.cy = c.y; }
+      }
     }
 
     if (drag.type === "heading") {
@@ -4232,6 +4691,7 @@ input[type=range]{ accent-color:#68f477; }
       };
     });
 
+    state.realMap = null;
     state.environment = generateEnvironment(state.viatura);
 
     nextThreatId = state.threats.length + 1;
@@ -4396,6 +4856,7 @@ input[type=range]{ accent-color:#68f477; }
         threats: state.threats.map(t => ({ ...t })),
         officers: state.officers.map(o => ({ ...o })),
         environment: state.environment.map(e => ({ ...e })),
+        realMap: state.realMap || null,
         nextThreatId,
         nextOfficerId,
         nextEnvId
@@ -4438,6 +4899,7 @@ input[type=range]{ accent-color:#68f477; }
         })
       : fresh.officers;
     fresh.environment = Array.isArray(data.environment) ? data.environment.map(e => ({ ...e })) : [];
+    fresh.realMap = data.realMap && typeof data.realMap === "object" ? data.realMap : null;
 
     if (fresh.threats.length < MIN_ACTORS) { showToast(L("Cena inválida: sem ameaças", "Invalid scene: no threats")); return; }
     if (fresh.officers.length < MIN_ACTORS) { showToast(L("Cena inválida: sem oficiais", "Invalid scene: no officers")); return; }
@@ -4585,11 +5047,12 @@ function computeFitAllViewBox() {
   });
   state.threats.forEach(t => consider(t.x, t.y, 90));
   state.officers.forEach(o => consider(o.x, o.y, 90));
+  const focusX = (state.viatura.cx + state.frontCar.cx) / 2, focusY = (state.viatura.cy + state.frontCar.cy) / 2;
   state.environment.forEach(env => {
-    const pad = env.type === "parede"
-      ? ENV_DIMENSIONS.parede.length / 2
-      : ENV_DIMENSIONS[env.type].radius;
-    consider(env.cx, env.cy, pad + 30);
+    if (state.realMap) {
+      if (Math.hypot(env.cx - focusX, env.cy - focusY) > 900) return;
+      consider(env.cx, env.cy, Math.min(envPad(env), 300) + 30);
+    } else consider(env.cx, env.cy, envPad(env) + 30);
   });
 
   minX -= 60; maxX += 60; minY -= 60; maxY += 60;
@@ -4757,7 +5220,16 @@ function buildReportHTML() {
     : allStancesCrouched ? L("Agachado (todos)", "Crouched (all)")
     : allStancesStanding ? L("Em pé (todos)", "Standing (all)") : L("Mista", "Mixed");
 
-  const envText = state.environment.length
+  const rmap = state.realMap;
+  const envText = rmap
+    ? escapeHtml(L(
+        `Local real (OpenStreetMap): ${rmap.street || rmap.label || ""} — ${rmap.lat.toFixed(5)}, ${rmap.lon.toFixed(5)}, raio ${rmap.radius} m. ` +
+        `${rmap.counts.arvore} árvore(s), ${rmap.counts.poste} poste(s), ${rmap.counts.muro} muro(s), ${rmap.counts.edificacao} edificação(ões). ` +
+        `Muros e fachadas tratados como parede de bloco. Dados © colaboradores do OpenStreetMap.`,
+        `Real location (OpenStreetMap): ${rmap.street || rmap.label || ""} — ${rmap.lat.toFixed(5)}, ${rmap.lon.toFixed(5)}, ${rmap.radius} m radius. ` +
+        `${rmap.counts.arvore} tree(s), ${rmap.counts.poste} pole(s), ${rmap.counts.muro} wall(s), ${rmap.counts.edificacao} building(s). ` +
+        `Walls and building faces treated as block walls. Data © OpenStreetMap contributors.`))
+    : state.environment.length
     ? state.environment.map(e => tx(ENV_NAMES[e.type]) || e.type).join(", ")
     : L("Nenhum", "None");
 
@@ -5369,9 +5841,10 @@ document.addEventListener("keydown", e => {
       cover: showPillarCover.checked, ratingKey: "coluna", label: p.labelI18n
     }));
     state.environment.forEach(env => {
-      const label = ENV_DIMENSIONS[env.type].label;
+      const label = envLabel(env);
       if (env.type === "parede") {
-        occ.push({ poly: rectToPerimeter(getParedeCorners(env)), z: H.parede, cover: true, ratingKey: "parede", label });
+        const tag = env.source === "building" ? { pt: "edificação", en: "building" } : env.source === "osm-wall" ? { pt: "muro", en: "wall" } : null;
+        occ.push({ poly: rectToPerimeter(getParedeCorners(env)), z: env.height ? [0, env.height] : H.parede, cover: true, ratingKey: "parede", label, tag });
       } else {
         occ.push({ circle: { c: { x: env.cx, y: env.cy }, r: ENV_DIMENSIONS[env.type].radius }, z: H[env.type], cover: true, ratingKey: env.type, label });
       }
@@ -5682,7 +6155,7 @@ document.addEventListener("keydown", e => {
         case "coluna": return { fill: "#cfe3ea", op: .55, stroke: "#cfe3ea", dash: "", tag: { pt: "coluna", en: "pillar" } };
         case "poste": return { fill: `url(#${id}-concrete)`, op: .82, stroke: "#d6d6cf", dash: "", tag: { pt: "poste", en: "pole" } };
         case "arvore": return { fill: `url(#${id}-bark)`, op: .85, stroke: "#9b6f47", dash: "", tag: { pt: "árvore", en: "tree" } };
-        case "parede": return { fill: `url(#${id}-blocks)`, op: .82, stroke: "#d8d3ca", dash: "", tag: { pt: "parede", en: "wall" } };
+        case "parede": return { fill: `url(#${id}-blocks)`, op: .82, stroke: "#d8d3ca", dash: "", tag: o.tag || { pt: "parede", en: "wall" } };
         default: return { fill: "#9a938a", op: .6, stroke: "#9a938a", dash: "", tag: o.label };
       }
     };
@@ -5959,7 +6432,19 @@ document.addEventListener("keydown", e => {
     update("voiceThreat", state.threats, L("Ameaça", "Threat"));
   }
 
-  function voiceTarget(command, threat) {
+  // num muro/fachada longo, usa o trecho de 2,5 m mais perto do policial
+  function wallPiece(o, officer) {
+    const env = o.envId != null ? state.environment.find(e => e.id === o.envId) : null;
+    if (!env || env.type !== "parede" || wallLen(env) <= 300) return o;
+    const half = wallLen(env) / 2, ht = wallThk(env) / 2, pl = 125;
+    const lx = clamp(carWorldToLocal(env, officer).x, -half + pl, half - pl);
+    const corners = [
+      { x: lx - pl, y: -ht }, { x: lx + pl, y: -ht }, { x: lx - pl, y: ht }, { x: lx + pl, y: ht }
+    ].map(p => carLocalToWorld(env, p));
+    return { ...o, corners };
+  }
+
+  function voiceTarget(command, threat, officer) {
     // tira expressões de posição ("atrás do", "por trás da", "vai para") para não confundir
     // "atrás" com "roda de trás"
     const q = " " + voiceNormalize(command)
@@ -6007,16 +6492,30 @@ document.addEventListener("keydown", e => {
       };
     }
 
-    const type = /arvor|tronco|\btree/.test(q) ? "arvore"
+    const type = /\b(predio|edific|casa|loja|comercio|fachada|building|house|store|shop)/.test(q) ? "predio"
+      : /arvor|tronco|\btree/.test(q) ? "arvore"
       : /\bpost|pole|lamp/.test(q) ? "poste"
       : /pared|muro|mureta|wall/.test(q) ? "parede" : null;
     if (type) {
       const names = {
         arvore: { pt: "da árvore", en: "the tree", none: { pt: "Não há árvore nesta cena.", en: "There is no tree in this scene." } },
         poste: { pt: "do poste", en: "the pole", none: { pt: "Não há poste nesta cena.", en: "There is no pole in this scene." } },
-        parede: { pt: "do muro", en: "the wall", none: { pt: "Não há muro nesta cena.", en: "There is no wall in this scene." } }
+        parede: { pt: "do muro", en: "the wall", none: { pt: "Não há muro nesta cena.", en: "There is no wall in this scene." } },
+        predio: { pt: "da edificação", en: "the building", none: { pt: "Não há edificação nesta cena.", en: "There is no building in this scene." } }
       }[type];
-      const options = getEnvironmentCoverObjects().filter(o => o.ratingKey === type);
+      const allEnv = getEnvironmentCoverObjects();
+      let options = type === "predio" ? allEnv.filter(o => o.ratingKey === "parede" && o.source === "building")
+        : type === "parede" ? allEnv.filter(o => o.ratingKey === "parede" && o.source !== "building")
+        : allEnv.filter(o => o.ratingKey === type);
+      if (!options.length && type === "parede") options = allEnv.filter(o => o.ratingKey === "parede");
+      if (options.length && state.realMap && officer) {
+        // local real: testa os anteparos mais próximos do policial e fica com o que melhor protege
+        const near = options.map(o => wallPiece(o, officer))
+          .map(o => { const c = objectCentroid(o); return { o, d: Math.hypot(c.x - officer.x, c.y - officer.y) }; })
+          .sort((a, b) => a.d - b.d).slice(0, 6)
+          .map(({ o }) => ({ object: o, label: { pt: names.pt, en: names.en } }));
+        return { candidates: near, specific: false };
+      }
       if (!options.length) {
         return { error: {
           pt: names.none.pt + " Carregue outra cena ou reposicione um elemento existente.",
@@ -6145,7 +6644,7 @@ document.addEventListener("keydown", e => {
     $("voiceOfficer").value = String(officer.id);
     const threat = state.threats.find(t => String(t.id) === $("voiceThreat").value) || state.threats[0];
     const threatNo = state.threats.indexOf(threat) + 1;
-    const target = voiceTarget(command, threat);
+    const target = voiceTarget(command, threat, officer);
 
     if ("stance" in target) {
       if (target.stance === "prone") {
@@ -6343,6 +6842,1285 @@ document.addEventListener("keydown", e => {
   })();
 
   renderVoiceChrome();
+
+  /* ------------------------------------------------------------
+     CENÁRIO EM LOCAL REAL (OpenStreetMap)
+     - Busca de endereço: Nominatim (reserva: Photon). Também aceita
+       coordenadas e links do Google Maps colados na busca.
+     - Mapa: Leaflet + blocos do OSM (opcional: sem mapa, a busca
+       e a montagem do cenário continuam funcionando).
+     - Dados do local: Overpass API (ruas, postes, árvores, muros,
+       edificações num raio em volta do ponto escolhido).
+     - Tudo roda no navegador; nada é enviado a servidor próprio.
+     Dados © colaboradores do OpenStreetMap (licença ODbL).
+  ------------------------------------------------------------ */
+
+  const OSM_CFG = {
+    overpass: [
+      "https://overpass.openstreetmap.fr/api/interpreter",
+      "https://overpass-api.de/api/interpreter",
+      "https://maps.mail.ru/osm/tools/overpass/api/interpreter"
+    ],
+    satZoom: 19,
+    nominatim: "https://nominatim.openstreetmap.org/search",
+    photon: "https://photon.komoot.io/api/",
+    leafletJs: [
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js",
+      "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    ],
+    leafletCss: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css",
+    tiles: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    // o servidor de blocos do OSM recusa páginas abertas como arquivo local (sem "Referer");
+    // nesse caso o mapa usa os blocos de ruas da Esri (sem chave de acesso)
+    tilesLocal: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+    satellite: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    start: { lat: -23.5505, lon: -46.6333, zoom: 13 }
+  };
+  // vias por onde passa carro (onde a viatura pode parar)
+  const OSM_VEHICULAR = /^(motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|living_street|road|(motorway|trunk|primary|secondary|tertiary)_link)$/;
+  const OSM_DEFAULT_WIDTH_M = { motorway: 11, trunk: 10, primary: 10, secondary: 9, tertiary: 8, unclassified: 7, residential: 7, living_street: 6, service: 5, road: 7 };
+
+  let leafletPromise = null;
+  let osmMap = null, osmMarker = null, osmCircle = null;
+  const osmPick = { lat: null, lon: null, label: "" };
+
+  const LF = () => window.L;   // Leaflet (o "L" local é a função de tradução)
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const js = document.createElement("script");
+      js.src = src;
+      js.onload = () => resolve();
+      js.onerror = () => { js.remove(); reject(new Error("script " + src)); };
+      document.head.appendChild(js);
+    });
+  }
+
+  function loadLeaflet() {
+    if (window.L && window.L.map) return Promise.resolve();
+    if (leafletPromise) return leafletPromise;
+    leafletPromise = (async () => {
+      const css = document.createElement("link");
+      css.rel = "stylesheet"; css.href = OSM_CFG.leafletCss;
+      document.head.appendChild(css);
+      for (const src of OSM_CFG.leafletJs) {
+        try { await loadScript(src); if (window.L && window.L.map) return; } catch (err) { /* tenta o próximo */ }
+      }
+      throw new Error("leaflet");
+    })();
+    leafletPromise.catch(() => { leafletPromise = null; });
+    return leafletPromise;
+  }
+
+  // fetch com tempo-limite, para nada ficar "travado" em "Buscando…"
+  async function fetchWithTimeout(url, opts = {}, ms = 15000) {
+    const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timer = ctrl ? setTimeout(() => ctrl.abort(), ms) : null;
+    try {
+      return await fetch(url, ctrl ? { ...opts, signal: ctrl.signal } : opts);
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  }
+
+  let osmStatusMsg = null;
+  function osmStatus(pt, en, kind) {
+    osmStatusMsg = { pt, en };
+    const el = $("osmStatus");
+    el.textContent = L(pt, en);
+    el.classList.toggle("is-error", kind === "error");
+  }
+
+  function refreshOsmStatus() {
+    if (osmStatusMsg && $("osmOverlay").classList.contains("open")) {
+      const t = L(osmStatusMsg.pt, osmStatusMsg.en);
+      if ($("osmStatus").textContent !== t) $("osmStatus").textContent = t;
+    }
+  }
+
+  // dica quando a internet está bloqueada (pré-visualização, arquivo local, rede corporativa)
+  const OSM_OFFLINE_TIP = {
+    pt: " Se você abriu o simulador numa pré-visualização (por exemplo, dentro do app do Claude ou de um e-mail), a internet fica bloqueada: abra pelo site tacticalcoverlab.org ou no navegador (Chrome, Edge, Safari). Redes corporativas também podem bloquear.",
+    en: " If you opened the simulator in a preview (for example inside the Claude app or an e-mail), internet access is blocked: open it from tacticalcoverlab.org or in a browser (Chrome, Edge, Safari). Corporate networks may also block it."
+  };
+
+  let osmArrow = null;
+  function osmBearing() {
+    return $("osmDirMode").value === "manual" ? (Number($("osmBearing").value) || 0) : null;
+  }
+  function drawOsmArrow() {
+    const lf = LF();
+    if (!osmMap || !lf || osmPick.lat === null) return;
+    const b = osmBearing();
+    if (osmArrow) { osmMap.removeLayer(osmArrow); osmArrow = null; }
+    if (b === null || !lf.polyline) return;
+    const kx = Math.cos(osmPick.lat * Math.PI / 180) * 111320, ky = 110574;
+    const at = (dist, deg) => {
+      const r = deg * Math.PI / 180;
+      return [osmPick.lat + Math.cos(r) * dist / ky, osmPick.lon + Math.sin(r) * dist / kx];
+    };
+    const tip = at(14, b);
+    const shaft = [at(10, b + 180), tip];
+    const headL = [tip, (() => { const t = at(14, b); const h = at(10.5, b - 14); return h; })()];
+    const headR = [tip, at(10.5, b + 14)];
+    osmArrow = lf.polyline([shaft, headL, headR], { color: "#ffd936", weight: 5, opacity: .95 }).addTo(osmMap);
+  }
+  function fitOsmRadius() {
+    if (osmMap && osmCircle && osmCircle.getBounds && osmMap.fitBounds) {
+      osmMap.fitBounds(osmCircle.getBounds(), { padding: [16, 16], maxZoom: 21 });
+    }
+  }
+
+  function setOsmPick(lat, lon, label) {
+    osmPick.lat = lat; osmPick.lon = lon;
+    if (label !== undefined) osmPick.label = label;
+    const lf = LF();
+    const r = Number($("osmRadius").value) || 60;
+    if (osmMap && lf) {
+      if (!osmMarker) osmMarker = lf.marker([lat, lon]).addTo(osmMap);
+      else osmMarker.setLatLng([lat, lon]);
+      if (!osmCircle) osmCircle = lf.circle([lat, lon], { radius: r, color: "#59cd76", weight: 2, fillOpacity: .08 }).addTo(osmMap);
+      else { osmCircle.setLatLng([lat, lon]); osmCircle.setRadius(r); }
+    }
+    $("osmBuildBtn").disabled = false;
+    drawOsmArrow();
+    const where = osmPick.label ? osmPick.label.split(",").slice(0, 2).join(",") + " — " : "";
+    osmStatus(
+      `Ponto escolhido: ${where}${lat.toFixed(5)}, ${lon.toFixed(5)}. ` + (osmMap ? "Clique no mapa para ajustar, ou em “Montar cenário”." : "Clique em “Montar cenário”."),
+      `Point selected: ${where}${lat.toFixed(5)}, ${lon.toFixed(5)}. ` + (osmMap ? "Click the map to adjust, or “Build scene”." : "Click “Build scene”.")
+    );
+  }
+
+  async function openOsmDialog() {
+    $("osmOverlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+    setTimeout(() => { try { $("osmQuery").focus(); } catch (e) {} }, 30);
+    if (!osmMap) osmStatus("Carregando o mapa…", "Loading the map…");
+    try {
+      await loadLeaflet();
+    } catch (err) {
+      $("osmMap").classList.add("is-off");
+      $("osmMap").textContent = L(
+        "O mapa não carregou aqui. A busca por endereço ou coordenadas continua funcionando.",
+        "The map did not load here. Searching by address or coordinates still works."
+      );
+      if (osmPick.lat !== null) setOsmPick(osmPick.lat, osmPick.lon);
+      else osmStatus("O mapa não carregou." + OSM_OFFLINE_TIP.pt + " Você ainda pode buscar o endereço ou colar coordenadas.",
+        "The map did not load." + OSM_OFFLINE_TIP.en + " You can still search the address or paste coordinates.", "error");
+      return;
+    }
+    const lf = LF();
+    if (!osmMap) {
+      $("osmMap").classList.remove("is-off");
+      $("osmMap").textContent = "";
+      osmMap = lf.map("osmMap", { zoomControl: true, maxZoom: 22 }).setView([OSM_CFG.start.lat, OSM_CFG.start.lon], OSM_CFG.start.zoom);
+      const osmAttr = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
+      const isWeb = /^https?:$/.test(location.protocol);
+      const street = isWeb
+        ? lf.tileLayer(OSM_CFG.tiles, { maxZoom: 22, maxNativeZoom: 19, attribution: osmAttr })
+        : lf.tileLayer(OSM_CFG.tilesLocal, {
+            maxZoom: 22, maxNativeZoom: 19,
+            attribution: 'Mapa &copy; Esri, HERE, Garmin, &copy; colaboradores do OpenStreetMap'
+          });
+      const satellite = lf.tileLayer(OSM_CFG.satellite, {
+        maxZoom: 22, maxNativeZoom: 19,
+        attribution: 'Imagem &copy; Esri, Maxar, Earthstar Geographics'
+      });
+      street.addTo(osmMap);
+      if (lf.control && lf.control.layers) {
+        lf.control.layers({ [L("Mapa", "Map")]: street, [L("Satélite", "Satellite")]: satellite }, null, { collapsed: false }).addTo(osmMap);
+      }
+      osmMap.on("click", e => setOsmPick(e.latlng.lat, e.latlng.lng, ""));
+      if (osmPick.lat !== null) { osmMap.setView([osmPick.lat, osmPick.lon], 18); }
+    }
+    setTimeout(() => osmMap.invalidateSize(), 60);
+    if (osmPick.lat === null) {
+      osmStatus("Busque um endereço (ou cole coordenadas / link do Google Maps) e clique no ponto exato da rua onde a viatura vai parar.",
+        "Search an address (or paste coordinates / a Google Maps link) and click the exact point on the street where the patrol car will stop.");
+    } else setOsmPick(osmPick.lat, osmPick.lon);
+  }
+
+  function closeOsmDialog() {
+    $("osmOverlay").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  // "-23.5505, -46.6333", "-23,5505 -46,6333" ou link do Google Maps / OSM
+  function parseCoordinates(text) {
+    const s = String(text || "").trim();
+    const num = "(-?\\d{1,3}(?:[.,]\\d+)?)";
+    const tryPair = (a, b) => {
+      const lat = parseFloat(String(a).replace(",", ".")), lon = parseFloat(String(b).replace(",", "."));
+      if (!Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return null;
+      return { lat, lon };
+    };
+    let m = s.match(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/);          // Google: ponto marcado
+    if (m) return tryPair(m[1], m[2]);
+    m = s.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);                    // Google: centro do mapa
+    if (m) return tryPair(m[1], m[2]);
+    m = s.match(/[?&](?:q|query|ll|destination|mlat)=(-?\d+(?:\.\d+)?)(?:,|%2C|&mlon=)(-?\d+(?:\.\d+)?)/i);
+    if (m) return tryPair(m[1], m[2]);
+    m = s.match(/#map=\d+\/(-?\d+(?:\.\d+)?)\/(-?\d+(?:\.\d+)?)/);          // openstreetmap.org
+    if (m) return tryPair(m[1], m[2]);
+    m = s.match(new RegExp("^" + num + "\\s*[,;]\\s*" + num + "$")) ||        // "-23.55, -46.63"
+        s.match(new RegExp("^" + num + "\\s+" + num + "$"));                  // "-23,55 -46,63"
+    if (m) return tryPair(m[1], m[2]);
+    return null;
+  }
+
+  async function geocodeNominatim(q) {
+    const url = `${OSM_CFG.nominatim}?format=jsonv2&limit=5&q=${encodeURIComponent(q)}&accept-language=${LANG === "en" ? "en" : "pt-BR"}`;
+    const res = await fetchWithTimeout(url, { headers: { "Accept": "application/json" } }, 12000);
+    if (!res.ok) throw new Error("nominatim " + res.status);
+    const list = await res.json();
+    return list.map(r => ({ lat: Number(r.lat), lon: Number(r.lon), label: r.display_name }));
+  }
+
+  async function geocodePhoton(q) {
+    const url = `${OSM_CFG.photon}?limit=5&q=${encodeURIComponent(q)}${LANG === "en" ? "&lang=en" : ""}`;
+    const res = await fetchWithTimeout(url, {}, 12000);
+    if (!res.ok) throw new Error("photon " + res.status);
+    const json = await res.json();
+    return (json.features || []).map(f => {
+      const p = f.properties || {}, c = (f.geometry && f.geometry.coordinates) || [];
+      const street = [p.street || p.name, p.housenumber].filter(Boolean).join(", ");
+      const label = [p.street ? (p.name && p.name !== p.street ? p.name : null) : null, street, p.district || p.locality,
+        p.city, p.state, p.country].filter(Boolean).join(", ");
+      return { lat: Number(c[1]), lon: Number(c[0]), label: label || p.name || "" };
+    }).filter(r => Number.isFinite(r.lat) && Number.isFinite(r.lon));
+  }
+
+  async function searchOsm() {
+    const q = $("osmQuery").value.trim();
+    if (!q) return;
+    const box = $("osmResults");
+    box.replaceChildren();
+
+    const coords = parseCoordinates(q);
+    if (coords) {
+      if (osmMap) osmMap.setView([coords.lat, coords.lon], 18);
+      setOsmPick(coords.lat, coords.lon, "");
+      fitOsmRadius();
+      return;
+    }
+
+    osmStatus("Buscando…", "Searching…");
+    $("osmSearchBtn").disabled = true;
+    let list = null;
+    try {
+      try { list = await geocodeNominatim(q); }
+      catch (err) { list = null; }
+      if (!list || !list.length) {
+        try { const alt = await geocodePhoton(q); if (alt.length || !list) list = alt; }
+        catch (err) { if (!list) list = null; }
+      }
+    } finally {
+      $("osmSearchBtn").disabled = false;
+    }
+
+    if (list === null) {
+      osmStatus("A busca de endereço não respondeu." + OSM_OFFLINE_TIP.pt + " Também dá para colar coordenadas ou um link do Google Maps.",
+        "The address search did not respond." + OSM_OFFLINE_TIP.en + " You can also paste coordinates or a Google Maps link.", "error");
+      return;
+    }
+    if (!list.length) {
+      osmStatus("Nenhum resultado. Tente incluir número, bairro e cidade, ou cole coordenadas.", "No results. Try adding number, district and city, or paste coordinates.", "error");
+      return;
+    }
+    list.forEach((r, i) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "osm-result";
+      b.textContent = r.label || `${r.lat.toFixed(5)}, ${r.lon.toFixed(5)}`;
+      b.addEventListener("click", () => {
+        if (osmMap) osmMap.setView([r.lat, r.lon], 18);
+        setOsmPick(r.lat, r.lon, r.label);
+        fitOsmRadius();
+        box.replaceChildren();
+      });
+      box.appendChild(b);
+      if (i === 0 && osmMap) osmMap.setView([r.lat, r.lon], 17);
+    });
+    osmStatus(
+      osmMap ? "Escolha um resultado ou clique direto no mapa, sobre a rua." : "Escolha um resultado.",
+      osmMap ? "Pick a result or click right on the street in the map." : "Pick a result."
+    );
+  }
+
+  function overpassQuery(lat, lon, r) {
+    const a = `(around:${r},${lat.toFixed(6)},${lon.toFixed(6)})`;
+    return `[out:json][timeout:25];(
+      way${a}["highway"];
+      way${a}["building"];
+      way${a}["barrier"~"^(wall|retaining_wall)$"];
+      node${a}["natural"="tree"];
+      node${a}["highway"="street_lamp"];
+      node${a}["power"="pole"];
+      node${a}["man_made"="utility_pole"];
+    );out geom;`;
+  }
+
+  async function fetchOverpass(query) {
+    let lastErr;
+    for (const url of OSM_CFG.overpass) {
+      try {
+        const res = await fetchWithTimeout(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: "data=" + encodeURIComponent(query)
+        }, 30000);
+        if (!res.ok) throw new Error("http " + res.status);
+        return await res.json();
+      } catch (err) { lastErr = err; }
+    }
+    throw lastErr || new Error("overpass");
+  }
+
+  // Reserva: o serviço de endereços (Nominatim) responde até para o arquivo aberto do
+  // computador e devolve o traçado da rua mais próxima. Só a rua — sem postes, árvores etc.
+  async function fetchStreetFromNominatim(lat, lon) {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat.toFixed(6)}&lon=${lon.toFixed(6)}&zoom=17&polygon_geojson=1`;
+    const res = await fetchWithTimeout(url, { headers: { "Accept": "application/json" } }, 12000);
+    if (!res.ok) throw new Error("reverse " + res.status);
+    const j = await res.json();
+    if (!j || j.category !== "highway" || !j.geojson) throw new Error("reverse: no street");
+    const lines = j.geojson.type === "LineString" ? [j.geojson.coordinates]
+      : j.geojson.type === "MultiLineString" ? j.geojson.coordinates : [];
+    if (!lines.length) throw new Error("reverse: no line");
+    return {
+      elements: lines.map((coords, i) => ({
+        type: "way", id: i + 1,
+        tags: { highway: j.type, name: j.name || "" },
+        geometry: coords.map(c => ({ lat: c[1], lon: c[0] }))
+      }))
+    };
+  }
+
+  async function buildOsmScene() {
+    if (osmPick.lat === null) return;
+    const r = Number($("osmRadius").value) || 60;
+    $("osmBuildBtn").disabled = true;
+    osmStatus("Baixando os dados do OpenStreetMap… (pode levar alguns segundos)", "Downloading OpenStreetMap data… (may take a few seconds)");
+    const bearing = osmBearing();
+    const opts = { radius: r, flip: $("osmFlip").checked, label: osmPick.label, bearing, satellite: $("osmSat").checked };
+    try {
+      let json = null;
+      try { json = await fetchOverpass(overpassQuery(osmPick.lat, osmPick.lon, r)); }
+      catch (err) {
+        osmStatus("O servidor de dados não respondeu; buscando só o traçado da rua…", "The data server did not respond; fetching the street layout only…");
+        try { json = await fetchStreetFromNominatim(osmPick.lat, osmPick.lon); opts.streetOnly = true; }
+        catch (err2) {
+          if (bearing === null) throw err;
+          json = { elements: [] };
+          opts.noData = true;
+        }
+      }
+      const result = importOsmScene(json, osmPick.lat, osmPick.lon, opts);
+      if (result.error) { osmStatus(result.error.pt, result.error.en, "error"); return; }
+      closeOsmDialog();
+    } catch (err) {
+      osmStatus("O servidor de dados do OpenStreetMap não respondeu. Aguarde um pouco e tente de novo, ou use “Direção da viatura: manual” para montar o cenário só com a imagem de satélite." + OSM_OFFLINE_TIP.pt,
+        "The OpenStreetMap data server did not respond. Wait a moment and try again, or use “Patrol car heading: manual” to build the scene from the satellite image only." + OSM_OFFLINE_TIP.en, "error");
+    } finally {
+      $("osmBuildBtn").disabled = false;
+    }
+  }
+
+  // ---------- conversão dos dados do OSM para a cena ----------
+  function importOsmScene(json, lat0, lon0, opts) {
+    const els = (json && json.elements) || [];
+    const kx = Math.cos(lat0 * Math.PI / 180) * 111320 * 100;   // cm por grau de longitude
+    const ky = 110574 * 100;                                     // cm por grau de latitude
+    const toLocal = (lat, lon) => ({ x: (lon - lon0) * kx, y: -(lat - lat0) * ky });
+    const R = (opts.radius || 60) * 100;
+
+    // 1) a via mais próxima do ponto clicado
+    const roads = els.filter(e => e.type === "way" && e.tags && e.tags.highway && Array.isArray(e.geometry))
+      .map(e => ({ tags: e.tags, pts: e.geometry.map(g => toLocal(g.lat, g.lon)) }));
+    let best = null;
+    roads.filter(rd => OSM_VEHICULAR.test(rd.tags.highway)).forEach(rd => {
+      for (let i = 0; i < rd.pts.length - 1; i++) {
+        const a = rd.pts[i], b = rd.pts[i + 1];
+        const ab = vsub(b, a), len2 = vdot(ab, ab);
+        if (len2 < 1) continue;
+        const t = clamp(-vdot(a, ab) / len2, 0, 1);
+        const p = { x: a.x + ab.x * t, y: a.y + ab.y * t };
+        const d = vlen(p);
+        if (!best || d < best.d) best = { d, p, dir: vnorm(ab), road: rd };
+      }
+    });
+    const manual = Number.isFinite(opts.bearing);
+    if (!manual && (!best || best.d > 3000)) {
+      return { error: {
+        pt: "Não há rua para veículos mapeada a menos de 30 m do ponto clicado. Clique sobre uma rua, ou escolha “Direção da viatura: manual” e ajuste a seta.",
+        en: "There is no mapped vehicle street within 30 m of the clicked point. Click on a street, or choose “Patrol car heading: manual” and adjust the arrow."
+      } };
+    }
+    if (manual && (!best || best.d > 1200)) best = null;
+    const tags = best ? best.road.tags : {};
+    let dir;
+    if (manual) {
+      // rumo: 0° = norte, sentido horário. No sistema local, y cresce para o sul.
+      const rb = opts.bearing * Math.PI / 180;
+      dir = { x: Math.sin(rb), y: -Math.cos(rb) };
+      if (opts.flip) dir = { x: -dir.x, y: -dir.y };
+      if (!best) best = { d: 0, p: { x: 0, y: 0 }, dir, road: { tags: {} } };
+    } else {
+      dir = best.dir;
+      if (tags.oneway === "-1") dir = { x: -dir.x, y: -dir.y };
+      if (opts.flip) dir = { x: -dir.x, y: -dir.y };
+    }
+    const widthTag = parseFloat(String(tags.width || "").replace(",", "."));
+    const lanes = parseInt(tags.lanes, 10);
+    const roadW = (Number.isFinite(widthTag) && widthTag > 2 ? widthTag
+      : Number.isFinite(lanes) && lanes > 0 ? lanes * 3.2
+      : OSM_DEFAULT_WIDTH_M[tags.highway] || 7) * 100;
+
+    // 2) gira tudo para a via ficar "para cima" na tela; carros na faixa da direita
+    const ang = -Math.PI / 2 - Math.atan2(dir.y, dir.x);
+    const cosA = Math.cos(ang), sinA = Math.sin(ang);
+    const carX = 450, midY = 620;
+    // direção manual: o ponto clicado é o centro entre os dois carros
+    const laneOffset = manual ? 0 : Math.max(0, roadW / 2 - 120);
+    const roadCx = carX - laneOffset;
+    const origin = manual ? { x: 0, y: 0 } : best.p;
+    const T = p => {
+      const q = { x: p.x - origin.x, y: p.y - origin.y };
+      return { x: q.x * cosA - q.y * sinA + roadCx, y: q.x * sinA + q.y * cosA + midY };
+    };
+
+    // imagem de satélite (blocos Esri) posicionada no mesmo sistema da cena
+    let imagery = null;
+    if (opts.satellite !== false) {
+      const z = OSM_CFG.satZoom, n = Math.pow(2, z);
+      const lonToX = lon => (lon + 180) / 360 * n;
+      const latToY = lat => { const r = lat * Math.PI / 180; return (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n; };
+      const xToLon = x => x / n * 360 - 180;
+      const yToLat = y => Math.atan(Math.sinh(Math.PI * (1 - 2 * y / n))) * 180 / Math.PI;
+      const ext = (R + 2500) / 100;   // metros
+      const dLat = ext / 110574, dLon = ext / (Math.cos(lat0 * Math.PI / 180) * 111320);
+      const x0 = Math.floor(lonToX(lon0 - dLon)), x1 = Math.floor(lonToX(lon0 + dLon));
+      const y0 = Math.floor(latToY(lat0 + dLat)), y1 = Math.floor(latToY(lat0 - dLat));
+      const tiles = [];
+      for (let tx = x0; tx <= x1; tx++) for (let ty = y0; ty <= y1; ty++) {
+        const nw = toLocal(yToLat(ty), xToLon(tx)), se = toLocal(yToLat(ty + 1), xToLon(tx + 1));
+        tiles.push({ x: tx, y: ty, px: Math.round(nw.x), py: Math.round(nw.y), w: Math.round(se.x - nw.x) + 1, h: Math.round(se.y - nw.y) + 1 });
+      }
+      imagery = { z, tiles, tx: roadCx, ty: midY, deg: ang * 180 / Math.PI, ox: Math.round(origin.x), oy: Math.round(origin.y) };
+    }
+    const anchor = { x: carX, y: midY };
+    const near = (p, extra = 0) => Math.hypot(p.x - roadCx, p.y - midY) <= R + extra;
+
+    // 3) cena base: viatura atrás do carro abordado, 3 m de distância
+    const fresh = cloneDefaultState();
+    const L2 = fresh.viatura.length / 2;
+    const gap = 300;
+    const dxThreats = fresh.threats.map(t => ({ x: t.x - fresh.frontCar.cx, y: t.y - fresh.frontCar.cy }));
+    const dxOfficers = fresh.officers.map(o => ({ x: o.x - fresh.viatura.cx, y: o.y - fresh.viatura.cy }));
+    fresh.frontCar.cx = carX; fresh.frontCar.cy = midY - (gap / 2 + L2);
+    fresh.viatura.cx = carX; fresh.viatura.cy = midY + (gap / 2 + L2); fresh.viatura.heading = 0;
+    fresh.threats.forEach((t, i) => { t.x = fresh.frontCar.cx + dxThreats[i].x; t.y = fresh.frontCar.cy + dxThreats[i].y; });
+    fresh.officers.forEach((o, i) => { o.x = fresh.viatura.cx + dxOfficers[i].x; o.y = fresh.viatura.cy + dxOfficers[i].y; });
+
+    const carsHit = (p, m) => isInsideCar(fresh.frontCar, p, m) || isInsideCar(fresh.viatura, p, m);
+
+    // 4) anteparos
+    const env = [];
+    let id = 1;
+    const counts = { arvore: 0, poste: 0, muro: 0, edificacao: 0 };
+    const pushPoint = (type, p) => {
+      if (!near(p) || carsHit(p, ENV_DIMENSIONS[type].radius + 10)) return;
+      if (env.some(e => e.type === type && Math.hypot(e.cx - p.x, e.cy - p.y) < 30)) return;
+      env.push({ id: id++, type, cx: p.x, cy: p.y, heading: 0, source: "osm" });
+      counts[type]++;
+    };
+    els.filter(e => e.type === "node" && e.tags).forEach(n => {
+      const p = T(toLocal(n.lat, n.lon));
+      if (n.tags.natural === "tree") pushPoint("arvore", p);
+      else if (n.tags.highway === "street_lamp" || n.tags.power === "pole" || n.tags.man_made === "utility_pole") pushPoint("poste", p);
+    });
+
+    const heightOf = (t, fallback) => {
+      const h = parseFloat(String(t.height || "").replace(",", "."));
+      if (Number.isFinite(h) && h > 0) return h * 100;
+      const lv = parseFloat(t["building:levels"]);
+      if (Number.isFinite(lv) && lv > 0) return lv * 300;
+      return fallback;
+    };
+    const pushSegments = (pts, source, height, thickness) => {
+      let added = 0;
+      for (let i = 0; i < pts.length - 1; i++) {
+        const a = pts[i], b = pts[i + 1];
+        const len = Math.hypot(b.x - a.x, b.y - a.y);
+        if (len < 30) continue;
+        const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+        if (!near(mid, len / 2)) continue;
+        if (carsHit(mid, 20) || carsHit(a, 0) || carsHit(b, 0)) continue;
+        env.push({
+          id: id++, type: "parede", cx: mid.x, cy: mid.y,
+          heading: Math.atan2(b.y - a.y, b.x - a.x),
+          length: len, thickness, height, source
+        });
+        added++;
+      }
+      return added;
+    };
+    const buildings = [];
+    els.filter(e => e.type === "way" && e.tags && Array.isArray(e.geometry)).forEach(w => {
+      const pts = w.geometry.map(g => T(toLocal(g.lat, g.lon)));
+      if (w.tags.building) {
+        if (!pts.some(p => near(p, 1500))) return;
+        buildings.push(pts);
+        if (pushSegments(pts, "building", heightOf(w.tags, 300), 20)) counts.edificacao++;
+      } else if (w.tags.barrier) {
+        if (pushSegments(pts, "osm-wall", heightOf(w.tags, 200), 20)) counts.muro++;
+      }
+    });
+
+    // 5) fundo: ruas (com largura) e contorno das edificações
+    const backdrop = {
+      roads: roads.map(rd => {
+        const w = parseFloat(String(rd.tags.width || "").replace(",", "."));
+        const ln = parseInt(rd.tags.lanes, 10);
+        const vehic = OSM_VEHICULAR.test(rd.tags.highway);
+        const width = vehic
+          ? (Number.isFinite(w) && w > 2 ? w : Number.isFinite(ln) && ln > 0 ? ln * 3.2 : OSM_DEFAULT_WIDTH_M[rd.tags.highway] || 7) * 100
+          : 200;
+        return { pts: rd.pts.map(T).map(p => ({ x: Math.round(p.x), y: Math.round(p.y) })), width, vehic };
+      }).filter(rd => rd.pts.some(p => near(p, 3000))),
+      buildings: buildings.map(b => b.map(p => ({ x: Math.round(p.x), y: Math.round(p.y) })))
+    };
+
+    fresh.environment = env;
+    fresh.realMap = {
+      label: opts.label || "",
+      lat: lat0, lon: lon0, radius: opts.radius || 60,
+      street: tags.name || "",
+      roadWidth: roadW,
+      manual, bearing: manual ? opts.bearing : null, noData: !!opts.noData, streetOnly: !!opts.streetOnly,
+      xf: { lat0, lon0, ang, tx: roadCx, ty: midY, ox: origin.x, oy: origin.y },
+      counts, backdrop, imagery
+    };
+    state = fresh;
+    nextThreatId = state.threats.length + 1;
+    nextOfficerId = state.officers.length + 1;
+    nextEnvId = id;
+    training.scenarioId = null;
+    stopTraining();
+    renderScenarioPicker();
+    $("bestAngleReadout").hidden = true;
+    lastEnvSig = null;
+    lastProfileSig = null;
+    render();
+
+    const street = tags.name ? tags.name : L("via sem nome", "unnamed street");
+    if (opts.noData) {
+      showToast(L("Cenário montado só com a imagem de satélite: o servidor do OpenStreetMap não respondeu. Acrescente postes, árvores e muros na cena.",
+        "Scene built from the satellite image only: the OpenStreetMap server did not respond. Add poles, trees and walls to the scene."));
+      return { ok: true, counts };
+    }
+    if (opts.streetOnly) {
+      showToast(L(`Local real: ${street}. Daqui veio só o traçado da rua: aberto como arquivo do computador, o servidor de postes, árvores e edificações recusa a consulta (pelo site tacticalcoverlab.org ele responde). Acrescente os anteparos olhando o satélite.`,
+        `Real location: ${street}. Only the street layout came through: opened as a file on the computer, the server for poles, trees and buildings refuses the request (from tacticalcoverlab.org it responds). Add the cover objects using the satellite image.`));
+      return { ok: true, counts };
+    }
+    const nothing = !counts.arvore && !counts.poste && !counts.muro && !counts.edificacao;
+    if (nothing) {
+      showToast(L(`Local real: ${street}. O OpenStreetMap não tem postes, árvores, muros nem edificações mapeados aqui — use a imagem de satélite como referência e acrescente os anteparos na cena.`,
+        `Real location: ${street}. OpenStreetMap has no poles, trees, walls or buildings mapped here — use the satellite image as a reference and add the cover objects to the scene.`));
+      return { ok: true, counts };
+    }
+    showToast(L(
+      `Local real: ${street} · ${counts.arvore} árvore(s), ${counts.poste} poste(s), ${counts.muro} muro(s), ${counts.edificacao} edificação(ões)`,
+      `Real location: ${street} · ${counts.arvore} tree(s), ${counts.poste} pole(s), ${counts.muro} wall(s), ${counts.edificacao} building(s)`
+    ));
+    return { ok: true, counts };
+  }
+
+  $("osmOpenBtn").addEventListener("click", openOsmDialog);
+  $("osmCloseBtn").addEventListener("click", closeOsmDialog);
+  $("osmSearchBtn").addEventListener("click", searchOsm);
+  $("osmQuery").addEventListener("keydown", e => { if (e.key === "Enter") searchOsm(); });
+  $("osmBuildBtn").addEventListener("click", buildOsmScene);
+  $("osmRadius").addEventListener("change", () => {
+    if (osmCircle) { osmCircle.setRadius(Number($("osmRadius").value) || 60); fitOsmRadius(); }
+  });
+  $("osmDirMode").addEventListener("change", () => {
+    $("osmBearingWrap").hidden = $("osmDirMode").value !== "manual";
+    drawOsmArrow();
+  });
+  $("osmBearing").addEventListener("input", () => {
+    $("osmBearingVal").textContent = `${$("osmBearing").value}°`;
+    drawOsmArrow();
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && $("osmOverlay").classList.contains("open")) closeOsmDialog();
+  });
+  $("showSatellite").addEventListener("change", () => render());
+
+  /* ------------------------------------------------------------
+     STREET VIEW DO LOCAL REAL
+     Mostra a foto de rua do Google no ponto mais próximo de quem
+     olha (viatura, oficial ou ameaça), apontada para o alvo.
+     Usa o visualizador incorporável do Google Maps, sem chave.
+  ------------------------------------------------------------ */
+  let svLastMap = null;
+  let svMode = "viatura";
+  let svCam = null, svBase = null;
+  let svAdj = { lat: 0, fwd: 0, rot: 0 };
+
+  // Ajuste fino: o Google às vezes usa uma foto tirada alguns metros ao lado do ponto
+  // pedido (ex.: na rua transversal). Mover a câmera virtual alinha o desenho à foto.
+  function applySvAdjust() {
+    if (!svBase) { svCam = null; return; }
+    const rr = -svAdj.rot * Math.PI / 180, c = Math.cos(rr), s = Math.sin(rr);   // desenho gira para um lado = câmera para o outro
+    const f0 = svBase.f;
+    const f = { x: f0.x * c - f0.y * s, y: f0.x * s + f0.y * c };
+    const r0 = { x: -f0.y, y: f0.x };
+    // desenho para a direita = câmera para a esquerda; desenho mais longe = câmera para trás
+    const from = { x: svBase.from.x - r0.x * svAdj.lat - f0.x * svAdj.fwd, y: svBase.from.y - r0.y * svAdj.lat - f0.y * svAdj.fwd };
+    svCam = { from, f, mode: svBase.mode, viewer: svBase.viewer };
+    const parts = [];
+    if (svAdj.lat) parts.push(L(`${(Math.abs(svAdj.lat) / 100).toFixed(1).replace(".", ",")} m ${svAdj.lat > 0 ? "à direita" : "à esquerda"}`, `${(Math.abs(svAdj.lat) / 100).toFixed(1)} m ${svAdj.lat > 0 ? "right" : "left"}`));
+    if (svAdj.fwd) parts.push(L(`${(Math.abs(svAdj.fwd) / 100).toFixed(1).replace(".", ",")} m ${svAdj.fwd > 0 ? "mais longe" : "mais perto"}`, `${(Math.abs(svAdj.fwd) / 100).toFixed(1)} m ${svAdj.fwd > 0 ? "farther" : "closer"}`));
+    if (svAdj.rot) parts.push(`${svAdj.rot > 0 ? "⟳" : "⟲"} ${Math.abs(svAdj.rot)}°`);
+    const el = document.getElementById("svAdjLabel");
+    if (el) el.textContent = parts.length ? L("Ajuste: ", "Adjustment: ") + parts.join(" · ") : L("Sem ajuste", "No adjustment");
+    svOverlaySig = null;
+  }
+  let svOverlaySig = null;
+
+  // ponto da cena (cm) -> latitude/longitude reais
+  function sceneToLatLon(rm, p) {
+    const x = rm.xf, c = Math.cos(x.ang), sn = Math.sin(x.ang);
+    const qx = p.x - x.tx, qy = p.y - x.ty;
+    const lx = qx * c + qy * sn + x.ox, ly = -qx * sn + qy * c + x.oy;
+    const kx = Math.cos(x.lat0 * Math.PI / 180) * 111320 * 100, ky = 110574 * 100;
+    return { lat: x.lat0 - ly / ky, lon: x.lon0 + lx / kx };
+  }
+
+  // direção na cena (de a para b) -> rumo real (0° = norte, sentido horário)
+  function sceneBearing(rm, a, b) {
+    const x = rm.xf, c = Math.cos(x.ang), sn = Math.sin(x.ang);
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const lx = dx * c + dy * sn, ly = -dx * sn + dy * c;
+    return (Math.atan2(lx, -ly) * 180 / Math.PI + 360) % 360;
+  }
+
+  // As fotos do Google são tiradas do carro que passa pelo meio da rua: a câmera
+  // fica no eixo da via mais próxima, não na calçada onde está a pessoa.
+  function svCameraPoint(rm, p) {
+    const roads = ((rm.backdrop && rm.backdrop.roads) || []).filter(r => r.vehic && r.pts && r.pts.length > 1);
+    let best = null;
+    roads.forEach(r => {
+      for (let i = 0; i < r.pts.length - 1; i++) {
+        const a = r.pts[i], b = r.pts[i + 1];
+        const ab = vsub(b, a), l2 = vdot(ab, ab);
+        if (l2 < 1) continue;
+        const t = clamp(vdot(vsub(p, a), ab) / l2, 0, 1);
+        const q = { x: a.x + ab.x * t, y: a.y + ab.y * t };
+        const d = Math.hypot(q.x - p.x, q.y - p.y);
+        if (!best || d < best.d) best = { d, q };
+      }
+    });
+    return best && best.d <= 2500 ? best.q : { x: p.x, y: p.y };
+  }
+
+  function streetViewTarget(mode) {
+    const officer = state.officers.find(o => String(o.id) === $("svOfficer").value) || state.officers[0];
+    const threat = state.threats.find(t => String(t.id) === $("svThreat").value) || state.threats[0];
+    const vtr = { x: state.viatura.cx, y: state.viatura.cy }, front = { x: state.frontCar.cx, y: state.frontCar.cy };
+    const tn = threat ? state.threats.indexOf(threat) + 1 : 1;
+    if (mode === "officer" && officer && threat) return { from: officer, to: threat, who: { pt: "de " + officer.name, en: officer.name }, at: { pt: "a ameaça " + tn, en: "threat " + tn } };
+    if (mode === "threat" && officer && threat) return { from: threat, to: officer, who: { pt: "da ameaça " + tn, en: "threat " + tn }, at: { pt: officer.name, en: officer.name } };
+    return { from: vtr, to: front, who: { pt: "da viatura", en: "the patrol car" }, at: { pt: "o carro abordado", en: "the stopped vehicle" } };
+  }
+
+  function showStreetView(mode) {
+    const rm = state.realMap;
+    if (!rm || !rm.xf) return;
+    svMode = mode || svMode;
+    const t = streetViewTarget(svMode);
+    // a câmera parte da posição de quem olha (a tentativa de usar o eixo da rua piorou o alinhamento)
+    const camPt = { x: t.from.x, y: t.from.y };
+    const offM = Math.hypot(camPt.x - t.from.x, camPt.y - t.from.y) / 100;
+    const ll = sceneToLatLon(rm, camPt);
+    const hd = sceneBearing(rm, camPt, t.to);
+    const lat = ll.lat.toFixed(6), lon = ll.lon.toFixed(6), h = hd.toFixed(0);
+    // zoom 1 do visualizador: abertura medida de ~57° na horizontal (foco ≈ 0,92 × largura)
+    $("svFrame").src = `https://maps.google.com/maps?layer=c&cbll=${lat},${lon}&cbp=11,${h},0,1,0&output=svembed&hl=${LANG === "en" ? "en" : "pt-BR"}`;
+    svBase = { from: { x: camPt.x, y: camPt.y }, f: vnorm(vsub(t.to, camPt)), mode: svMode, viewer: t.from };
+    if (document.getElementById("svLinkMsg")) $("svLinkMsg").textContent = "";
+    svAdj = { lat: 0, fwd: 0, rot: 0 };
+    applySvAdjust();
+    svOverlaySig = null;
+    renderSvOverlay();
+    $("svOpenLink").href = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lon}&heading=${h}`;
+    document.querySelectorAll("[data-sv]").forEach(b => b.classList.toggle("active", b.dataset.sv === svMode));
+    const offTxt = offM >= 0.5
+      ? { pt: ` A câmera fica no meio da rua, a ${offM.toFixed(1).replace(".", ",")} m de onde está ${t.who.pt.replace(/^de /, "").replace(/^da /, "a ")}: o desenho já considera isso.`,
+          en: ` The camera is in the middle of the street, ${offM.toFixed(1)} m from where ${t.who.en} stands: the drawing already accounts for this.` }
+      : { pt: "", en: "" };
+    $("svNote").textContent = L(
+      `Foto do Google tirada do ponto de rua mais próximo ${t.who.pt} (${lat}, ${lon}), olhando para ${t.at.pt} (rumo ${h}°).` + ` A câmera do Google fica a cerca de 2,5 m de altura: não reproduz a visão de quem está agachado ou deitado — para isso, use a Linha de Visão acima. No modo congelado a foto fica travada e o desenho acompanha as posições da cena; desligue-o para girar e andar na foto com o mouse. Se o Google usar uma foto tirada alguns metros ao lado (comum perto de esquinas), o desenho fica deslocado: use os botões de alinhamento ou monte o cenário no meio da quadra.`,
+      `Google photo from the street point nearest to ${t.who.en} (${lat}, ${lon}), looking at ${t.at.en} (heading ${h}°).` + ` Google's camera sits about 2.5 m high: it does not reproduce the view of someone crouched or prone — use the Line of Sight above for that. In frozen mode the photo stays locked and the drawing follows the scene positions; turn it off to turn and move inside the photo with the mouse. If Google uses a photo taken a few meters away (common near corners), the drawing will be offset: use the alignment buttons or build the scene mid-block.`
+    );
+  }
+
+  let svSelSig = null;
+  function updateSvSelectors() {
+    const sig = LANG + "|" + state.officers.map(o => o.id + ":" + o.name).join(",") + "|" + state.threats.map(t => t.id).join(",");
+    if (sig === svSelSig) return;
+    svSelSig = sig;
+    const fill = (id, list, label) => {
+      const sel = $(id), prev = sel.value;
+      sel.replaceChildren();
+      list.forEach((a, i) => {
+        const op = document.createElement("option");
+        op.value = String(a.id);
+        op.textContent = label(a, i);
+        sel.appendChild(op);
+      });
+      if (list.some(a => String(a.id) === prev)) sel.value = prev;
+    };
+    fill("svOfficer", state.officers, (o, i) => o.name || OFFICER_NAMES[i]);
+    fill("svThreat", state.threats, (t, i) => L("Ameaça ", "Threat ") + (i + 1));
+  }
+
+  function syncStreetViewCard() {
+    const rm = state.realMap;
+    $("svCard").hidden = !(rm && rm.xf);
+    if (rm && rm.xf) updateSvSelectors();
+    if (rm && rm.xf && !$("svCard").hidden) renderSvOverlay();
+    if (rm === svLastMap) return;
+    svLastMap = rm;
+    if (rm && rm.xf) showStreetView("viatura");
+    else { $("svFrame").removeAttribute("src"); svCam = null; $("svOverlay").replaceChildren(); }
+  }
+
+  document.querySelectorAll("[data-sv]").forEach(b => b.addEventListener("click", () => showStreetView(b.dataset.sv)));
+
+  /* ------------------------------------------------------------
+     MODO CONGELADO: desenha a cena do simulador por cima da foto
+     do Street View (viaturas, anteparos e pessoas), em perspectiva
+     a partir do ponto e da direção da câmera. A foto fica travada
+     para o desenho não se perder. Aproximado: a foto do Google é
+     do ponto de rua mais próximo, com câmera a ~2,5 m de altura.
+  ------------------------------------------------------------ */
+  const SV_CAM_H = 250;      // altura da câmera do Google (cm)
+  const SV_FOCAL = 0.92;     // foco em fração da largura do quadro (zoom 1, medido)
+  const SV_NEAR = 25;        // plano de corte junto à câmera (cm)
+
+  function svProject(p, z, cam, W, H) {
+    const rx = p.x - cam.from.x, ry = p.y - cam.from.y;
+    const f = cam.f, r = { x: -f.y, y: f.x };
+    const d = rx * f.x + ry * f.y, lat = rx * r.x + ry * r.y;
+    const F = SV_FOCAL * W;
+    return { d, u: W / 2 + lat / d * F, v: H / 2 - (z - SV_CAM_H) / d * F };
+  }
+
+  // corta um polígono 3D pelo plano d >= SV_NEAR e projeta
+  function svPoly(pts3, cam, W, H) {
+    const withD = pts3.map(q => {
+      const rx = q.x - cam.from.x, ry = q.y - cam.from.y;
+      return { ...q, d: rx * cam.f.x + ry * cam.f.y };
+    });
+    const out = [];
+    for (let i = 0; i < withD.length; i++) {
+      const a = withD[i], b = withD[(i + 1) % withD.length];
+      const aIn = a.d >= SV_NEAR, bIn = b.d >= SV_NEAR;
+      if (aIn) out.push(a);
+      if (aIn !== bIn) {
+        const t = (SV_NEAR - a.d) / (b.d - a.d);
+        out.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, z: a.z + (b.z - a.z) * t, d: SV_NEAR });
+      }
+    }
+    if (out.length < 3) return null;
+    return out.map(q => svProject(q, q.z, cam, W, H));
+  }
+
+  const svPts = arr => arr.map(p => `${p.u.toFixed(1)},${p.v.toFixed(1)}`).join(" ");
+
+  // caixa a partir de 4 cantos (ordem TL, TR, BL, BR) e faixa de altura
+  function svBox(corners, z0, z1, cam, W, H) {
+    const ring = [corners[0], corners[1], corners[3], corners[2]];
+    const faces = [];
+    for (let i = 0; i < 4; i++) {
+      const a = ring[i], b = ring[(i + 1) % 4];
+      faces.push([{ x: a.x, y: a.y, z: z0 }, { x: b.x, y: b.y, z: z0 }, { x: b.x, y: b.y, z: z1 }, { x: a.x, y: a.y, z: z1 }]);
+    }
+    faces.push(ring.map(p => ({ x: p.x, y: p.y, z: z1 })));
+    return faces.map(f => svPoly(f, cam, W, H)).filter(Boolean);
+  }
+
+  function svDepth(p, cam) {
+    return (p.x - cam.from.x) * cam.f.x + (p.y - cam.from.y) * cam.f.y;
+  }
+
+  // Silhueta de veículo em perspectiva: perfil lateral (comprimento × altura) extrudado na
+  // largura. A viatura é uma SUV policial (com giroflex); o carro abordado, um sedã.
+  // Coordenadas locais do carro: y negativo = frente.
+  const SV_PROFILES = {
+    suv: {
+      lower: { hw: .97, pts: [[-1, 38], [-1, 88], [-.93, 102], [-.48, 112], [.985, 112], [1, 98], [1, 42]] },
+      upper: { hw: .85, pts: [[-.48, 112], [-.2, 178], [.88, 180], [.975, 170], [.985, 112]] },
+      wheelR: 38, wheelY: [-.6, .6], bar: [-.12, -.02]
+    },
+    sedan: {
+      lower: { hw: .97, pts: [[-1, 32], [-1, 76], [-.9, 92], [-.42, 98], [.62, 98], [.9, 100], [1, 90], [1, 36]] },
+      upper: { hw: .82, pts: [[-.42, 98], [-.12, 142], [.4, 144], [.66, 100]] },
+      wheelR: 32, wheelY: [-.6, .6], bar: null
+    }
+  };
+
+  function svVehicle(car, kind, color, cam, W, H) {
+    const P = SV_PROFILES[kind];
+    const W2 = car.width / 2, L2 = car.length / 2;
+    const at = (x, y, z) => { const w = carLocalToWorld(car, { x, y }); return { x: w.x, y: w.y, z }; };
+    const fills = [], lines = [];
+    const prism = (part, glass) => {
+      const hw = W2 * part.hw;
+      const prof = part.pts.map(([fy, z]) => [fy * L2, z]);
+      [-hw, hw].forEach(x => {
+        const poly = svPoly(prof.map(([y, z]) => at(x, y, z)), cam, W, H);
+        if (poly) { fills.push({ p: poly, glass }); lines.push(poly); }
+      });
+      for (let i = 0; i < prof.length; i++) {
+        const [y1, z1] = prof[i], [y2, z2] = prof[(i + 1) % prof.length];
+        const q = svPoly([at(-hw, y1, z1), at(hw, y1, z1), at(hw, y2, z2), at(-hw, y2, z2)], cam, W, H);
+        if (q) { fills.push({ p: q, glass }); lines.push(q); }
+      }
+    };
+    prism(P.lower, false);
+    prism(P.upper, true);
+    let h = `<g><g opacity=".26">${fills.map(f => `<polygon points="${svPts(f.p)}" fill="${f.glass ? "#203040" : color}"/>`).join("")}</g>`;
+    h += lines.map(p => `<polygon points="${svPts(p)}" fill="none" stroke="${color}" stroke-width=".9" stroke-opacity=".95" stroke-linejoin="round"/>`).join("");
+    // rodas (aro + pneu) dos dois lados
+    P.wheelY.forEach(fy => [-W2 * .97, W2 * .97].forEach(x => {
+      const ring = [];
+      for (let k = 0; k < 16; k++) {
+        const a = k / 16 * Math.PI * 2;
+        ring.push(at(x, fy * L2 + Math.cos(a) * P.wheelR, P.wheelR + Math.sin(a) * P.wheelR));
+      }
+      const pr = svPoly(ring, cam, W, H);
+      if (pr) h += `<polygon points="${svPts(pr)}" fill="#0d1114" fill-opacity=".45" stroke="${color}" stroke-width=".9"/>`;
+    }));
+    // giroflex sobre o teto (viatura)
+    if (P.bar) {
+      const [b0, b1] = P.bar, bw = W2 * .62;
+      const bar = svBox([at(-bw, b0 * L2, 0), at(bw, b0 * L2, 0), at(-bw, b1 * L2, 0), at(bw, b1 * L2, 0)], 180, 190, cam, W, H);
+      bar.forEach((f, i) => { h += `<polygon points="${svPts(f)}" fill="${i % 2 ? "#3b7bff" : "#ff3b3b"}" fill-opacity=".7" stroke="#fff" stroke-width=".6"/>`; });
+    }
+    return h;
+  }
+
+
+  /* ------------------------------------------------------------
+     VEÍCULOS EM 3D (sólidos) PARA O STREET VIEW
+     Malha montada por seções ao longo do comprimento (carroceria e
+     cabine), rodas cilíndricas, faróis, lanternas, giroflex e
+     para-choque de impulsão. Faces iluminadas pelo sol (Lambert),
+     sem as faces de trás, desenhadas da mais longe para a mais perto.
+     Coordenadas locais do carro: x lateral, y comprimento (frente = y
+     negativo), z altura em cm.
+  ------------------------------------------------------------ */
+  const SV_SUN = (() => { const v = { x: .35, y: .45, z: .82 }; const l = Math.hypot(v.x, v.y, v.z); return { x: v.x / l, y: v.y / l, z: v.z / l }; })();
+
+  const SV_SHAPES = {
+    suv: {
+      wheelR: 37, wheelW: 25, wheelY: .62, zb: 36,
+      top: fy => fy < -.95 ? 92 + (fy + 1) / .05 * 8 : fy < -.45 ? 100 + (fy + .95) / .5 * 10 : fy > .97 ? 106 : 112,
+      cabin: [-.45, .975], cabW: [.94, .8],
+      roof: fy => fy < -.17 ? 112 + (fy + .45) / .28 * 66 : fy > .9 ? 178 - (fy - .9) / .075 * 16 : 178,
+      bar: true, push: true
+    },
+    sedan: {
+      wheelR: 32, wheelY: .6, wheelW: 22, zb: 32,
+      top: fy => fy < -.95 ? 78 + (fy + 1) / .05 * 8 : fy < -.5 ? 86 + (fy + .95) / .45 * 10 : fy > .62 ? 99 - Math.max(0, fy - .95) / .05 * 6 : 98,
+      cabin: [-.5, .62], cabW: [.93, .76],
+      roof: fy => fy < -.14 ? 98 + (fy + .5) / .36 * 46 : fy > .3 ? 144 - (fy - .3) / .32 * 44 : 144,
+      bar: false, push: false
+    }
+  };
+
+  const SV_LIVERIES = {
+    us: { side: fy => (fy > -.42 && fy < .56) ? "#f2f3f2" : "#16181b", hood: "#16181b", roof: "#f2f3f2", lower: "#16181b", stripe: null },
+    generic: { side: () => "#f0f1f0", hood: "#f0f1f0", roof: "#f0f1f0", lower: "#2b2f33", stripe: "#1f3f99" },
+    civil: { side: () => "#8d949b", hood: "#8d949b", roof: "#8d949b", lower: "#3a3f44", stripe: null }
+  };
+
+  function svShade(hex, k) {
+    const n = parseInt(hex.slice(1), 16);
+    const c = v => Math.max(0, Math.min(255, Math.round(v * k)));
+    return `rgb(${c(n >> 16)},${c((n >> 8) & 255)},${c(n & 255)})`;
+  }
+
+  function svVehicleMesh(car, kind, liveryKey, cam, W, H, alpha) {
+    const S = SV_SHAPES[kind], LV = SV_LIVERIES[liveryKey];
+    const W2 = car.width / 2, L2 = car.length / 2;
+    const P = (x, y, z) => { const w = carLocalToWorld(car, { x, y }); return { x: w.x, y: w.y, z }; };
+    const faces = [];  // { pts3, color, ref, glow }
+    const add = (pts3, color, ref, glow) => faces.push({ pts3, color, ref, glow });
+    const center = P(0, 0, 90);
+
+    // estações ao longo do comprimento (mais densas nas pontas)
+    const N = 22;
+    const st = Array.from({ length: N + 1 }, (_, i) => -Math.cos(i / N * Math.PI));
+    const halfW = fy => W2 * (1 - .085 * Math.pow(Math.max(0, (Math.abs(fy) - .82) / .18), 2));
+
+    // carroceria: seção com cantos chanfrados
+    const sec = fy => {
+      const w = halfW(fy), zb = S.zb + (Math.abs(fy) > .9 ? 4 : 0), zt = S.top(fy);
+      return [[-w * .95, zb], [-w, zb + 14], [-w, zt - 11], [-w * .94, zt], [w * .94, zt], [w, zt - 11], [w, zb + 14], [w * .95, zb]];
+    };
+    for (let i = 0; i < N; i++) {
+      const fa = st[i], fb = st[i + 1], fm = (fa + fb) / 2;
+      const A = sec(fa), B = sec(fb);
+      for (let k = 0; k < 7; k++) {
+        const quad = [P(A[k][0], fa * L2, A[k][1]), P(A[k + 1][0], fa * L2, A[k + 1][1]), P(B[k + 1][0], fb * L2, B[k + 1][1]), P(B[k][0], fb * L2, B[k][1])];
+        const color = k === 3 ? (fm < S.cabin[0] || fm > S.cabin[1] ? LV.hood : LV.roof)
+          : (k === 0 || k === 6) ? LV.lower : LV.side(fm);
+        add(quad, color, center);
+      }
+    }
+    // tampas da frente e de trás (grade e traseira escuras)
+    [[st[0], "#202326"], [st[N], LV.hood]].forEach(([fy, col]) => {
+      const s = sec(fy);
+      add(s.map(([x, z]) => P(x, fy * L2, z)), col, center);
+    });
+
+    // faixa lateral (pintura genérica)
+    if (LV.stripe) {
+      [-1, 1].forEach(sd => {
+        for (let i = 0; i < N; i++) {
+          const fa = st[i], fb = st[i + 1];
+          if (fa < -.9 || fb > .92) continue;
+          const xa = sd * (halfW(fa) + .6), xb = sd * (halfW(fb) + .6);
+          add([P(xa, fa * L2, 70), P(xb, fb * L2, 70), P(xb, fb * L2, 82), P(xa, fa * L2, 82)], LV.stripe, center);
+        }
+      });
+    }
+
+    // cabine (vidros nas laterais, para-brisa e vidro traseiro; teto na cor da pintura)
+    const cs = st.filter(f => f >= S.cabin[0] && f <= S.cabin[1]);
+    if (cs[0] > S.cabin[0]) cs.unshift(S.cabin[0]);
+    if (cs[cs.length - 1] < S.cabin[1]) cs.push(S.cabin[1]);
+    const csec = fy => {
+      const w = halfW(fy), zb = S.top(fy), zr = Math.max(zb + .5, S.roof(fy));
+      return [[-w * S.cabW[0], zb], [-w * S.cabW[1], zr], [w * S.cabW[1], zr], [w * S.cabW[0], zb]];
+    };
+    const cabCenter = P(0, (S.cabin[0] + S.cabin[1]) / 2 * L2, 120);
+    for (let i = 0; i < cs.length - 1; i++) {
+      const fa = cs[i], fb = cs[i + 1];
+      const A = csec(fa), B = csec(fb);
+      const slope = (S.roof(fb) - S.roof(fa)) / ((fb - fa) * L2);
+      for (let k = 0; k < 3; k++) {
+        const quad = [P(A[k][0], fa * L2, A[k][1]), P(A[k + 1][0], fa * L2, A[k + 1][1]), P(B[k + 1][0], fb * L2, B[k + 1][1]), P(B[k][0], fb * L2, B[k][1])];
+        const glass = k !== 1 || Math.abs(slope) > .35;   // teto inclinado = para-brisa / vidro traseiro
+        add(quad, glass ? "#1d2a35" : LV.roof, cabCenter, glass ? "glass" : null);
+      }
+    }
+    // colunas: faixas da cor da carroceria na frente e atrás da cabine
+    [cs[0], cs[cs.length - 1]].forEach(fy => {
+      const s = csec(fy);
+      add(s.map(([x, z]) => P(x, fy * L2, z)), LV.roof, cabCenter);
+    });
+
+    // rodas: pneu (cilindro) + aro claro no lado de fora
+    const SEG = 18;
+    [-S.wheelY, S.wheelY].forEach(fy => [-1, 1].forEach(sd => {
+      const cy = fy * L2, cx = sd * (W2 - S.wheelW / 2 + 3), r = S.wheelR;
+      const ring = (x, rr) => Array.from({ length: SEG }, (_, k) => {
+        const a = k / SEG * Math.PI * 2;
+        return P(x, cy + Math.cos(a) * rr, r + Math.sin(a) * rr);
+      });
+      const out = ring(cx + sd * S.wheelW / 2, r), inn = ring(cx - sd * S.wheelW / 2, r);
+      const wc = P(cx, cy, r);
+      for (let k = 0; k < SEG; k++) {
+        const k2 = (k + 1) % SEG;
+        add([out[k], out[k2], inn[k2], inn[k]], "#141618", wc);
+      }
+      add(out, "#141618", wc);
+      const rim = ring(cx + sd * (S.wheelW / 2 + .8), r * .62);
+      add(rim, "#9ea4aa", wc);
+      add(ring(cx + sd * (S.wheelW / 2 + 1.2), r * .18), "#5b6066", wc);
+    }));
+
+    // faróis e lanternas
+    [-1, 1].forEach(sd => {
+      const fy = st[0] * L2 - .8, ry = st[N] * L2 + .8;
+      const zt = S.top(-1), zr = S.top(1);
+      add([P(sd * W2 * .58, fy, zt - 16), P(sd * W2 * .86, fy, zt - 16), P(sd * W2 * .86, fy, zt - 6), P(sd * W2 * .58, fy, zt - 6)], "#eef4ff", P(sd * W2 * .7, fy + 10, zt - 11), "light");
+      add([P(sd * W2 * .62, ry, zr - 20), P(sd * W2 * .9, ry, zr - 20), P(sd * W2 * .9, ry, zr - 6), P(sd * W2 * .62, ry, zr - 6)], "#c8202c", P(sd * W2 * .75, ry - 10, zr - 13), "light");
+    });
+
+    // caixa simples (giroflex, para-choque de impulsão, retrovisores)
+    const box = (x0, x1, y0, y1, z0, z1, color, glow) => {
+      const c = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+      const ref = P((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2);
+      for (let k = 0; k < 4; k++) {
+        const a = c[k], b = c[(k + 1) % 4];
+        add([P(a[0], a[1], z0), P(b[0], b[1], z0), P(b[0], b[1], z1), P(a[0], a[1], z1)], color, ref, glow);
+      }
+      add(c.map(([x, y]) => P(x, y, z1)), color, ref, glow);
+    };
+    if (S.bar) {
+      const by0 = -.13 * L2, by1 = -.04 * L2, bz = S.roof(-.08);
+      box(-W2 * .62, 0, by0, by1, bz, bz + 10, "#ff2f3a", "light");
+      box(0, W2 * .62, by0, by1, bz, bz + 10, "#2f6bff", "light");
+    }
+    if (S.push) {
+      const y0 = -L2 - 14, y1 = -L2 - 6;
+      box(-W2 * .42, -W2 * .34, y0, y1, 40, 98, "#111315");
+      box(W2 * .34, W2 * .42, y0, y1, 40, 98, "#111315");
+      box(-W2 * .42, W2 * .42, y0, y1, 84, 92, "#111315");
+    }
+    [-1, 1].forEach(sd => box(sd * W2, sd * (W2 + 12), (S.cabin[0] + .03) * L2, (S.cabin[0] + .08) * L2, S.top(S.cabin[0]) + 2, S.top(S.cabin[0]) + 14, "#16181b"));
+
+    // ---- projeção, sombreamento e ordem de desenho ----
+    const drawn = [];
+    faces.forEach(f => {
+      const a = f.pts3[0], b = f.pts3[1], c = f.pts3[2];
+      let n = {
+        x: (b.y - a.y) * (c.z - a.z) - (b.z - a.z) * (c.y - a.y),
+        y: (b.z - a.z) * (c.x - a.x) - (b.x - a.x) * (c.z - a.z),
+        z: (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)
+      };
+      let nl = Math.hypot(n.x, n.y, n.z);
+      if (nl < 1e-6) {
+        const d = f.pts3[3] || f.pts3[f.pts3.length - 1];
+        n = { x: (c.y - a.y) * (d.z - a.z) - (c.z - a.z) * (d.y - a.y), y: (c.z - a.z) * (d.x - a.x) - (c.x - a.x) * (d.z - a.z), z: (c.x - a.x) * (d.y - a.y) - (c.y - a.y) * (d.x - a.x) };
+        nl = Math.hypot(n.x, n.y, n.z);
+        if (nl < 1e-6) return;
+      }
+      n = { x: n.x / nl, y: n.y / nl, z: n.z / nl };
+      const g = f.pts3.reduce((s, p) => ({ x: s.x + p.x / f.pts3.length, y: s.y + p.y / f.pts3.length, z: s.z + p.z / f.pts3.length }), { x: 0, y: 0, z: 0 });
+      // normal para fora (em relação ao centro da peça)
+      if ((g.x - f.ref.x) * n.x + (g.y - f.ref.y) * n.y + (g.z - f.ref.z) * n.z < 0) n = { x: -n.x, y: -n.y, z: -n.z };
+      // face de costas para a câmera não aparece
+      const vx = g.x - cam.from.x, vy = g.y - cam.from.y, vz = g.z - SV_CAM_H;
+      if (vx * n.x + vy * n.y + vz * n.z >= 0) return;
+      const poly = svPoly(f.pts3, cam, W, H);
+      if (!poly) return;
+      const lam = Math.max(0, n.x * SV_SUN.x + n.y * SV_SUN.y + n.z * SV_SUN.z);
+      let k = f.glow === "light" ? 1.15 : .42 + .7 * lam;
+      if (f.glow === "glass") k = .75 + .35 * Math.max(0, n.z);   // reflexo do céu nos vidros
+      const depth = vx * cam.f.x + vy * cam.f.y;
+      drawn.push({ depth, html: `<polygon points="${svPts(poly)}" fill="${svShade(f.color, k)}" stroke="${svShade(f.color, k * .92)}" stroke-width=".6" stroke-linejoin="round"/>` });
+    });
+    drawn.sort((a, b) => b.depth - a.depth);
+
+    // sombra no chão (deslocada para o lado oposto ao sol)
+    const sh = 26;
+    const foot = [[-W2 - 6, -L2 - 10], [W2 + 6, -L2 - 10], [W2 + 6, L2 + 10], [-W2 - 6, L2 + 10]].map(([x, y]) => {
+      const w = carLocalToWorld(car, { x, y });
+      return { x: w.x - SV_SUN.x * sh, y: w.y - SV_SUN.y * sh, z: 0 };
+    });
+    const shadow = svPoly(foot, cam, W, H);
+    let html = `<g opacity="${alpha}">`;
+    if (shadow) html += `<polygon points="${svPts(shadow)}" fill="#000" fill-opacity=".38" filter="url(#svBlur)"/>`;
+    html += drawn.map(d => d.html).join("");
+    html += `</g><g>`;
+    return html;
+  }
+
+  function renderSvOverlay() {
+    const svg = $("svOverlay");
+    const frozen = $("svFreeze").checked;
+    $("svFrameWrap").classList.toggle("frozen", frozen);
+    if (!svCam || !frozen) { if (svg.childNodes.length) svg.replaceChildren(); svOverlaySig = null; return; }
+    const W = svg.clientWidth || 640, H = svg.clientHeight || 360;
+    const sig = [W, H, svCam.from.x, svCam.from.y, svCam.f.x, LANG, envSignature(), $("svCarStyle").value, $("svLivery").value, $("svShowEngine").checked,
+      state.viatura.cx, state.viatura.cy, state.viatura.heading, state.frontCar.cx, state.frontCar.cy, state.frontCar.heading,
+      ...state.officers.map(o => `${o.x}|${o.y}|${o.crouched}|${o.prone}|${o.facing}`),
+      ...state.threats.map(t => `${t.x}|${t.y}|${t.crouched}|${t.prone}|${t.facing}`)].join(";");
+    if (sig === svOverlaySig) return;
+    svOverlaySig = sig;
+    const cam = svCam;
+    const items = [];   // { depth, html }
+
+    const carCorners = car => [
+      { x: -car.width / 2, y: -car.length / 2 }, { x: car.width / 2, y: -car.length / 2 },
+      { x: -car.width / 2, y: car.length / 2 }, { x: car.width / 2, y: car.length / 2 }
+    ].map(p => carLocalToWorld(car, p));
+
+    // viaturas (a que contém a câmera não é desenhada)
+    [[state.viatura, "#9fd0ff", L("VIATURA", "PATROL CAR")], [state.frontCar, "#e6e6e6", L("ABORDADO", "STOPPED")]].forEach(([car, color, name]) => {
+      if (isInsideCar(car, cam.from, 0)) return;
+      if (cam.mode === "viatura" && car === state.viatura) return;
+      const carStyle = $("svCarStyle").value;
+      const kind = car === state.viatura ? "suv" : "sedan";
+      let h = carStyle === "line" ? svVehicle(car, kind, color, cam, W, H)
+        : svVehicleMesh(car, kind, car === state.viatura ? $("svLivery").value : "civil", cam, W, H, carStyle === "ghost" ? .55 : 1);
+      if (car === state.viatura && $("svShowEngine").checked) {
+        const eng = svBox(getEngineCorners(car), 30, 100, cam, W, H);
+        h += eng.map(f => `<polygon points="${svPts(f)}" fill="#f0c83c" fill-opacity=".18" stroke="#f0c83c" stroke-width="1" stroke-dasharray="4 3"/>`).join("");
+      }
+      const top = svProject({ x: car.cx, y: car.cy }, car === state.viatura ? 205 : 160, cam, W, H);
+      if (top.d > SV_NEAR) h += `<text x="${top.u.toFixed(1)}" y="${top.v.toFixed(1)}" text-anchor="middle" class="sv-tag">${name}</text>`;
+      h += `</g>`;
+      items.push({ depth: svDepth({ x: car.cx, y: car.cy }, cam), html: h });
+    });
+
+    // anteparos (as fachadas de edificações já aparecem na foto)
+    state.environment.forEach(env => {
+      if (env.source === "building") return;
+      if (env.type === "parede") {
+        const faces = svBox(getParedeCorners(env), 0, env.height || 200, cam, W, H);
+        if (!faces.length) return;
+        const h = `<g><g opacity=".3">${faces.map(f => `<polygon points="${svPts(f)}" fill="#b9b0a5"/>`).join("")}</g>` +
+          faces.map(f => `<polygon points="${svPts(f)}" fill="none" stroke="#efe6da" stroke-width="1.4"/>`).join("") + `</g>`;
+        items.push({ depth: svDepth({ x: env.cx, y: env.cy }, cam), html: h });
+        return;
+      }
+      const d = svDepth({ x: env.cx, y: env.cy }, cam);
+      if (d < SV_NEAR + 10) return;
+      const r = ENV_DIMENSIONS[env.type].radius;
+      const base = svProject({ x: env.cx, y: env.cy }, 0, cam, W, H);
+      const wpx = 2 * r / d * SV_FOCAL * W;
+      if (env.type === "poste") {
+        const top = svProject({ x: env.cx, y: env.cy }, 900, cam, W, H);
+        items.push({ depth: d, html: `<rect x="${(base.u - wpx / 2).toFixed(1)}" y="${top.v.toFixed(1)}" width="${wpx.toFixed(1)}" height="${(base.v - top.v).toFixed(1)}" fill="#cfcfc8" fill-opacity=".45" stroke="#f4f4ee" stroke-width="1.4"/>` });
+      } else {
+        const top = svProject({ x: env.cx, y: env.cy }, 300, cam, W, H);
+        const crown = svProject({ x: env.cx, y: env.cy }, 480, cam, W, H);
+        const cr = 180 / d * SV_FOCAL * W;
+        items.push({ depth: d, html: `<ellipse cx="${crown.u.toFixed(1)}" cy="${crown.v.toFixed(1)}" rx="${cr.toFixed(1)}" ry="${(cr * .8).toFixed(1)}" fill="#5aa05a" fill-opacity=".22" stroke="#9be09b" stroke-width="1.2"/><rect x="${(base.u - wpx / 2).toFixed(1)}" y="${top.v.toFixed(1)}" width="${wpx.toFixed(1)}" height="${(base.v - top.v).toFixed(1)}" fill="#8a5a36" fill-opacity=".5" stroke="#e0b48c" stroke-width="1.2"/>` });
+      }
+    });
+
+    // pessoas
+    const person = (a, color, label) => {
+      // quem olha: só aparece (tracejado) quando a foto foi tirada longe da posição real dele
+      const isViewer = cam.viewer === a;
+      if (isViewer && Math.hypot(a.x - cam.from.x, a.y - cam.from.y) < 120) return;
+      if (isViewer) { color = "transparent"; label = label + L(" (posição real)", " (actual position)"); }
+      const d = svDepth(a, cam);
+      if (d < SV_NEAR + 20) return;
+      const st = stanceOf(a);
+      const dist = Math.hypot(a.x - cam.from.x, a.y - cam.from.y) / 100;
+      const tag = `${label} · ${dist.toFixed(1).replace(".", LANG === "en" ? "." : ",")} m`;
+      if (st === "prone") {
+        const f = a.facing !== undefined ? { x: Math.cos(a.facing), y: Math.sin(a.facing) } : { x: 0, y: -1 };
+        const sd = { x: -f.y, y: f.x };
+        const c = [
+          { x: a.x - sd.x * 25, y: a.y - sd.y * 25 }, { x: a.x + sd.x * 25, y: a.y + sd.y * 25 },
+          { x: a.x - sd.x * 25 - f.x * 170, y: a.y - sd.y * 25 - f.y * 170 }, { x: a.x + sd.x * 25 - f.x * 170, y: a.y + sd.y * 25 - f.y * 170 }
+        ];
+        const faces = svBox(c, 0, 32, cam, W, H);
+        const head = svProject({ x: a.x + f.x * 12, y: a.y + f.y * 12 }, 18, cam, W, H);
+        const hr = 11 / d * SV_FOCAL * W;
+        let h = `<g opacity=".85">${faces.map(fc => `<polygon points="${svPts(fc)}" fill="${color}" fill-opacity=".55" stroke="#fff" stroke-width="1"/>`).join("")}`;
+        if (head.d > SV_NEAR) h += `<circle cx="${head.u.toFixed(1)}" cy="${head.v.toFixed(1)}" r="${Math.max(2, hr).toFixed(1)}" fill="${color}" stroke="#fff" stroke-width="1.2"/>`;
+        const lab = svProject(a, 70, cam, W, H);
+        h += `<text x="${lab.u.toFixed(1)}" y="${lab.v.toFixed(1)}" text-anchor="middle" class="sv-tag">${tag}</text></g>`;
+        items.push({ depth: d, html: h });
+        return;
+      }
+      const hTop = st === "crouched" ? 102 : 176;
+      const base = svProject(a, 0, cam, W, H), top = svProject(a, hTop, cam, W, H);
+      const k = SV_FOCAL * W / d;
+      const headR = 11 * k, bodyW = 46 * k;
+      const hv = top.v + headR;
+      const bodyTop = hv + headR * 1.1;
+      const dash = isViewer ? ` stroke-dasharray="6 4"` : "";
+      let h = `<g opacity=".9">`;
+      h += `<rect x="${(base.u - bodyW / 2).toFixed(1)}" y="${bodyTop.toFixed(1)}" width="${bodyW.toFixed(1)}" height="${Math.max(2, base.v - bodyTop).toFixed(1)}" rx="${(bodyW * .3).toFixed(1)}" fill="${color}" fill-opacity=".6" stroke="#fff" stroke-width="${isViewer ? 2 : 1.2}"${dash}/>`;
+      h += `<circle cx="${base.u.toFixed(1)}" cy="${hv.toFixed(1)}" r="${Math.max(2, headR).toFixed(1)}" fill="${color}" stroke="#fff" stroke-width="${isViewer ? 2 : 1.2}"${dash}/>`;
+      h += `<text x="${base.u.toFixed(1)}" y="${(top.v - 6).toFixed(1)}" text-anchor="middle" class="sv-tag">${tag}</text></g>`;
+      items.push({ depth: d, html: h });
+    };
+    state.officers.forEach((o, i) => person(o, officerColor(i), o.name || OFFICER_NAMES[i]));
+    state.threats.forEach((t, i) => person(t, threatColor(i), L("Ameaça ", "Threat ") + (i + 1)));
+
+    items.sort((a, b) => b.depth - a.depth);
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.innerHTML = `<defs><filter id="svBlur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter></defs>` + items.map(i => i.html).join("") +
+      `<text x="10" y="${H - 34}" class="sv-hint">${L("Desenho do simulador sobre a foto · aproximado", "Simulator drawing over the photo · approximate")}</text>`;
+  }
+
+  $("svFreeze").addEventListener("change", () => { svOverlaySig = null; renderSvOverlay(); });
+  window.addEventListener("resize", () => { svOverlaySig = null; if (state.realMap) renderSvOverlay(); });
+
+  ["svOfficer", "svThreat"].forEach(id => $(id).addEventListener("change", () => {
+    if (svMode === "officer" || svMode === "threat") showStreetView(svMode);
+  }));
+
+  [["svAdjL", "lat", -50], ["svAdjR", "lat", 50], ["svAdjF", "fwd", 50], ["svAdjB", "fwd", -50], ["svAdjRotL", "rot", -2], ["svAdjRotR", "rot", 2]].forEach(([id, k, step]) => {
+    $(id).addEventListener("click", () => {
+      if (!svBase) return;
+      svAdj[k] = Math.round((svAdj[k] + step) * 10) / 10;
+      applySvAdjust(); renderSvOverlay();
+    });
+  });
+  $("svAdjReset").addEventListener("click", () => { svAdj = { lat: 0, fwd: 0, rot: 0 }; applySvAdjust(); renderSvOverlay(); });
+
+  /* Alinhamento exato pelo link do Google Maps: na foto aberta no Google Maps, o
+     endereço traz "@lat,lon,3a,75y,90h,90t" = posição exata da foto e direção. */
+  function latLonToScene(rm, lat, lon) {
+    const x = rm.xf, c = Math.cos(x.ang), sn = Math.sin(x.ang);
+    const kx = Math.cos(x.lat0 * Math.PI / 180) * 111320 * 100, ky = 110574 * 100;
+    const lx = (lon - x.lon0) * kx - x.ox, ly = -(lat - x.lat0) * ky - x.oy;
+    return { x: lx * c - ly * sn + x.tx, y: lx * sn + ly * c + x.ty };
+  }
+
+  function parseStreetViewLink(text) {
+    const s = String(text || "");
+    const m = s.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?),[\d.]+a(?:,([\d.]+)y)?(?:,([\d.]+)h)?(?:,([\d.]+)t)?/);
+    if (m) return { lat: +m[1], lon: +m[2], heading: m[4] !== undefined ? +m[4] : null };
+    const v = s.match(/viewpoint=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+    if (v) { const h = s.match(/heading=(-?\d+(?:\.\d+)?)/); return { lat: +v[1], lon: +v[2], heading: h ? +h[1] : null }; }
+    const c = parseCoordinates(s);
+    return c ? { lat: c.lat, lon: c.lon, heading: null } : null;
+  }
+
+  function alignStreetViewByLink() {
+    const rm = state.realMap;
+    if (!rm || !rm.xf) return;
+    const p = parseStreetViewLink($("svLink").value);
+    if (!p) {
+      $("svLinkMsg").textContent = L("Link não reconhecido. Copie o endereço completo da barra do navegador, com a foto aberta no Google Maps.",
+        "Link not recognized. Copy the full address from the browser bar, with the photo open in Google Maps.");
+      return;
+    }
+    const cam = latLonToScene(rm, p.lat, p.lon);
+    const dist = Math.hypot(cam.x - state.viatura.cx, cam.y - state.viatura.cy) / 100;
+    if (dist > 150) {
+      $("svLinkMsg").textContent = L(`Essa foto fica a ${Math.round(dist)} m da viatura — confira se é do mesmo local.`, `That photo is ${Math.round(dist)} m from the patrol car — check that it is the same place.`);
+      return;
+    }
+    // direção: a do link, ou a de quem olha para o alvo atual
+    const t = streetViewTarget(svMode);
+    let f;
+    if (p.heading !== null) {
+      const x = rm.xf, b = p.heading * Math.PI / 180;
+      const lx = Math.sin(b), ly = -Math.cos(b);
+      f = { x: lx * Math.cos(x.ang) - ly * Math.sin(x.ang), y: lx * Math.sin(x.ang) + ly * Math.cos(x.ang) };
+    } else f = vnorm(vsub(t.to, cam));
+    const hd = sceneBearing(rm, cam, { x: cam.x + f.x * 100, y: cam.y + f.y * 100 }).toFixed(0);
+    $("svFrame").src = `https://maps.google.com/maps?layer=c&cbll=${p.lat.toFixed(7)},${p.lon.toFixed(7)}&cbp=11,${hd},0,1,0&output=svembed&hl=${LANG === "en" ? "en" : "pt-BR"}`;
+    svBase = { from: cam, f: vnorm(f), mode: svMode, viewer: t.from, exact: true };
+    svAdj = { lat: 0, fwd: 0, rot: 0 };
+    applySvAdjust();
+    renderSvOverlay();
+    const off = Math.hypot(cam.x - t.from.x, cam.y - t.from.y) / 100;
+    const fN = vnorm(f), rN = { x: -fN.y, y: fN.x };
+    const rel = vsub(t.from, cam);
+    const side = vdot(rel, rN), ahead = vdot(rel, fN);
+    const fmt = v => (Math.abs(v) / 100).toFixed(1).replace(".", LANG === "en" ? "." : ",");
+    const where = off < 1.2 ? { pt: "", en: "" } : {
+      pt: ` Esta é a foto disponível mais próxima: ${t.who.pt.replace(/^da /, "a ").replace(/^de /, "")} está ${fmt(side)} m ${side >= 0 ? "à direita" : "à esquerda"} e ${fmt(ahead)} m ${ahead >= 0 ? "à frente" : "atrás"} da câmera (contorno tracejado, quando aparece). Para a visão exata dela, use a Linha de Visão.`,
+      en: ` This is the nearest available photo: ${t.who.en} stands ${fmt(side)} m to the ${side >= 0 ? "right" : "left"} and ${fmt(ahead)} m ${ahead >= 0 ? "ahead of" : "behind"} the camera (dashed outline, when visible). For their exact view, use the Line of Sight.`
+    };
+    $("svLinkMsg").textContent = L(
+      `Alinhado pela posição exata da foto (a ${off.toFixed(1).replace(".", ",")} m ${t.who.pt}), rumo ${hd}°.` + where.pt,
+      `Aligned to the photo's exact position (${off.toFixed(1)} m from ${t.who.en}), heading ${hd}°.` + where.en
+    );
+  }
+
+  $("svLinkBtn").addEventListener("click", alignStreetViewByLink);
+  $("svLink").addEventListener("keydown", e => { if (e.key === "Enter") alignStreetViewByLink(); });
+
+  ["svCarStyle", "svLivery", "svShowEngine"].forEach(id => $(id).addEventListener("change", () => { svOverlaySig = null; renderSvOverlay(); }));
 
   /* ------------------------------------------------------------
      INITIALIZATION
