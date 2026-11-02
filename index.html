@@ -1007,6 +1007,27 @@ input[type=range]{ accent-color:#68f477; }
 .vr-fire{ position:absolute; left:150px; bottom:10px; padding:9px 12px; border:1px solid #6b2a2a; border-radius:8px; background:rgba(42,22,23,.88); color:#ffc2c2; font-size:12px; font-weight:900; cursor:pointer; }
 .vr-stage.narrow .vr-fire{ left:auto; right:10px; bottom:96px; }
 #vehicleTypeField[hidden]{ display:none; }
+/* registro por aluno */
+.training-student{ display:flex; align-items:center; gap:6px; font-size:12px; color:#cfd6da; font-weight:700; }
+.training-student input{ width:130px; height:32px; border:1px solid #394149; border-radius:8px; background:#101316; color:#f5f7f8; padding:4px 8px; }
+.training-result{ margin:8px 0 0; padding:8px 10px; border:1px solid #30373c; border-radius:9px; background:#0f1316; font-size:12px; line-height:1.5; color:#dfe5e8; }
+.training-result[hidden]{ display:none; }
+.training-result .tr-head{ font-weight:800; margin-bottom:4px; }
+.training-result .tr-row{ padding:4px 0; border-top:1px solid #20262a; }
+.tr-covered{ color:#7dffa0; } .tr-hidden{ color:#e8c25a; } .tr-exposed{ color:#ff6b6b; }
+.tr-warn{ color:#f0cd66; }
+.training-session{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:8px; font-size:12px; color:#aeb7bc; }
+.training-session .btn{ min-height:30px; padding:4px 10px; font-size:12px; }
+.training-session-info{ flex:1 1 220px; }
+.training-log{ margin-top:8px; max-height:260px; overflow:auto; border:1px solid #30373c; border-radius:9px; }
+.training-log[hidden]{ display:none; }
+.training-log table{ width:100%; border-collapse:collapse; font-size:11.5px; }
+.training-log th, .training-log td{ padding:5px 7px; border-bottom:1px solid #20262a; text-align:left; white-space:nowrap; }
+.training-log th{ position:sticky; top:0; background:#14191c; color:#cfd6da; }
+.unval-tag{ display:inline-block; margin-left:6px; padding:1px 6px; border-radius:10px; font-size:10px; font-weight:800; color:#f0cd66; border:1px solid rgba(232,194,90,.6); background:rgba(232,194,90,.08); vertical-align:middle; }
+/* modo aula */
+body.class-mode:not(.show-adv) .adv-only{ display:none !important; }
+#classModeBtn[aria-pressed="true"], #advancedBtn[aria-pressed="true"]{ border-color:#59cd76; background:#193e28; color:#aaffb5; }
 /* ===== ANTEPAROS MANUAIS ===== */
 .env-add-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
 .env-add-row .add-btn{ margin-top:0; }
@@ -1422,11 +1443,14 @@ input[type=range]{ accent-color:#68f477; }
         <span class="toolbar-separator"></span>
         <!-- MELHORIA #6: Salvar/Carregar cena no localStorage -->
         <button class="btn" id="saveSceneBtn" title="Salvar cena atual no navegador">💾 Salvar cena</button>
-        <button class="btn" id="generateReportBtn" title="Gerar laudo técnico para impressão">📄 Gerar laudo técnico</button>
+        <button class="btn" id="generateReportBtn" title="Gerar relatório da cena para impressão">📄 Gerar relatório da cena</button>
         <button class="btn" id="loadSceneBtn" title="Carregar cena salva no navegador">📂 Carregar cena</button>
         <button class="btn" id="osmOpenBtn" title="Montar o cenário numa rua real (OpenStreetMap)">🗺 Local real</button>
         <span class="toolbar-separator"></span>
         <button class="btn" id="trainingToggleBtn">🎯 Modo Treinamento</button>
+        <span class="toolbar-separator"></span>
+        <button class="btn" id="classModeBtn" type="button" aria-pressed="false" title="Mostra só o essencial para a aula">🎓 Modo aula</button>
+        <button class="btn" id="advancedBtn" type="button" aria-pressed="false" hidden title="3D, VR, Street View, local real, voz, painel do instrutor e Monte Carlo">⚙ Recursos avançados</button>
       </div>
 
       <div class="voice-bar" aria-label="Comandos de voz">
@@ -1452,21 +1476,30 @@ input[type=range]{ accent-color:#68f477; }
               <span class="training-stat-v" id="trainingTimer">00:00</span>
             </div>
             <div class="training-stat">
-              <span class="training-stat-k">exposto</span>
+              <span class="training-stat-k">exposto (trocas)</span>
               <span class="training-stat-v" id="trainingExposedCount" style="color:#ff6b6b">0</span>
             </div>
             <div class="training-stat">
-              <span class="training-stat-k">protegido</span>
+              <span class="training-stat-k">protegido (trocas)</span>
               <span class="training-stat-v" id="trainingCoveredCount" style="color:#7dffa0">0</span>
             </div>
             <div class="training-stat" id="trainingFirstCoverWrap" hidden="">
               <span class="training-stat-k">1ª proteção</span>
               <span class="training-stat-v" id="trainingFirstCover">—</span>
             </div>
+            <label class="training-student">Aluno <input id="trainingStudent" type="text" autocomplete="off" placeholder="nome ou nº"></label>
             <button class="btn primary" id="trainingStartBtn">Iniciar</button>
             <button class="btn" id="trainingStopBtn" hidden="">Finalizar</button>
           </div>
         </div>
+        <div class="training-result" id="trainingResult" hidden data-i18n-skip></div>
+        <div class="training-session">
+          <span class="training-session-info" id="trainingSessionInfo" data-i18n-skip></span>
+          <button class="btn" id="trainingCsvBtn" type="button">⬇ Exportar CSV</button>
+          <button class="btn" id="trainingLogBtn" type="button" aria-pressed="false">Ver tentativas</button>
+          <button class="btn" id="trainingClearBtn" type="button">Apagar sessão</button>
+        </div>
+        <div class="training-log" id="trainingLog" hidden data-i18n-skip></div>
         <p class="training-objective" id="trainingObjective">Escolha um cenário acima para uma situação prática guiada, ou clique Iniciar para cronometrar o cenário livre atual.</p>
       </div>
 
@@ -1644,12 +1677,12 @@ input[type=range]{ accent-color:#68f477; }
             <label class="switch"><input id="showEngineCover" type="checkbox" checked=""><span class="slider"></span></label>
           </div>
           <div class="switch-row">
-            <span>Colunas A/B/C protegem</span>
+            <span>Colunas A/B/C protegem <small class="unval-tag">hipótese · só arma curta</small></span>
             <label class="switch"><input id="showPillarCover" type="checkbox" checked=""><span class="slider"></span></label>
           </div>
           <div class="switch-row">
-            <span>Rodas protegem</span>
-            <label class="switch"><input id="showWheelCover" type="checkbox" checked=""><span class="slider"></span></label>
+            <span>Rodas protegem <small class="unval-tag">não validado</small></span>
+            <label class="switch"><input id="showWheelCover" type="checkbox"><span class="slider"></span></label>
           </div>
         </div>
 
@@ -1994,7 +2027,7 @@ input[type=range]{ accent-color:#68f477; }
 
   <section class="profile-card" id="monteCarloCard">
     <div class="profile-toolbar">
-      <span class="profile-title">VALIDAÇÃO ESTATÍSTICA — ÂNGULO ÓTIMO (MONTE CARLO)</span>
+      <span class="profile-title">ANÁLISE ESTATÍSTICA DO ÂNGULO (MONTE CARLO)</span>
       <span class="profile-hint">Independente da cena acima — sorteia suas próprias N situações por padrão de abordagem e mede o ganho de proteção do ângulo ótimo sobre a viatura alinhada (0°).</span>
     </div>
     <div class="mc-controls">
@@ -2086,8 +2119,8 @@ input[type=range]{ accent-color:#68f477; }
     "Exportar SVG": "Export SVG",
     "Salvar cena atual no navegador": "Save the current scene in this browser",
     "💾 Salvar cena": "💾 Save scene",
-    "Gerar laudo técnico para impressão": "Generate a printable technical report",
-    "📄 Gerar laudo técnico": "📄 Technical report",
+    "Gerar relatório da cena para impressão": "Generate a printable scene report",
+    "📄 Gerar relatório da cena": "📄 Scene report",
     "Carregar cena salva no navegador": "Load the scene saved in this browser",
     "📂 Carregar cena": "📂 Load scene",
     "🎯 Modo Treinamento": "🎯 Training Mode",
@@ -2144,7 +2177,7 @@ input[type=range]{ accent-color:#68f477; }
     "VISTA DE PERFIL — por que agachar importa": "PROFILE VIEW — why crouching matters",
     "Altura real da cobertura vs. altura do oficial, na postura atual de cada um.": "Real cover height vs. officer height, in each one's current stance.",
     "Vista lateral comparando a altura das coberturas com a altura dos oficiais em pé ou agachados": "Side view comparing cover heights with officer heights standing or crouched",
-    "VALIDAÇÃO ESTATÍSTICA — ÂNGULO ÓTIMO (MONTE CARLO)": "STATISTICAL VALIDATION — OPTIMAL ANGLE (MONTE CARLO)",
+    "ANÁLISE ESTATÍSTICA DO ÂNGULO (MONTE CARLO)": "STATISTICAL ANGLE ANALYSIS (MONTE CARLO)",
     "Independente da cena acima — sorteia suas próprias N situações por padrão de abordagem e mede o ganho de proteção do ângulo ótimo sobre a viatura alinhada (0°).": "Independent of the scene above — draws its own N situations per approach pattern and measures the protection gain of the optimal angle over the aligned patrol car (0°).",
     "Simulações por cenário": "Simulations per scenario",
     "▶ Rodar simulação": "▶ Run simulation",
@@ -2191,6 +2224,19 @@ input[type=range]{ accent-color:#68f477; }
     "Fundo com imagem de satélite": "Satellite image background",
     "Imagem de satélite (local real)": "Satellite image (real location)",
     "Anteparos do ambiente": "Environment cover",
+    "exposto (trocas)": "exposed (changes)",
+    "protegido (trocas)": "covered (changes)",
+    "Aluno": "Student",
+    "nome ou nº": "name or no.",
+    "⬇ Exportar CSV": "⬇ Export CSV",
+    "Ver tentativas": "Show attempts",
+    "Apagar sessão": "Delete session",
+    "hipótese · só arma curta": "hypothesis · handgun only",
+    "não validado": "not validated",
+    "🎓 Modo aula": "🎓 Class mode",
+    "⚙ Recursos avançados": "⚙ Advanced features",
+    "Mostra só o essencial para a aula": "Shows only the essentials for class",
+    "3D, VR, Street View, local real, voz, painel do instrutor e Monte Carlo": "3D, VR, Street View, real location, voice, instructor panel and Monte Carlo",
     "🚓 Modelo da viatura": "🚓 Patrol vehicle model",
     "Renault Duster 1.6 · motor transversal": "Renault Duster 1.6 · transverse engine",
     "Chevrolet Spin 1.8 · motor transversal": "Chevrolet Spin 1.8 · transverse engine",
@@ -2422,6 +2468,8 @@ input[type=range]{ accent-color:#68f477; }
     if (lastMonteCarlo) renderMonteCarloResults(lastMonteCarlo.rows, lastMonteCarlo.trialsPerScenario);
     else renderMcEmpty();
     renderVoiceChrome();
+    renderTrainingSession();
+    renderTrainingResult();
     if ($("reportOverlay").classList.contains("open")) openReport();
     render();
 
@@ -4008,10 +4056,8 @@ input[type=range]{ accent-color:#68f477; }
     } else if (!anyExposed && training.wasExposed) {
       training.coveredCount++;
       training.wasExposed = false;
-      if (training.firstCoverMs === null) {
-        training.firstCoverMs = performance.now() - training.startTime;
-      }
     }
+    trainingCheckProtection();
 
     $("trainingExposedCount").textContent = training.exposedCount;
     $("trainingCoveredCount").textContent = training.coveredCount;
@@ -4020,6 +4066,167 @@ input[type=range]{ accent-color:#68f477; }
       $("trainingFirstCoverWrap").hidden = false;
       $("trainingFirstCover").textContent = formatMs(training.firstCoverMs);
     }
+  }
+
+  /* ------------------------------------------------------------
+     REGISTRO POR ALUNO (pré e pós-teste)
+     A nota vem da POSIÇÃO FINAL (Linha de Visão, contra cada ameaça)
+     e do tempo até a decisão. As trocas exposto/protegido durante o
+     arraste ficam só como informação.
+     Por ameaça:  protegido = cabeça e tronco cobertos por anteparo
+                  balístico e nada exposto;
+                  só oculto = nada exposto, mas cabeça ou tronco só
+                  escondidos (lataria, vidro);
+                  exposto   = alguma parte do corpo exposta.
+  ------------------------------------------------------------ */
+  // materiais sem nenhum ensaio (árvore e poste com arma curta são inferidos de ensaio com fuzil: não entram aqui)
+  const UNTESTED_COVER = new Set(["coluna", "roda", "cambio", "agregados", "bateria"]);
+  const TRAIN_LOG_KEY = "vas-training-log-v1";
+  let trainingLog = [];
+  try { trainingLog = JSON.parse(localStorage.getItem(TRAIN_LOG_KEY) || "[]") || []; } catch (e) { trainingLog = []; }
+  function saveTrainingLog() { try { localStorage.setItem(TRAIN_LOG_KEY, JSON.stringify(trainingLog)); } catch (e) {} }
+  const TRAIN_LEVEL = {
+    covered: { pt: "protegido", en: "covered" },
+    hidden: { pt: "só oculto", en: "concealed only" },
+    exposed: { pt: "exposto", en: "exposed" }
+  };
+  const STANCE_NAMES = { standing: { pt: "em pé", en: "standing" }, crouched: { pt: "agachado", en: "crouched" }, prone: { pt: "deitado", en: "prone" } };
+
+  function assessPositions() {
+    const occ = buildOccluders();
+    return state.officers.map((o, oi) => {
+      const stance = stanceOf(o);
+      const threats = state.threats.map((t, ti) => {
+        const u = vnorm(vsub(t, o));
+        const lean = { dir: { x: 0, y: 0 }, amount: 0, perp: rightOf(u) };
+        const weapon = t.weapon || "curta";
+        const res = classify(bodySamples(o, stance, lean, facingVec(o, t)), eyePoint(t, "standing", lean, null), occ, weapon);
+        const parts = summarizeParts(res);
+        const exposed = ["head", "torso", "legs"].filter(k => parts[k].status === "exposed");
+        const level = exposed.length ? "exposed" : (parts.head.status === "covered" && parts.torso.status === "covered") ? "covered" : "hidden";
+        const unval = new Map();
+        res.forEach(r => { if (r.status === "covered") r.by.forEach(b => { if (UNTESTED_COVER.has(b.ratingKey)) unval.set(b.label.pt, b.label); }); });
+        return { n: ti + 1, weapon, dist: Math.hypot(t.x - o.x, t.y - o.y) / 100, level, parts, exposed, unvalidated: [...unval.values()] };
+      });
+      const coveredN = threats.filter(x => x.level === "covered").length;
+      const overall = threats.some(x => x.level === "exposed") ? "exposed" : coveredN === threats.length ? "covered" : "hidden";
+      return { officer: o, name: o.name || `${L("Oficial", "Officer")} ${oi + 1}`, stance, threats, coveredN, overall };
+    });
+  }
+
+  // 1ª proteção: o primeiro momento em que todos os oficiais ficam protegidos de todas as ameaças
+  function trainingCheckProtection() {
+    if (!training.active || training.firstCoverMs !== null) return;
+    const now = performance.now();
+    if (now - (training.lastLosCheck || 0) < 250) {
+      if (!training.losTimer) training.losTimer = setTimeout(() => { training.losTimer = null; trainingCheckProtection(); }, 260);
+      return;
+    }
+    training.lastLosCheck = now;
+    const a = assessPositions();
+    if (a.length && a.every(x => x.overall === "covered")) {
+      training.firstCoverMs = now - training.startTime;
+      $("trainingFirstCoverWrap").hidden = false;
+      $("trainingFirstCover").textContent = formatMs(training.firstCoverMs);
+    }
+  }
+
+  const secTxt = ms => ms === null || ms === undefined ? "" : (ms / 1000).toFixed(1).replace(".", LANG === "en" ? "." : ",");
+
+  function finishTraining() {
+    if (!training.active) return;
+    const decisionMs = performance.now() - training.startTime;
+    const a = assessPositions();
+    if (training.firstCoverMs === null && a.length && a.every(x => x.overall === "covered")) training.firstCoverMs = decisionMs;
+    const student = ($("trainingStudent").value || "").trim();
+    const sc = SCENARIOS.find(s => s.id === training.scenarioId);
+    const scenario = sc ? sc.label : { pt: "Cenário livre", en: "Free scenario" };
+    const attempt = 1 + new Set(trainingLog.filter(r => r.student === student && r.scenario.pt === scenario.pt).map(r => r.attemptId)).size;
+    const when = new Date();
+    const attemptId = when.getTime();
+    a.forEach(x => trainingLog.push({
+      attemptId, student, when: when.toISOString(), scenario, attempt,
+      model: vehicleModel().short, officer: x.name, stance: x.stance,
+      firstCoverMs: training.firstCoverMs, decisionMs, overall: x.overall, coveredN: x.coveredN, total: x.threats.length,
+      threats: x.threats.map(t => ({ n: t.n, weapon: t.weapon, dist: t.dist, level: t.level,
+        exposed: t.exposed.map(k => ({ k, frac: t.parts[k].frac })), unvalidated: t.unvalidated })),
+      exposedChanges: training.exposedCount, coveredChanges: training.coveredCount
+    }));
+    saveTrainingLog();
+    stopTraining();
+    training.lastResult = { a, decisionMs, firstCoverMs: training.firstCoverMs, student };
+    renderTrainingResult();
+    renderTrainingSession();
+    showToast(student ? L(`Tentativa registrada: ${student}`, `Attempt recorded: ${student}`)
+      : L("Tentativa registrada sem nome do aluno", "Attempt recorded without a student name"));
+  }
+
+  function renderTrainingResult() {
+    const r = training.lastResult, box = $("trainingResult");
+    if (!r) { box.hidden = true; return; }
+    const lvl = k => `<b class="tr-${k}">${tx(TRAIN_LEVEL[k]).toUpperCase()}</b>`;
+    box.innerHTML = `<div class="tr-head">${L("Resultado da posição final", "Final position result")}${r.student ? ` — ${escapeHtml(r.student)}` : ""} · ${L("decisão em", "decision at")} ${formatMs(r.decisionMs)} · ${L("1ª proteção", "1st cover")} ${r.firstCoverMs === null ? "—" : formatMs(r.firstCoverMs)}</div>` +
+      r.a.map(x => {
+        const unval = [...new Map(x.threats.flatMap(t => t.unvalidated).map(l => [l.pt, l])).values()];
+        return `<div class="tr-row"><b>${escapeHtml(x.name)}</b> · ${tx(STANCE_NAMES[x.stance])} → ${lvl(x.overall)} · ${L("protegido de", "covered from")} ${x.coveredN}/${x.threats.length} ${L("ameaça(s)", "threat(s)")}<br>` +
+          x.threats.map(t => `${L("Ameaça", "Threat")} ${t.n} (${t.weapon === "fuzil" ? L("fuzil", "rifle") : L("arma curta", "handgun")}, ${t.dist.toFixed(1).replace(".", LANG === "en" ? "." : ",")} m): ${lvl(t.level)}` +
+            (t.exposed.length ? ` — ${t.exposed.map(k => `${tx(PART_NAMES[k]).toLowerCase()} ${Math.round(t.parts[k].frac * 100)}%`).join(", ")}` : "")).join(" · ") +
+          (unval.length ? `<br><span class="tr-warn">⚠ ${L("Parte da proteção vem de material não validado em teste", "Part of the protection comes from material not validated by testing")}: ${unval.map(l => tx(l)).join(", ")}</span>` : "") +
+          `</div>`;
+      }).join("");
+    box.hidden = false;
+  }
+
+  function renderTrainingSession() {
+    const attempts = new Set(trainingLog.map(r => r.attemptId)).size;
+    const students = new Set(trainingLog.map(r => r.student || "")).size;
+    $("trainingSessionInfo").textContent = attempts
+      ? L(`Sessão: ${attempts} tentativa(s) de ${students} aluno(s), guardadas neste navegador.`, `Session: ${attempts} attempt(s) from ${students} student(s), kept in this browser.`)
+      : L("Sessão: nenhuma tentativa registrada. Digite o aluno, clique Iniciar e depois Finalizar.", "Session: no attempts recorded. Type the student, click Start, then Finish.");
+    $("trainingCsvBtn").disabled = !attempts;
+    $("trainingClearBtn").disabled = !attempts;
+    const log = $("trainingLog");
+    if (!log.hidden) {
+      const rows = trainingLog.slice().reverse().slice(0, 60);
+      log.innerHTML = `<table><thead><tr><th>${L("Aluno", "Student")}</th><th>${L("Data", "Date")}</th><th>${L("Cenário", "Scenario")}</th><th>#</th><th>${L("Oficial", "Officer")}</th><th>${L("Postura", "Stance")}</th><th>${L("1ª proteção", "1st cover")}</th><th>${L("Decisão", "Decision")}</th><th>${L("Resultado", "Result")}</th></tr></thead><tbody>` +
+        rows.map(r => `<tr><td>${escapeHtml(r.student || "—")}</td><td>${new Date(r.when).toLocaleString(LANG === "en" ? "en-US" : "pt-BR", { dateStyle: "short", timeStyle: "short" })}</td><td>${escapeHtml(tx(r.scenario))}</td><td>${r.attempt}</td><td>${escapeHtml(r.officer)}</td><td>${tx(STANCE_NAMES[r.stance])}</td><td>${r.firstCoverMs === null ? "—" : formatMs(r.firstCoverMs)}</td><td>${formatMs(r.decisionMs)}</td><td class="tr-${r.overall}">${tx(TRAIN_LEVEL[r.overall])} (${r.coveredN}/${r.total})</td></tr>`).join("") +
+        `</tbody></table>` + (trainingLog.length > 60 ? `<p>${L("Mostrando as 60 mais recentes; o CSV traz todas.", "Showing the 60 most recent; the CSV has all of them.")}</p>` : "");
+    }
+  }
+
+  function exportTrainingCsv() {
+    if (!trainingLog.length) return;
+    const pt = LANG !== "en";
+    const maxT = Math.max(1, ...trainingLog.map(r => r.total));
+    const q = v => { const s = String(v === null || v === undefined ? "" : v); return /[;"\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+    const head = pt
+      ? ["Aluno", "Data", "Hora", "Cenário", "Tentativa", "Viatura", "Oficial", "Postura final", "Tempo até a 1ª proteção (s)", "Tempo até a decisão (s)", "Resultado final", "Protegido de (ameaças)", "Total de ameaças"]
+      : ["Student", "Date", "Time", "Scenario", "Attempt", "Patrol vehicle", "Officer", "Final stance", "Time to 1st cover (s)", "Time to decision (s)", "Final result", "Covered from (threats)", "Total threats"];
+    for (let i = 1; i <= maxT; i++) head.push(...(pt
+      ? [`Ameaça ${i} arma`, `Ameaça ${i} distância (m)`, `Ameaça ${i} resultado`, `Ameaça ${i} partes expostas`]
+      : [`Threat ${i} weapon`, `Threat ${i} distance (m)`, `Threat ${i} result`, `Threat ${i} exposed parts`]));
+    head.push(...(pt ? ["Proteção não validada", "Trocas para exposto (informativo)", "Trocas para protegido (informativo)"]
+      : ["Unvalidated protection", "Changes to exposed (informative)", "Changes to covered (informative)"]));
+    const lng = pt ? "pt" : "en", num = v => pt ? String(v).replace(".", ",") : String(v);
+    const lines = trainingLog.map(r => {
+      const d = new Date(r.when);
+      const row = [r.student, d.toLocaleDateString(pt ? "pt-BR" : "en-US"), d.toLocaleTimeString(pt ? "pt-BR" : "en-US", { hour: "2-digit", minute: "2-digit" }),
+        r.scenario[lng], r.attempt, r.model, r.officer, STANCE_NAMES[r.stance][lng],
+        r.firstCoverMs === null ? "" : num((r.firstCoverMs / 1000).toFixed(1)), num((r.decisionMs / 1000).toFixed(1)),
+        TRAIN_LEVEL[r.overall][lng], r.coveredN, r.total];
+      for (let i = 0; i < maxT; i++) {
+        const t = r.threats[i];
+        if (!t) { row.push("", "", "", ""); continue; }
+        row.push(t.weapon === "fuzil" ? (pt ? "fuzil" : "rifle") : (pt ? "arma curta" : "handgun"), num(t.dist.toFixed(1)), TRAIN_LEVEL[t.level][lng],
+          t.exposed.map(e => `${PART_NAMES[e.k][lng].toLowerCase()} ${Math.round(e.frac * 100)}%`).join(", "));
+      }
+      const unval = [...new Set(r.threats.flatMap(t => t.unvalidated.map(l => l[lng])))].join(", ");
+      row.push(unval, r.exposedChanges, r.coveredChanges);
+      return row.map(q).join(";");
+    });
+    const csv = "\ufeff" + head.map(q).join(";") + "\r\n" + lines.join("\r\n") + "\r\n";
+    const day = new Date().toISOString().slice(0, 10);
+    downloadBlob(new Blob([csv], { type: "text/csv;charset=utf-8" }), pt ? `treinamento-alunos-${day}.csv` : `training-students-${day}.csv`);
   }
 
   function formatMs(ms) {
@@ -5340,6 +5547,8 @@ input[type=range]{ accent-color:#68f477; }
   }
 
   function startTraining() {
+    if (!($("trainingStudent").value || "").trim()) showToast(L("Dica: digite o nome ou nº do aluno para identificar a tentativa no CSV.", "Tip: type the student's name or number to identify the attempt in the CSV."));
+    training.lastResult = null; renderTrainingResult();
     training.active = true;
     training.startTime = performance.now();
     training.exposedCount = 0;
@@ -5386,7 +5595,52 @@ input[type=range]{ accent-color:#68f477; }
   });
 
   $("trainingStartBtn").addEventListener("click", startTraining);
-  $("trainingStopBtn").addEventListener("click", stopTraining);
+  $("trainingStopBtn").addEventListener("click", finishTraining);
+  $("trainingCsvBtn").addEventListener("click", exportTrainingCsv);
+  $("trainingLogBtn").addEventListener("click", () => {
+    const log = $("trainingLog");
+    log.hidden = !log.hidden;
+    $("trainingLogBtn").setAttribute("aria-pressed", log.hidden ? "false" : "true");
+    renderTrainingSession();
+  });
+  $("trainingClearBtn").addEventListener("click", () => {
+    const b = $("trainingClearBtn");
+    if (!b.dataset.armed) {
+      b.dataset.armed = "1";
+      b.textContent = L("Clique de novo para apagar tudo", "Click again to delete all");
+      setTimeout(() => { delete b.dataset.armed; b.textContent = L("Apagar sessão", "Delete session"); }, 4000);
+      return;
+    }
+    delete b.dataset.armed;
+    b.textContent = L("Apagar sessão", "Delete session");
+    trainingLog = []; saveTrainingLog();
+    training.lastResult = null; renderTrainingResult();
+    renderTrainingSession();
+    showToast(L("Sessão apagada", "Session deleted"));
+  });
+  renderTrainingSession();
+
+  /* MODO AULA: só configuração, atores, Linha de Visão, Modo Treinamento e relatório.
+     3D/VR, painel do instrutor, Street View, local real, voz e Monte Carlo ficam em "Recursos avançados". */
+  const CLASS_KEY = "vas-class-mode";
+  ["vrCard", "taCard", "svCard", "osmOpenBtn", "monteCarloCard"].forEach(id => { const el = document.getElementById(id); if (el) el.classList.add("adv-only"); });
+  document.querySelectorAll(".voice-bar").forEach(el => el.classList.add("adv-only"));
+  function setClassMode(on, adv) {
+    document.body.classList.toggle("class-mode", on);
+    document.body.classList.toggle("show-adv", on && !!adv);
+    $("classModeBtn").setAttribute("aria-pressed", on ? "true" : "false");
+    $("advancedBtn").hidden = !on;
+    $("advancedBtn").setAttribute("aria-pressed", on && adv ? "true" : "false");
+    try { localStorage.setItem(CLASS_KEY, on ? "1" : "0"); } catch (e) {}
+  }
+  $("classModeBtn").addEventListener("click", () => {
+    const on = !document.body.classList.contains("class-mode");
+    setClassMode(on, false);
+    showToast(on ? L("Modo aula: só o essencial. 3D, voz, local real e Monte Carlo em Recursos avançados.", "Class mode: essentials only. 3D, voice, real location and Monte Carlo under Advanced features.")
+      : L("Modo aula desligado: todos os recursos visíveis", "Class mode off: all features visible"));
+  });
+  $("advancedBtn").addEventListener("click", () => setClassMode(true, !document.body.classList.contains("show-adv")));
+  try { if (localStorage.getItem(CLASS_KEY) === "1") setClassMode(true, false); } catch (e) {}
 
   $("rerollBtn").addEventListener("click", () => {
     const active = SCENARIOS.find(s => s.id === training.scenarioId);
@@ -5402,7 +5656,7 @@ input[type=range]{ accent-color:#68f477; }
 
     showEngineCover.checked = true;
     showPillarCover.checked = true;
-    showWheelCover.checked = true;
+    showWheelCover.checked = false;   // roda não validada: desligada por padrão
     showContour.checked = true;
     showExposure.checked = true;
     showLabels.checked = true;
@@ -5882,6 +6136,18 @@ function buildReportHTML() {
     satura: L("Cede sob saturação", "Fails under saturation"),
     inferido: L("Resiste (inferido)", "Resists (inferred)") };
 
+  const ST = { val: L("Validado", "Validated"), est: L("Estimado", "Estimated"), nt: L("Não testado", "Not tested") };
+  const SRC17 = L("Ensaio AGSP, 31/10/2017", "AGSP test, Oct 31 2017"), SRCNEXT = L("Novo ensaio previsto (.40, 5,56, 7,62)", "New test planned (.40, 5.56, 7.62)");
+  // situação e fonte, na mesma ordem das linhas da tabela abaixo
+  const BALLISTIC_STATUS = [
+    [ST.val + L(" (Fire 1.0); blocos maiores: ", " (Fire 1.0); larger blocks: ") + ST.est.toLowerCase(), SRC17],   // motor
+    [ST.nt, "—"], [ST.nt, "—"], [ST.nt, "—"],                                                                        // câmbio, agregados, bateria
+    [ST.val, SRC17],                                                                                                  // porta
+    [ST.val + L(" (fuzil); arma curta: ", " (rifle); handgun: ") + ST.est.toLowerCase(), SRC17 + " · " + SRCNEXT],  // árvore
+    [ST.val + L(" (fuzil); arma curta: ", " (rifle); handgun: ") + ST.est.toLowerCase(), SRC17 + " · " + SRCNEXT],  // poste de concreto
+    [ST.val, SRC17],                                                                                                  // parede
+    [ST.nt, SRCNEXT], [ST.nt, SRCNEXT], [ST.nt, SRCNEXT]                                                              // coluna, roda, poste metálico
+  ];
   const ballisticsRows = [
     [L("Motor do veículo", "Vehicle engine"), R.resiste, R.resiste,
       L("Testado AGSP 2017 (motor Fire 1.0 do Fiat Palio). Perfuração apenas da carcaça com 7,62 e 5,56, sem transfixação. Blocos maiores: inferido no mínimo equivalente.",
@@ -5908,8 +6174,14 @@ function buildReportHTML() {
       L("Não testada. Hipótese do autor: protege arma curta em ângulo longitudinal.",
         "Not tested. Author's hypothesis: protects against handgun at a longitudinal angle.")],
     [L("Roda", "Wheel"), R.hipotese, R.hipotese,
-      L("Não testada no relatório AGSP 2017.", "Not tested in the AGSP 2017 report.")]
-  ].map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join("");
+      L("Não testada no relatório AGSP 2017. Desligada por padrão no simulador.", "Not tested in the AGSP 2017 report. Off by default in the simulator.")],
+    [L("Poste metálico", "Metal pole"), R.hipotese, R.hipotese,
+      L("Ainda não disponível na cena. Entra no novo ensaio.", "Not yet available in the scene. Part of the new test.")]
+  ];
+  const ballisticsRowsHtml = ballisticsRows.map((r, i) => {
+    const s = BALLISTIC_STATUS[i] || [ST.nt, "—"];
+    return `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${s[0]}</td><td>${s[1]}</td><td>${r[3]}</td></tr>`;
+  }).join("");
 
   const activeScenario = training.scenarioId ? SCENARIOS.find(s => s.id === training.scenarioId) : null;
   const scenarioLabel = training.scenarioId
@@ -5919,14 +6191,14 @@ function buildReportHTML() {
   const val = k => escapeHtml(header[k] || "");
 
   return `
-    <h1>${L("Laudo Técnico de Posicionamento em Abordagem Veicular", "Technical Report — Officer Positioning in Vehicle Approaches")}</h1>
+    <h1>${L("Relatório da Cena — Posicionamento em Abordagem Veicular", "Scene Report — Officer Positioning in Vehicle Approaches")}</h1>
     <p class="subtitle">${L("Simulador geométrico", "Geometric simulator")} · Vehicle Approach Shielding</p>
 
     <div class="report-header-fields" id="reportHeaderFields">
       <label>${L("Instituição", "Institution")} <input type="text" data-report-field="institution" value="${val("institution")}" placeholder="${L("Ex.: Polícia Militar do Estado de São Paulo", "e.g. São Paulo State Military Police")}"></label>
       <label>${L("Unidade / Curso", "Unit / Course")} <input type="text" data-report-field="unit" value="${val("unit")}" placeholder="${L("Ex.: APMBB — Curso de Formação de Oficiais", "e.g. APMBB — Officer Training Course")}"></label>
       <label>${L("Instrutor responsável", "Responsible instructor")} <input type="text" data-report-field="instructor" value="${val("instructor")}" placeholder="${L("Nome, posto e função", "Name, rank and role")}"></label>
-      <label>${L("Identificação do laudo", "Report ID")} <input type="text" data-report-field="reportNumber" value="${val("reportNumber")}" placeholder="${L("Ex.: LAU-2026-0001", "e.g. REP-2026-0001")}"></label>
+      <label>${L("Identificação do relatório", "Report ID")} <input type="text" data-report-field="reportNumber" value="${val("reportNumber")}" placeholder="${L("Ex.: LAU-2026-0001", "e.g. REP-2026-0001")}"></label>
     </div>
 
     <div class="report-meta">
@@ -6031,10 +6303,12 @@ function buildReportHTML() {
           <th>${L("Anteparo", "Barrier")}</th>
           <th>${L("Arma curta", "Handgun")}</th>
           <th>${L("Fuzil", "Rifle")}</th>
+          <th>${L("Situação", "Status")}</th>
+          <th>${L("Fonte", "Source")}</th>
           <th>${L("Observação", "Notes")}</th>
         </tr>
       </thead>
-      <tbody>${ballisticsRows}</tbody>
+      <tbody>${ballisticsRowsHtml}</tbody>
     </table>
     <p class="report-note">${L(
       `Fonte: 1º Teste de Impacto Balístico do 20º BPM/M, realizado no estande do Arsenal de
@@ -6049,7 +6323,7 @@ function buildReportHTML() {
 
     <h2>${L("6. Ressalvas e referências", "6. Limitations and references")}</h2>
     <p class="report-note">${L(
-      `Este laudo é gerado por um simulador geométrico bidimensional. Ele calcula o que está
+      `Este relatório é gerado por um simulador geométrico bidimensional. Ele calcula o que está
       geometricamente entre o oficial e a ameaça, e verifica se o objeto interposto tem
       capacidade balística conhecida de deter o calibre em questão. Não considera penetração
       parcial, ricochete, fragmentação, cadência de tiro, precisão do atirador, mobilidade,
@@ -6938,6 +7212,13 @@ document.addEventListener("keydown", e => {
       msg += " " + L(
         "Deitado: para reagir, role para a direita ou a esquerda (use a visada). Calcanhares no chão. Atenção ao ricochete rente ao chão e ao vão sob o carro, que funciona nos dois sentidos. Avise a equipe de que está deitado.",
         "Prone: to react, roll right or left (use the lean). Heels down. Watch for rounds skipping along the ground and for the gap under the car, which works both ways. Tell your team you are prone.");
+    }
+    {
+      // aviso visível quando a proteção depende de material ainda não testado
+      const unval = new Map();
+      threatView.forEach(r => { if (r.status === "covered") r.by.forEach(b => { if (UNTESTED_COVER.has(b.ratingKey)) unval.set(b.label.pt, b.label); }); });
+      if (unval.size) msg += " ⚠ " + L(`Proteção não validada em teste: ${[...unval.values()].map(l => l.pt).join(", ")} — trate como hipótese.`,
+        `Protection not validated by testing: ${[...unval.values()].map(l => l.en).join(", ")} — treat it as a hypothesis.`);
     }
     $("sightInsight").textContent = msg.trim();
 
