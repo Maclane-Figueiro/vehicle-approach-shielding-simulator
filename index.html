@@ -1028,6 +1028,13 @@ input[type=range]{ accent-color:#68f477; }
 /* modo aula */
 body.class-mode:not(.show-adv) .adv-only{ display:none !important; }
 #classModeBtn[aria-pressed="true"], #advancedBtn[aria-pressed="true"]{ border-color:#59cd76; background:#193e28; color:#aaffb5; }
+.vr-pick{ position:absolute; z-index:4; pointer-events:none; transform:translate(14px, 14px); max-width:260px; padding:5px 9px; border-radius:8px; font-size:12px; font-weight:800; line-height:1.3; background:rgba(8,10,12,.86); border:1px solid #4a545b; color:#e9eef0; }
+.vr-pick[hidden]{ display:none; }
+.vr-pick small{ display:block; font-weight:600; color:#aab4b9; font-size:10.5px; }
+.vr-pick.ok{ border-color:#59cd76; } .vr-pick.ok b{ color:#7dffa0; }
+.vr-pick.unval{ border-color:#e8c25a; } .vr-pick.unval b{ color:#f0cd66; }
+.vr-pick.weak{ border-color:#ff9d3f; } .vr-pick.weak b{ color:#ffb36b; }
+.vr-pick.conceal{ border-color:#8d979c; } .vr-pick.conceal b{ color:#c9d1d5; }
 /* ===== ANTEPAROS MANUAIS ===== */
 .env-add-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
 .env-add-row .add-btn{ margin-top:0; }
@@ -1900,6 +1907,7 @@ body.class-mode:not(.show-adv) .adv-only{ display:none !important; }
       <button class="btn" type="button" id="vrFullBtn" hidden>⛶ Tela cheia</button>
       <button class="btn" type="button" id="vrCloseBtn" hidden>✕ Fechar 3D</button>
       <label class="sv-toggle"><input type="checkbox" id="vrLabels" checked> Nomes e distâncias</label>
+      <label class="sv-toggle" title="Desligado: vai na hora, sem gastar tempo"><input type="checkbox" id="vrRunTo" checked> Duplo clique: ir correndo</label>
       <label class="sv-toggle" id="vrSatWrap" hidden><input type="checkbox" id="vrSat"> Satélite no chão</label>
       <button class="btn" type="button" id="vrSvBtn" hidden aria-pressed="false">🛣 Street View ao lado</button>
     </div>
@@ -1910,8 +1918,9 @@ body.class-mode:not(.show-adv) .adv-only{ display:none !important; }
       <div class="vr-hud" id="vrHud" data-i18n-skip></div>
       <div class="vr-shot" id="vrShot" data-i18n-skip></div>
       <div class="vr-cross" id="vrCross" aria-hidden="true"></div>
+      <div class="vr-pick" id="vrPick" hidden data-i18n-skip></div>
       <button type="button" class="vr-fire" id="vrFireBtn" title="Disparar pela mira (tecla F)">🔫 Disparar (F)</button>
-      <div class="vr-help">Arraste para olhar · W A S D anda · Shift corre · ← → gira · C agacha · P deita · Espaço levanta · Q / E visada (segurar) · F dispara pela mira</div>
+      <div class="vr-help">Arraste para olhar · W A S D anda · Shift corre · ← → gira · C agacha · P deita · Espaço levanta · Q / E visada (segurar) · F dispara pela mira · duplo clique num abrigo: ir até ele · mouse: botão direito segurado anda, rodinha dá passos</div>
       <div class="vr-pad" aria-label="Movimento">
         <button type="button" data-vr-pad="f:1" aria-label="Frente">▲</button>
         <button type="button" data-vr-pad="s:-1" aria-label="Esquerda">◀</button>
@@ -2250,7 +2259,9 @@ body.class-mode:not(.show-adv) .adv-only{ display:none !important; }
     "⛶ Tela cheia": "⛶ Full screen",
     "✕ Fechar 3D": "✕ Close 3D",
     "Nomes e distâncias": "Names and distances",
-    "Arraste para olhar · W A S D anda · Shift corre · ← → gira · C agacha · P deita · Espaço levanta · Q / E visada (segurar) · F dispara pela mira": "Drag to look · W A S D walk · Shift run · ← → turn · C crouch · P prone · Space stand · Q / E lean (hold) · F fires at the crosshair",
+    "Arraste para olhar · W A S D anda · Shift corre · ← → gira · C agacha · P deita · Espaço levanta · Q / E visada (segurar) · F dispara pela mira · duplo clique num abrigo: ir até ele · mouse: botão direito segurado anda, rodinha dá passos": "Drag to look · W A S D walk · Shift run · ← → turn · C crouch · P prone · Space stand · Q / E lean (hold) · F fires at the crosshair · double-click a cover: go to it · mouse: hold right button to walk, wheel takes steps",
+    "Duplo clique: ir correndo": "Double-click: run there",
+    "Desligado: vai na hora, sem gastar tempo": "Off: moves instantly, no time spent",
     "Carregando o 3D…": "Loading 3D…",
     "Fase 1 da realidade virtual. O cálculo é o mesmo da Linha de Visão (cabeça, tronco e pernas; coberto, oculto ou exposto), feito a partir da posição real dos seus olhos a cada passo. Ao andar, a posição do oficial também muda na cena 2D. No óculos de VR (Meta Quest e similares): abra o simulador no navegador do óculos e toque em Entrar em VR — a altura real da sua cabeça define em pé, agachado ou deitado; o manche esquerdo anda e o direito gira 30°.": "Virtual reality, phase 1. The calculation is the same as Line of Sight (head, torso and legs; covered, concealed or exposed), done from the real position of your eyes at every step. As you walk, the officer's position also changes in the 2D scene. On a VR headset (Meta Quest and similar): open the simulator in the headset browser and tap Enter VR — your real head height sets standing, crouched or prone; the left stick walks and the right stick turns 30°.",
     "🔫 Disparar (F)": "🔫 Fire (F)",
@@ -9761,6 +9772,11 @@ document.addEventListener("keydown", e => {
         const d = new THREE.Vector3(0, 0, -1).applyQuaternion(q);
         taAimedShotFromWorld(p, d, performance.now());
       });
+      c.addEventListener("squeezestart", () => {
+        const p = new THREE.Vector3(), q = new THREE.Quaternion();
+        c.getWorldPosition(p); c.getWorldQuaternion(q);
+        vrGoTo(vrPickWorld(null, p, new THREE.Vector3(0, 0, -1).applyQuaternion(q)), true);
+      });
       vr.rig.add(c);
     });
   }
@@ -9839,9 +9855,13 @@ document.addEventListener("keydown", e => {
     if (k.has("arrowleft")) vr.yaw += dt * 1.6;
     if (k.has("arrowright")) vr.yaw -= dt * 1.6;
     vr.lean = k.has("q") ? -1 : k.has("e") ? 1 : performance.now() < (vr.autoLeanUntil || 0) ? vr.autoLean : (sightState.visada || 0);
+    if (vr.mouseFwd) fwd += 1;   // botão direito do mouse segurado: anda para onde olha
+    let wheelLimit = Infinity;
+    if (!fwd && !side && vr.wheelDist) { fwd = Math.sign(vr.wheelDist); wheelLimit = Math.abs(vr.wheelDist); }
     if (!fwd && !side) return;
     const run = k.has("shift") && vr.stance === "standing";
-    const v = (run ? 4 : VR_SPEED[vr.stance]) * 100 * dt;
+    const v = Math.min(wheelLimit, (run ? 4 : VR_SPEED[vr.stance]) * 100 * dt);
+    if (wheelLimit < Infinity) vr.wheelDist -= Math.sign(vr.wheelDist) * v;
     const f = dirOfYaw(vr.yaw), r = rightOf(f);
     const l = Math.hypot(fwd, side);
     const dx = (f.x * fwd + r.x * side) / l * v, dy = (f.y * fwd + r.y * side) / l * v;
@@ -9849,6 +9869,7 @@ document.addEventListener("keydown", e => {
     const tryP = [{ x: vr.pos.x + dx, y: vr.pos.y + dy }, { x: vr.pos.x + dx, y: vr.pos.y }, { x: vr.pos.x, y: vr.pos.y + dy }];
     const ok = tryP.find(p => !vrBlocked(p));
     if (ok) { vr.pos = ok; vr.dirty = true; }
+    else if (wheelLimit < Infinity) vr.wheelDist = 0;   // encostou no obstáculo: para o passo da rodinha
   }
 
   // óculos: manche esquerdo anda (para onde você olha), direito gira 30° por toque
@@ -9948,8 +9969,9 @@ document.addEventListener("keydown", e => {
     stage.dataset.risk = worst;
     document.querySelectorAll("[data-vr-stance]").forEach(b => b.classList.toggle("active", b.dataset.vrStance === a.me.stance));
     // tela estreita (celular): o aviso ocupa a largura toda e o painel desce
-    const narrow = stage.clientWidth < 640 || (vr.svOn && stage.clientWidth < 780);
-    stage.classList.toggle("narrow", narrow);
+    // !!: sem isso, com o Street View nunca aberto (svOn indefinido) o toggle alternava a cada atualização e a tela piscava
+    const narrow = stage.clientWidth < 640 || (!!vr.svOn && stage.clientWidth < 780);
+    if (stage.classList.contains("narrow") !== narrow) stage.classList.toggle("narrow", narrow);
     $("vrHud").style.top = narrow && alert.textContent ? `${alert.offsetHeight + 16}px` : "";
 
     // ameaças viram para você (deitadas mantêm a direção do corpo); rótulo com a distância
@@ -10060,6 +10082,7 @@ document.addEventListener("keydown", e => {
       vrHudFollow();
       vr.dirty = vr.dirty || (t - vr.lastSync > 400);
     } else {
+      vrGoTick(dt);
       vrMove(dt);
       vrApplyCamera();
       vrSvTick(t);
@@ -10163,6 +10186,7 @@ document.addEventListener("keydown", e => {
     $("vrFullBtn").hidden = true;
     vrSvSet(false);
     vrRealUi();
+    if (vr.go) vrGoCancel();
     if (document.fullscreenElement === $("vrSplit")) document.exitFullscreen();
   }
 
@@ -10213,6 +10237,288 @@ document.addEventListener("keydown", e => {
     vrXrLabel();
   }
 
+  /* ---------- duplo clique: ir para o abrigo ---------- */
+
+  const VR_RUN_SPEED = 350;   // cm/s: deslocamento correndo até o abrigo
+  const lerpAngle = (a, b, t) => a + Math.atan2(Math.sin(b - a), Math.cos(b - a)) * t;
+
+  function vrPointInPoly(p, poly) {
+    let inside = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const a = poly[i], b = poly[j];
+      if ((a.y > p.y) !== (b.y > p.y) && p.x < (b.x - a.x) * (p.y - a.y) / (b.y - a.y) + a.x) inside = !inside;
+    }
+    return inside;
+  }
+  function vrDistToObj(p, o) {
+    if (o.shape === "circle") return Math.max(0, Math.hypot(p.x - o.center.x, p.y - o.center.y) - o.radius);
+    const poly = rectToPerimeter(o.corners);
+    if (vrPointInPoly(p, poly)) return 0;
+    let best = Infinity;
+    for (let i = 0; i < poly.length; i++) {
+      const a = poly[i], b = poly[(i + 1) % poly.length], ab = vsub(b, a), l2 = vdot(ab, ab) || 1;
+      const t = clamp(vdot(vsub(p, a), ab) / l2, 0, 1);
+      best = Math.min(best, Math.hypot(p.x - (a.x + ab.x * t), p.y - (a.y + ab.y * t)));
+    }
+    return best;
+  }
+
+  // o que está sob o cursor (ou na mira do controle): ponto da cena em cm
+  function vrPickWorld(ndc, origin, dir) {
+    if (!vr.world) return null;
+    const rc = new THREE.Raycaster();
+    if (ndc) rc.setFromCamera(ndc, vr.camera); else rc.set(origin, dir);
+    rc.far = 150;
+    const hits = rc.intersectObject(vr.world, true);
+    for (const h of hits) {
+      if (!h.object.visible || h.object.isSprite || h.object.isLine) continue;
+      const p = { x: h.point.x * 100, y: h.point.z * 100, z: h.point.y * 100 };
+      // ignora as pessoas (ameaças e outros policiais)
+      if (p.z < 200 && [...state.threats, ...state.officers.filter(o => o !== vrOfficer())].some(a => Math.hypot(a.x - p.x, a.y - p.y) < 45)) continue;
+      return p;
+    }
+    return null;
+  }
+
+  // qual abrigo é esse ponto: componente da viatura mais próximo, ou árvore/poste/muro/edificação
+  function vrCoverAt(p) {
+    if (!p) return null;
+    if (isInsideCar(state.viatura, p, 25)) {
+      // na viatura: motor (o conjunto todo), rodas e colunas; câmbio, agregados e bateria contam junto com o motor
+      const objs = getActiveCoverObjects(state.viatura).filter(o => !o.envId && o.ratingKey && !/^bay-/.test(o.key || ""));
+      if (!objs.length) return { conceal: true, label: { pt: "lataria da viatura", en: "patrol car body" } };
+      let best = null, bd = Infinity;
+      objs.forEach(o => { const d = vrDistToObj(p, o); if (d < bd) { bd = d; best = o; } });
+      return { obj: best };
+    }
+    if (isInsideCar(state.frontCar, p, 25)) return { suspect: true, label: { pt: "carro abordado", en: "stopped vehicle" } };
+    let best = null, bd = Infinity;
+    getEnvironmentCoverObjects().forEach(o => { const d = vrDistToObj(p, o); if (d < bd) { bd = d; best = o; } });
+    if (best && bd < (p.z > 30 ? 160 : 70)) return { obj: best };
+    return { ground: true };
+  }
+
+  // situação do abrigo diante das armas presentes na cena
+  function vrCoverStatus(obj) {
+    const weapons = [...new Set(state.threats.filter(t => !t.neutralized).map(t => t.weapon || "curta"))];
+    if (weapons.some(w => !objectResistsWeapon(obj, w))) return { cls: "weak", txt: { pt: "não para fuzil", en: "does not stop rifle fire" } };
+    if (UNTESTED_COVER.has(obj.ratingKey)) return { cls: "unval", txt: { pt: "abrigo não validado em teste", en: "cover not validated by testing" } };
+    return { cls: "ok", txt: { pt: "abrigo", en: "cover" } };
+  }
+
+  // melhor ponto atrás do objeto: o que deixa o corpo menos exposto a todas as ameaças
+  function vrCoverDestination(obj) {
+    const live = state.threats.filter(t => !t.neutralized);
+    const refs = live.length ? live : state.threats;
+    const me = { x: vr.pos.x, y: vr.pos.y, crouched: false, prone: false };
+    // fica junto do objeto clicado: até 1,7 m da peça e 1,1 m da lataria (viatura) ou 1,5 m do objeto
+    const car = state.viatura, w2 = car.width / 2, l2 = car.length / 2;
+    const carObj = { corners: [{ x: -w2, y: -l2 }, { x: w2, y: -l2 }, { x: -w2, y: l2 }, { x: w2, y: l2 }].map(q => carLocalToWorld(car, q)) };
+    const near = obj.envId ? (p => vrDistToObj(p, obj) <= 150) : (p => vrDistToObj(p, obj) <= 170 && vrDistToObj(p, carObj) <= 110);
+    let best = null;
+    const tryRef = (t, filter) => {
+      const d = positionFromThreat(obj, t, me, filter);
+      if (!d) return;
+      const ex = d.los ? d.los.exposed.length : d.exposedTo.length, sc = d.los ? d.los.score : 0;
+      if (!best || ex < best.ex || (ex === best.ex && sc < best.sc)) best = { d, ex, sc, t };
+    };
+    refs.forEach(t => tryRef(t, near));
+    if (best) return best;
+    // nenhum ponto junto do objeto fica na "sombra" dele (ex.: viatura reta, ameaças à frente):
+    // fica no melhor ponto ao lado do objeto e avisa — não foge para longe dele
+    const occ = buildOccluders(), c = objectCentroid(obj);
+    const stance = obj.requiresCrouch ? "crouched" : "standing";
+    // só do lado de trás do objeto em relação às ameaças (nunca entre o objeto e elas)
+    const tm = refs.reduce((a, t) => ({ x: a.x + t.x / refs.length, y: a.y + t.y / refs.length }), { x: 0, y: 0 });
+    const back = vnorm(vsub(c, tm));
+    let local = null;
+    for (let r = 20; r <= 260; r += 15) for (let k = 0; k < 32; k++) {
+      const q = { x: c.x + Math.cos(k / 16 * Math.PI) * r, y: c.y + Math.sin(k / 16 * Math.PI) * r };
+      if (vrBlocked(q) || !near(q) || vdot(vsub(q, c), back) < -10) continue;
+      const los = losExposureAt(q, stance, occ);
+      const sc = los.score * 1000 + Math.hypot(q.x - me.x, q.y - me.y);
+      if (!local || sc < local.sc) local = { sc, d: { p: q, los }, ex: los.exposed.length };
+    }
+    if (local) {
+      const t = refs.reduce((a, b) => Math.hypot(b.x - local.d.p.x, b.y - local.d.p.y) < Math.hypot(a.x - local.d.p.x, a.y - local.d.p.y) ? b : a);
+      return { d: local.d, ex: local.ex, sc: local.sc, t, noShadow: true };
+    }
+    refs.forEach(t => tryRef(t, null));
+    return best;
+  }
+
+  // caminho a pé, contornando carros e obstáculos (grade de 25 cm + atalhos em linha reta)
+  function vrPlanPath(a, b) {
+    const free = q => !vrBlocked(q);
+    const lineFree = (p, q) => {
+      const n = Math.max(1, Math.ceil(Math.hypot(q.x - p.x, q.y - p.y) / 12));
+      for (let i = 1; i < n; i++) { const t = i / n; if (!free({ x: p.x + (q.x - p.x) * t, y: p.y + (q.y - p.y) * t })) return false; }
+      return true;
+    };
+    if (lineFree(a, b)) return [b];
+    const G = 25, pad = 700;
+    const x0 = Math.min(a.x, b.x) - pad, y0 = Math.min(a.y, b.y) - pad;
+    const W = Math.ceil((Math.abs(a.x - b.x) + 2 * pad) / G) + 1, H = Math.ceil((Math.abs(a.y - b.y) + 2 * pad) / G) + 1;
+    if (W * H > 250000) return [b];
+    const pt = (i, j) => ({ x: x0 + i * G, y: y0 + j * G });
+    const known = new Uint8Array(W * H), blocked = new Uint8Array(W * H);
+    const isB = (i, j) => { const k = j * W + i; if (!known[k]) { known[k] = 1; blocked[k] = vrBlocked(pt(i, j)) ? 1 : 0; } return blocked[k]; };
+    const si = Math.round((a.x - x0) / G), sj = Math.round((a.y - y0) / G), ti = Math.round((b.x - x0) / G), tj = Math.round((b.y - y0) / G);
+    const g = new Float32Array(W * H).fill(Infinity), from = new Int32Array(W * H).fill(-1), closed = new Uint8Array(W * H);
+    const h = (i, j) => { const dx = Math.abs(i - ti), dy = Math.abs(j - tj); return Math.max(dx, dy) + .414 * Math.min(dx, dy); };
+    const heap = [];
+    const push = (f, k) => { heap.push([f, k]); let c = heap.length - 1; while (c > 0) { const p = (c - 1) >> 1; if (heap[p][0] <= heap[c][0]) break; [heap[p], heap[c]] = [heap[c], heap[p]]; c = p; } };
+    const pop = () => { const top = heap[0], last = heap.pop(); if (heap.length) { heap[0] = last; let c = 0; for (;;) { const l = 2 * c + 1, r = l + 1; let m = c; if (l < heap.length && heap[l][0] < heap[m][0]) m = l; if (r < heap.length && heap[r][0] < heap[m][0]) m = r; if (m === c) break; [heap[m], heap[c]] = [heap[c], heap[m]]; c = m; } } return top; };
+    const s = sj * W + si, goal = tj * W + ti;
+    g[s] = 0; push(h(si, sj), s);
+    let found = false, n = 0;
+    while (heap.length && n++ < 200000) {
+      const [, k] = pop();
+      if (closed[k]) continue;
+      closed[k] = 1;
+      if (k === goal) { found = true; break; }
+      const i = k % W, j = (k - i) / W;
+      for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) {
+        if (!di && !dj) continue;
+        const ni = i + di, nj = j + dj;
+        if (ni < 0 || nj < 0 || ni >= W || nj >= H) continue;
+        const nk = nj * W + ni;
+        if (closed[nk] || (nk !== goal && isB(ni, nj))) continue;
+        const ng = g[k] + (di && dj ? 1.414 : 1);
+        if (ng < g[nk]) { g[nk] = ng; from[nk] = k; push(ng + h(ni, nj), nk); }
+      }
+    }
+    if (!found) return [b];
+    const cells = [];
+    for (let k = goal; k !== -1 && k !== s; k = from[k]) { const i = k % W; cells.push(pt(i, (k - i) / W)); }
+    cells.reverse();
+    cells[cells.length - 1] = b;
+    // atalhos: de cada ponto, vai direto ao mais distante que dá para alcançar em linha reta
+    const out = []; let cur = a, idx = 0;
+    while (idx < cells.length) {
+      let far = idx;
+      for (let k = cells.length - 1; k > idx; k--) if (lineFree(cur, cells[k])) { far = k; break; }
+      out.push(cells[far]); cur = cells[far]; idx = far + 1;
+    }
+    return out;
+  }
+
+  function vrGoMarker(p) {
+    if (vr.goMark) { vr.scene.remove(vr.goMark); vr.goMark.geometry.dispose(); vr.goMark.material.dispose(); vr.goMark = null; }
+    if (!p) return;
+    const m = new THREE.Mesh(new THREE.RingGeometry(.22, .3, 32), new THREE.MeshBasicMaterial({ color: 0x59cd76, transparent: true, opacity: .85, depthTest: false }));
+    m.rotation.x = -Math.PI / 2; m.position.set(p.x / 100, .02, p.y / 100); m.renderOrder = 9;
+    vr.scene.add(m); vr.goMark = m;
+  }
+
+  function vrGoCancel() { vr.go = null; vrGoMarker(null); }
+
+  // resultado em uma frase ao chegar
+  function vrGoReport(g) {
+    const d = g.dest && g.dest.d;
+    const art = t => /^agregados/.test(t) ? "os " : /^(árvore|parede|edificação|coluna|roda|bateria|lataria|fachada)/.test(t) ? "a " : "o ";
+    const who = g.label ? (LANG === "en" ? "behind the " + g.label.en : "atrás d" + art(g.label.pt) + g.label.pt) : L("no ponto escolhido", "at the chosen spot");
+    let msg = `${(vrOfficer() || {}).name || ""} ${who}, ${tx(STANCE_NAMES[g.stance])}`;
+    if (d && d.los) {
+      if (d.los.exposed.length) msg += L(` — ainda exposto à(s) ameaça(s) ${d.los.exposed.map(e => state.threats.indexOf(e.threat) + 1).join(", ")}`, ` — still exposed to threat(s) ${d.los.exposed.map(e => state.threats.indexOf(e.threat) + 1).join(", ")}`);
+      else if (d.los.hidden.length) msg += L(" — fora de vista, mas parte do corpo só oculta", " — out of sight, but part of the body only concealed");
+      else msg += L(" — coberto de todas as ameaças", " — covered from every threat");
+    }
+    if (g.status && g.status.cls !== "ok") msg += ` · ⚠ ${tx(g.status.txt)}`;
+    if (g.dest && g.dest.noShadow) msg += L(" · ⚠ daqui o objeto não fica entre você e a ameaça (com a viatura reta não há sombra do motor fora do carro: gire a viatura, ex. 45°)",
+      " · ⚠ from here the object is not between you and the threat (with the car straight there is no engine shadow outside the car: angle the car, e.g. 45°)");
+    if (g.secs) msg += L(` · ${g.secs.toFixed(1).replace(".", ",")} s correndo`, ` · ${g.secs.toFixed(1)} s running`);
+    showToast(msg);
+  }
+
+  // inicia o deslocamento até o abrigo (ou ponto do chão) clicado
+  function vrGoTo(pick, fromXr) {
+    const c = vrCoverAt(pick);
+    if (!c) return;
+    if (c.suspect) { showToast(L("Esse é o carro abordado: escolha a viatura, um poste, uma árvore ou um muro.", "That is the stopped vehicle: choose the patrol car, a pole, a tree or a wall.")); return; }
+    if (c.conceal) { showToast(L("Lataria só esconde, não para disparo. Ligue o motor como abrigo ou clique em outro objeto.", "Car body only conceals, it doesn't stop rounds. Turn on engine cover or click another object.")); return; }
+    let dest, stance = vr.stance, label = null, status = null, face = null, destInfo = null;
+    if (c.ground) {
+      dest = { x: pick.x, y: pick.y };
+      if (vrBlocked(dest)) {
+        let found = null;
+        for (let r = 15; r <= 150 && !found; r += 15) for (let k = 0; k < 16 && !found; k++) { const q = { x: dest.x + Math.cos(k / 8 * Math.PI) * r, y: dest.y + Math.sin(k / 8 * Math.PI) * r }; if (!vrBlocked(q)) found = q; }
+        if (!found) return;
+        dest = found;
+      }
+    } else {
+      destInfo = vrCoverDestination(c.obj);
+      if (!destInfo) { showToast(L("Não achei um ponto protegido atrás desse objeto. Tente outro abrigo.", "No protected spot found behind that object. Try another cover.")); return; }
+      dest = destInfo.d.p;
+      stance = c.obj.requiresCrouch ? "crouched" : "standing";
+      label = c.obj.labelI18n || { pt: c.obj.label, en: c.obj.label };
+      status = vrCoverStatus(c.obj);
+      face = destInfo.t;
+    }
+    if (fromXr) {
+      // óculos: teletransporte (andar com o corpo parado enjoa); a postura é a do seu corpo
+      const head = vr.camera.position.clone(); vr.rig.localToWorld(head);
+      vr.rig.position.x += dest.x / 100 - head.x; vr.rig.position.z += dest.y / 100 - head.z;
+      vr.dirty = true;
+      return;
+    }
+    const run = $("vrRunTo").checked;
+    const path = run ? vrPlanPath({ x: vr.pos.x, y: vr.pos.y }, dest) : [dest];
+    const len = path.reduce((s, q, i) => s + Math.hypot(q.x - (i ? path[i - 1].x : vr.pos.x), q.y - (i ? path[i - 1].y : vr.pos.y)), 0);
+    vr.go = { path, stance, face, label, status, dest: destInfo, instant: !run, t0: performance.now(), len };
+    if (run && len > 30) { vr.stance = "standing"; vr.lean = 0; }
+    vrGoMarker(dest);
+  }
+
+  function vrGoTick(dt) {
+    const g = vr.go;
+    if (!g) return;
+    if ([...vr.keys].some(k => /^[wasd]$|^arrow/.test(k)) || vr.pad.f || vr.pad.s) { vrGoCancel(); return; }
+    let step = g.instant ? 1e9 : VR_RUN_SPEED * dt;
+    while (step > 0 && g.path.length) {
+      const n = g.path[0], dx = n.x - vr.pos.x, dy = n.y - vr.pos.y, d = Math.hypot(dx, dy);
+      if (d <= step) { vr.pos = { x: n.x, y: n.y }; g.path.shift(); step -= d; }
+      else {
+        vr.pos = { x: vr.pos.x + dx / d * step, y: vr.pos.y + dy / d * step }; step = 0;
+        vr.yaw = lerpAngle(vr.yaw, yawOf({ x: dx, y: dy }), Math.min(1, dt * 7));
+        vr.pitch *= .9;
+      }
+    }
+    vr.dirty = true;
+    if (g.path.length) return;
+    // chegou: assume a postura do abrigo e olha para a ameaça
+    vr.stance = g.stance;
+    if (g.face) { vr.yaw = yawOf(vsub(g.face, vr.pos)); vr.pitch = 0; }
+    const o = vrOfficer();
+    if (o && g.face) o.facing = angle(vr.pos, g.face);
+    g.secs = g.instant ? 0 : (performance.now() - g.t0) / 1000;
+    vr.go = null;
+    vrGoMarker(null);
+    vrGoReport(g);
+  }
+
+  // etiqueta ao passar o mouse
+  function vrHover(e) {
+    const tip = $("vrPick");
+    if (vr.drag || !vr.open || vr.renderer.xr.isPresenting) { tip.hidden = true; return; }
+    const now = performance.now();
+    if (now - (vr.hoverT || 0) < 90) return;
+    vr.hoverT = now;
+    const wrap = $("vrCanvasWrap").getBoundingClientRect();
+    const ndc = new THREE.Vector2((e.clientX - wrap.left) / wrap.width * 2 - 1, -((e.clientY - wrap.top) / wrap.height) * 2 + 1);
+    const c = vrCoverAt(vrPickWorld(ndc));
+    if (!c || c.ground) { tip.hidden = true; return; }
+    let cls, title, sub;
+    if (c.suspect) { cls = "conceal"; title = tx(c.label); sub = L("carro do suspeito", "suspect's car"); }
+    else if (c.conceal) { cls = "conceal"; title = tx(c.label); sub = L("só esconde", "conceals only"); }
+    else { const s = vrCoverStatus(c.obj); cls = s.cls; title = tx(c.obj.labelI18n || { pt: c.obj.label, en: c.obj.label }); sub = tx(s.txt) + L(" · duplo clique: ir até lá", " · double-click: go there"); }
+    tip.className = "vr-pick " + cls;
+    tip.innerHTML = `<b>${escapeHtml(title)}</b><small>${escapeHtml(sub)}</small>`;
+    const st = $("vrStage").getBoundingClientRect();
+    tip.style.left = `${e.clientX - st.left}px`; tip.style.top = `${e.clientY - st.top}px`;
+    tip.hidden = false;
+  }
+
   /* ---------- controles ---------- */
 
   $("vrStartBtn").addEventListener("click", vrStart);
@@ -10247,12 +10553,42 @@ document.addEventListener("keydown", e => {
     else if (k === "escape" && document.fullscreenElement) document.exitFullscreen();
   });
   vrStage.addEventListener("keyup", e => { vr.keys.delete(e.key.toLowerCase()); });
+  // teclado funciona mesmo sem clicar no 3D antes (ex.: depois de um comando de voz ou de um botão),
+  // desde que o foco não esteja num campo de texto
+  const VR_ANY_KEYS = new Set([...VR_KEYS, "c", "p", " ", "x", "f"]);
+  const vrTyping = el => el && (/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) || el.isContentEditable);
+  document.addEventListener("keydown", e => {
+    if (!vr.open || !vr.visible || (vr.renderer && vr.renderer.xr.isPresenting)) return;
+    if (vrStage.contains(e.target) || vrTyping(e.target) || e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key.toLowerCase();
+    if (!VR_ANY_KEYS.has(k)) return;
+    e.preventDefault();
+    vrStage.focus({ preventScroll: true });
+    vrStage.dispatchEvent(new KeyboardEvent("keydown", { key: e.key, bubbles: true, cancelable: true }));
+  });
+  document.addEventListener("keyup", e => { if (vr.open) vr.keys.delete(e.key.toLowerCase()); });
+  // depois de um comando de voz com o 3D aberto, o teclado volta para o 3D
+  const vrBackToStage = () => { if (vr.open) setTimeout(() => vrStage.focus({ preventScroll: true }), 0); };
+  $("voiceSend").addEventListener("click", vrBackToStage);
+  $("voiceText").addEventListener("keydown", e => { if (e.key === "Enter") vrBackToStage(); });
   vrStage.addEventListener("blur", () => vr.keys.clear());
   $("vrCanvasWrap").addEventListener("pointerdown", e => {
     vrStage.focus({ preventScroll: true });
     vr.drag = { x: e.clientX, y: e.clientY, id: e.pointerId };
     e.currentTarget.setPointerCapture(e.pointerId);
   });
+  // só com o mouse: botão direito segurado anda (e o arrasto continua girando a visão);
+  // rodinha dá passos de 30 cm para frente ou para trás (depois de clicar no 3D)
+  $("vrCanvasWrap").addEventListener("contextmenu", e => e.preventDefault());
+  $("vrCanvasWrap").addEventListener("pointerdown", e => { if (e.button === 2) { vr.mouseFwd = true; if (vr.go) vrGoCancel(); } });
+  ["pointerup", "pointercancel", "pointerleave"].forEach(ev => $("vrCanvasWrap").addEventListener(ev, e => { if (ev !== "pointerup" || e.button === 2) vr.mouseFwd = false; }));
+  window.addEventListener("blur", () => { vr.mouseFwd = false; });
+  $("vrCanvasWrap").addEventListener("wheel", e => {
+    if (!vr.open || document.activeElement !== vrStage) return;   // sem o 3D em foco, a rodinha rola a página
+    e.preventDefault();
+    if (vr.go) vrGoCancel();
+    vr.wheelDist = clamp((vr.wheelDist || 0) + (e.deltaY < 0 ? 30 : -30), -150, 150);
+  }, { passive: false });
   $("vrCanvasWrap").addEventListener("pointermove", e => {
     if (!vr.drag || vr.drag.id !== e.pointerId) return;
     const k = e.pointerType === "touch" ? .006 : .0045;
@@ -10261,6 +10597,20 @@ document.addEventListener("keydown", e => {
     vr.drag.x = e.clientX; vr.drag.y = e.clientY;
   });
   ["pointerup", "pointercancel"].forEach(ev => $("vrCanvasWrap").addEventListener(ev, () => { vr.drag = null; }));
+  $("vrCanvasWrap").addEventListener("pointerdown", e => { vr.tapDown = e.button === 0 ? { x: e.clientX, y: e.clientY, t: performance.now() } : null; });
+  $("vrCanvasWrap").addEventListener("pointerup", e => {
+    const d = vr.tapDown; vr.tapDown = null;
+    if (!d || Math.hypot(e.clientX - d.x, e.clientY - d.y) > 8 || performance.now() - d.t > 400) { vr.lastTap = null; return; }
+    const now = performance.now(), last = vr.lastTap;
+    if (last && now - last.t < 350 && Math.hypot(e.clientX - last.x, e.clientY - last.y) < 30) {
+      vr.lastTap = null;
+      const wrap = $("vrCanvasWrap").getBoundingClientRect();
+      const ndc = new THREE.Vector2((e.clientX - wrap.left) / wrap.width * 2 - 1, -((e.clientY - wrap.top) / wrap.height) * 2 + 1);
+      vrGoTo(vrPickWorld(ndc), false);
+    } else vr.lastTap = { x: e.clientX, y: e.clientY, t: now };
+  });
+  $("vrCanvasWrap").addEventListener("pointermove", vrHover);
+  $("vrCanvasWrap").addEventListener("pointerleave", () => { $("vrPick").hidden = true; });
   document.querySelectorAll("[data-vr-pad]").forEach(b => {
     const [axis, val] = b.dataset.vrPad.split(":");
     const on = e => { e.preventDefault(); vr.pad[axis] = Number(val); };
